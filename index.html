@@ -10,7 +10,8 @@
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-header{padding:18px 16px 8px;max-width:1100px;margin:auto}
+header{padding:18px 16px 8px;max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.hbtn{flex-shrink:0;padding:8px 16px;border:0;border-radius:10px;background:var(--ac);color:var(--act);font:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
 h1{font-size:20px;margin:0}h1+p{margin:2px 0 0;color:var(--mut);font-size:13px}
 nav{display:flex;gap:6px;max-width:1100px;margin:8px auto 0;padding:0 16px}
 nav button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
@@ -71,12 +72,11 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 </style>
 </head>
 <body>
-<header><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></header>
+<header><div><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
 <nav><button id="t1" class="on">Status Tempahan</button><button id="t2">Tempah Baharu</button><button id="t3" class="hide">Senarai Tempahan</button><button id="t4" class="hide">Penyelia</button></nav>
 <main>
 <section id="p1">
   <button class="btn" id="goBook" style="margin:0 0 10px">+ Tempah Bas / Van</button>
-  <button class="del" id="goAdm" style="width:100%;margin:0 0 10px;padding:11px;color:var(--tx)">Log Masuk</button>
   <label style="margin-top:0">Semak untuk tarikh</label>
   <div style="display:flex;gap:6px;margin-bottom:12px"><button class="del" id="dprev" style="color:var(--tx);padding:8px 14px">&lsaquo;</button><input type="date" id="sdate"><button class="del" id="dnext" style="color:var(--tx);padding:8px 14px">&rsaquo;</button></div>
   <p class="small" id="now"></p>
