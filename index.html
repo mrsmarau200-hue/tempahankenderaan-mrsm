@@ -176,8 +176,9 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div class="grid2">
      <div class="card"><h2>Senarai Pemandu</h2><div id="dlist"></div></div>
      <div class="card"><h2 id="dhead">Daftar Pemandu</h2>
+      <label>No. gaji (isi dahulu, maklumat lain keluar automatik)</label><input id="dgaji" inputmode="numeric" autocomplete="off" placeholder="cth: 326108"><div class="small" id="dfind" style="margin-top:4px"></div>
       <label>Nama penuh</label><input id="dnama">
-      <div class="row"><div><label>No. gaji</label><input id="dgaji"></div><div><label>No. telefon</label><input id="dtel" type="tel"></div></div>
+      <label>No. telefon</label><input id="dtel" type="tel">
       <label>Email</label><input id="demel" type="email" autocomplete="off">
       <div class="row"><div><label>Kelas lesen</label><input id="dlesen" placeholder="cth: D, E, PSV"></div><div><label>Tarikh tamat lesen</label><input id="dtamat" type="date"></div></div>
       <label>Status</label><select id="dstat"><option value="aktif">Aktif</option><option value="nonaktif">Tidak aktif (cuti / tidak bertugas)</option></select>
@@ -351,7 +352,15 @@ function addItem(col,inp,docs){
 }
 $("vadd").onclick=function(){addItem("vehicles","vnew",vehDocs)};
 var editDrv=null,DF=["dnama","dgaji","dtel","demel","dlesen","dtamat"];
-function dReset(){editDrv=null;DF.forEach(function(k){$(k).value=""});$("dstat").value="aktif";$("dsave").textContent="Daftar Pemandu";$("dhead").textContent="Daftar Pemandu";$("dcancel").classList.add("hide")}
+function dReset(){editDrv=null;$("dfind").textContent="";DF.forEach(function(k){$(k).value=""});$("dstat").value="aktif";$("dsave").textContent="Daftar Pemandu";$("dhead").textContent="Daftar Pemandu";$("dcancel").classList.add("hide")}
+function drvLookup(){
+  if(editDrv)return;var v=$("dgaji").value.trim(),f=$("dfind");if(!v){f.textContent="";return}
+  var st=staffDocs.find(function(x){return String(x.noGaji)===v});
+  if(!st){f.textContent=!staffDocs.length?(v.length>=5?"Senarai staf belum dimuatkan (semak Code.gs / importStaf).":""):(v.length>=5?"No. gaji tiada dalam senarai staf.":"");return}
+  $("dnama").value=st.name;$("dtel").value=st.phone||"";$("demel").value=st.email||"";
+  f.textContent="Dijumpai: "+st.name+" ("+(st.jawatan||"-")+"). Isi kelas lesen dan tarikh tamat lesen, kemudian simpan.";
+}
+$("dgaji").oninput=drvLookup;
 $("dcancel").onclick=function(){dReset();$("drvmsg").textContent=""};
 $("dlist").addEventListener("click",function(ev){
   var id=ev.target.getAttribute&&ev.target.getAttribute("data-de"),d=drvDocs.find(function(x){return x.id===id});if(!d)return;
