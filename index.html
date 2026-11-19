@@ -437,9 +437,8 @@ $("scancel").onclick=function(){sReset();$("smsg").textContent=""};
 function staffLookup(){
   if(editSup)return;var v=$("sgaji").value.trim(),f=$("sfind");if(!v){f.textContent="";return}
   var st=staffDocs.find(function(x){return String(x.noGaji)===v});
-  if(!st){f.textContent=(staffDocs.length&&v.length>=5)?"No. gaji tiada dalam senarai staf.":"";return}
+  if(!st){f.textContent=!staffDocs.length?(v.length>=5?"Senarai staf belum dimuatkan (semak Code.gs / importStaf).":""):(v.length>=5?"No. gaji tiada dalam senarai staf.":"");return}
   $("snama").value=st.name;$("sjaw").value=st.jawatan||"";$("semail").value=st.email||"";
-  var pre=(st.email||"").split("@")[0];if(!$("snew").value&&/^[a-z0-9._-]{3,20}$/.test(pre))$("snew").value=pre;
   f.textContent="Dijumpai: "+st.name+" ("+(st.jawatan||"-")+"). Semak maklumat sebelum menyimpan.";
 }
 $("sgaji").oninput=staffLookup;
