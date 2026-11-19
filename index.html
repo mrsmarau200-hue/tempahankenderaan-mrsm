@@ -589,6 +589,9 @@ function formBody(b){
 }
 var curForm=null;
 function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0}
+document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(rj&&canEdit&&db){var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;
+  ask("Tolak program yang telah diluluskan ini? Sebab penolakan (pilihan):",true).then(function(r){if(r===null)return;db.collection("bookings").doc(rj).update({status:"rejected",reason:r.trim(),decidedAt:Date.now()}).then(function(){toast("Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){toast("Gagal mengemas kini.")})})}
+});
 document.addEventListener("click",function(ev){var pr=ev.target.getAttribute&&ev.target.getAttribute("data-pr");if(pr)showForm(pr)});
 $("pclose").onclick=function(){$("pform").classList.add("hide")};
 $("pprint").onclick=function(){try{window.print()}catch(e){toast("Cetakan terus tidak dibenarkan. Guna Muat Turun, kemudian buka fail dan cetak.")}};
@@ -610,7 +613,7 @@ function pmTable(nm,y,mo,pr){
   var l=bookings.filter(function(b){var d=new Date(b.start);return (b.status||"approved")!=="pending"&&(!nm||bd(b).indexOf(nm)>=0)&&d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)}).sort(function(a,b){return b.start-a.start});
   return '<div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Destinasi</th><th>Pelajar</th><th>Pemohon</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th>'+(pr?'<th></th>':'')+'</tr></thead><tbody>'
    +(l.length?l.map(function(b){var st=stag(b),ok=(b.status||"approved")==="approved";
-     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+st+'</td>'+(pr?'<td>'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button>':'<span class="small">-</span>')+'</td>':'')+'</tr>'}).join(""):'<tr><td colspan="'+(pr?9:8)+'" class="small">Tiada program untuk tempoh ini.</td></tr>')
+     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+st+'</td>'+(pr?'<td>'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> <button class="del" data-rj="'+esc(b.id)+'">Tolak</button>':'<span class="small">-</span>')+'</td>':'')+'</tr>'}).join(""):'<tr><td colspan="'+(pr?9:8)+'" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
 }
 function renderDriver(){
