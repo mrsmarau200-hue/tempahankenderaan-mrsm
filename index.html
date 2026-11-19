@@ -354,7 +354,7 @@ $("vadd").onclick=function(){addItem("vehicles","vnew",vehDocs)};
 var editDrv=null,DF=["dnama","dgaji","dtel","demel","dlesen","dtamat"];
 function dReset(){editDrv=null;$("dfind").textContent="";DF.forEach(function(k){$(k).value=""});$("dstat").value="aktif";$("dsave").textContent="Daftar Pemandu";$("dhead").textContent="Daftar Pemandu";$("dcancel").classList.add("hide")}
 function drvLookup(){
-  if(editDrv)return;var v=$("dgaji").value.trim(),f=$("dfind");if(!v){f.textContent="";return}
+  if(editDrv)return;$("drvmsg").textContent="";var v=$("dgaji").value.trim(),f=$("dfind");if(!v){f.textContent="";return}
   var st=staffDocs.find(function(x){return String(x.noGaji)===v});
   if(!st){f.textContent=!staffDocs.length?(v.length>=5?"Senarai staf belum dimuatkan (semak Code.gs / importStaf).":""):(v.length>=5?"No. gaji tiada dalam senarai staf.":"");return}
   $("dnama").value=st.name;$("dtel").value=st.phone||"";$("demel").value=st.email||"";
@@ -444,7 +444,7 @@ var editSup=null;
 function sReset(){editSup=null;$("sfind").textContent="";["snama","sjaw","sgaji","semail","snew","spw","spw2"].forEach(function(k){$(k).value=""});$("snew").disabled=false;$("spwbox").classList.remove("hide");$("sadd").textContent="Tambah Pengguna";$("shead").textContent="Tambah Pengguna";$("srole").value="penyelia";toggleRole();$("scancel").classList.add("hide")}
 $("scancel").onclick=function(){sReset();$("smsg").textContent=""};
 function staffLookup(){
-  if(editSup)return;var v=$("sgaji").value.trim(),f=$("sfind");if(!v){f.textContent="";return}
+  if(editSup)return;$("smsg").textContent="";var v=$("sgaji").value.trim(),f=$("sfind");if(!v){f.textContent="";return}
   var st=staffDocs.find(function(x){return String(x.noGaji)===v});
   if(!st){f.textContent=!staffDocs.length?(v.length>=5?"Senarai staf belum dimuatkan (semak Code.gs / importStaf).":""):(v.length>=5?"No. gaji tiada dalam senarai staf.":"");return}
   $("snama").value=st.name;$("sjaw").value=st.jawatan||"";$("semail").value=st.email||"";
