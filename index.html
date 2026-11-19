@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tempahan Bas &amp; Van MRSM Arau</title>
+<style>
+:root{--bg:#f6f7f4;--card:#fff;--tx:#1d2a22;--mut:#5f6f65;--bd:#dfe4dc;--ac:#1f6b4a;--act:#fff;--red:#b3261e;--redbg:#fbe9e7;--grn:#1f6b4a;--grnbg:#e3f3ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--card:#1d2620;--tx:#e8efe9;--mut:#9fb0a5;--bd:#2f3c34;--ac:#5fc08f;--act:#10281b;--red:#ff8a80;--redbg:#3a1f1d;--grn:#7fd6a5;--grnbg:#1a3326;color-scheme:dark}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:18px 16px 8px;max-width:1100px;margin:auto}
+h1{font-size:20px;margin:0}h1+p{margin:2px 0 0;color:var(--mut);font-size:13px}
+nav{display:flex;gap:6px;max-width:1100px;margin:8px auto 0;padding:0 16px}
+nav button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
+nav button.on{background:var(--ac);color:var(--act);border-color:var(--ac)}
+main{max-width:1100px;margin:12px auto;padding:0 16px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+h2{font-size:16px;margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 3px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:var(--ac);color:var(--act);font:inherit;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.5}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.free{background:var(--grnbg);color:var(--grn)}.busy{background:var(--redbg);color:var(--red)}
+.msg{margin-top:10px;font-size:13px;color:var(--red)}.ok{color:var(--grn)}
+.small{font-size:13px;color:var(--mut)}
+.wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-align:top}
+.pend{background:var(--bd);color:var(--tx)}.del{background:none;border:1px solid var(--bd);color:var(--red);border-radius:8px;padding:3px 8px;cursor:pointer}
+.hide{display:none}.dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}.dlg.hide{display:none}.dlg>div{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;max-width:360px;width:100%}.dlg .row{margin-top:12px}.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin:auto;background:var(--tx);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:60;font-size:14px}.toast.hide{display:none}.li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}
+.dash{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start}
+.side{position:sticky;top:8px;background:linear-gradient(180deg,#14573b,#0d3b28);color:#e9f5ee;border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;gap:16px;min-height:480px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+.brand{display:flex;gap:10px;align-items:center;padding:0 6px}.brand b{display:block}.brand small{opacity:.7;font-size:12px}.logo{font-size:24px;background:rgba(255,255,255,.14);border-radius:12px;padding:6px 8px}
+.sl{display:flex;flex-direction:column;gap:4px;background:none;padding:0;margin:0;max-width:none}
+.sl a,.sf a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#e9f5ee;cursor:pointer;font-weight:600;font-size:14px}
+.sl a:hover,.sf a:hover{background:rgba(255,255,255,.12)}.sl a.on{background:#fff;color:#14573b}
+.sl i{margin-left:auto;background:#f5b335;color:#3a2a00;border-radius:99px;font-style:normal;font-size:11px;padding:1px 8px}
+.sf{margin-top:auto;border-top:1px solid rgba(255,255,255,.18);padding-top:10px;display:flex;flex-direction:column;gap:2px}
+.dmain{min-width:0}.dt{font-size:20px;margin:2px 0 12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 14px 14px 18px;position:relative;overflow:hidden}
+.st:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,var(--ac))}
+.st b{display:block;font-size:30px;line-height:1.1}.st span{color:var(--mut);font-size:13px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:140px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;font-size:11px;color:var(--mut);gap:3px}
+.bars i{display:block;width:100%;background:linear-gradient(var(--ac),#8fd3b0);border-radius:6px 6px 0 0}
+.hb{margin:10px 0}.hb .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px}
+.hb .tr{height:9px;background:var(--bd);border-radius:99px;overflow:hidden}.hb .tr i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),#8fd3b0);border-radius:99px}
+@media(max-width:760px){.dash{grid-template-columns:1fr}.side{position:static;min-height:0;padding:12px}.sl{flex-direction:row;overflow-x:auto}.sl a{white-space:nowrap}.sf{flex-direction:row;margin-top:0}}
+.warn{background:#fdf0d5;color:#8a5a00}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn{background:#3a2d10;color:#f5c26b}}
+.pform{position:fixed;inset:0;background:#e9ece8;overflow:auto;z-index:100;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 20px}.pform.hide{display:none}.pform .tb{display:flex;gap:8px;max-width:760px;margin:0 auto 10px;flex-wrap:wrap}.pform .tb .btn{width:auto;margin:0;padding:10px 16px}.pform .small{color:#444}
+@media print{body>*:not(#pform){display:none!important}#pform{position:static!important;background:#fff!important;padding:0!important;overflow:visible!important}#pform .tb,#pform .small{display:none!important}}
+.sec{font-size:15px;margin:4px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--ac)}
+.pk{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:6px}label.ck{display:inline-flex;align-items:center;gap:6px;margin:0;color:var(--tx);font-size:14px}.ck input{width:auto;margin:0}.ck.off{opacity:.55}
+.calhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal .ch{font-size:11px;color:var(--mut);text-align:center;padding:2px 0}
+.cd{min-height:64px;border:1px solid var(--bd);border-radius:8px;padding:3px;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:2px;overflow:hidden;background:var(--card);min-width:0}
+.cd.blank{border:0;background:none;cursor:default}.cd .dn{font-size:11px;color:var(--mut)}
+.cd.today{border-color:var(--ac);box-shadow:inset 0 0 0 1px var(--ac)}.cd.sel{background:var(--grnbg)}
+.pl{display:block;font-size:10px;font-weight:700;color:#fff;border-radius:5px;padding:1px 3px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pl .fn{display:none}
+@media(min-width:760px){.pl .ini{display:none}.pl .fn{display:inline}.cd{min-height:78px}.pl{font-size:11px}}
+.cb{position:absolute;right:3px;top:2px;font-size:10px;background:var(--bd);color:var(--tx);border-radius:99px;padding:0 5px}
+.leg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:12px}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.caldet{margin-top:10px;padding:10px;border:1px solid var(--bd);border-radius:10px}
+</style>
+</head>
+<body>
+<header><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></header>
+<nav><button id="t1" class="on">Status Tempahan</button><button id="t2">Tempah Baharu</button><button id="t3" class="hide">Senarai Tempahan</button><button id="t4" class="hide">Penyelia</button></nav>
+<main>
+<section id="p1">
+  <button class="btn" id="goBook" style="margin:0 0 10px">+ Tempah Bas / Van</button>
+  <button class="del" id="goAdm" style="width:100%;margin:0 0 10px;padding:11px;color:var(--tx)">Log Masuk</button>
+  <label style="margin-top:0">Semak untuk tarikh</label>
+  <div style="display:flex;gap:6px;margin-bottom:12px"><button class="del" id="dprev" style="color:var(--tx);padding:8px 14px">&lsaquo;</button><input type="date" id="sdate"><button class="del" id="dnext" style="color:var(--tx);padding:8px 14px">&rsaquo;</button></div>
+  <p class="small" id="now"></p>
+  <h2>Kenderaan</h2><div class="grid" id="vcards"></div>
+  <h2 style="margin-top:16px">Pemandu</h2><div class="grid" id="dcards"></div>
+  <h2 style="margin-top:16px">Senarai Tempahan</h2>
+  <div class="row" style="margin-bottom:8px"><div><label style="margin-top:0">Tahun</label><select id="fy"></select></div><div><label style="margin-top:0">Bulan</label><select id="fm"></select></div></div><div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Pemohon</th><th>Pelajar</th><th>Destinasi</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div><div id="upc" class="hide"></div>
+</section>
+<section id="p2" class="hide">
+  <div class="card">
+    <h2>Borang Tempahan</h2>
+    <label>Nama program / perjalanan</label><input id="prog">
+    <label>Guru / staf pemohon</label><input id="guru">
+    <div class="row"><div><label>Jumlah pelajar</label><input id="pel" type="number" min="1"></div><div><label>Destinasi / lokasi</label><input id="tuj" placeholder="cth: Kuala Lumpur"></div></div>
+    <div class="row"><div><label>Mula</label><input id="mula" type="datetime-local"></div><div><label>Tamat</label><input id="tamat" type="datetime-local"></div></div>
+    <label>Kenderaan</label><select id="veh"></select>
+    <p class="small" id="hint">Pilih tarikh dan masa dahulu. Kenderaan yang sudah ditempah pada masa itu akan dikunci. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
+    <button class="btn" id="hantar">Hantar Tempahan</button>
+    <div class="msg" id="msg"></div>
+  </div>
+</section>
+<section id="p3" class="hide"></section>
+<section id="p7" class="hide"><div class="dash">
+  <aside class="side"><div class="brand"><span class="logo">&#128652;</span><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
+   <div class="sf"><a id="dlout">&#128682; Log Keluar</a></div></aside>
+  <div class="dmain"><h2 class="dt" id="pwel"></h2><div class="card"><h2>Giliran Bertugas</h2><div id="giliranNow"></div><div id="calD" style="margin-top:12px"></div></div><div class="card"><label style="margin-top:0">Pemandu</label><select id="pdsel"></select><div class="row"><div><label>Tahun</label><select id="pdy"></select></div><div><label>Bulan</label><select id="pdm"></select></div></div></div><div id="pdbody"></div></div></div></section>
+<section id="p6" class="hide"><div class="card"><h2>Tukar Kata Laluan</h2><p class="small">Ini log masuk pertama anda. Sila tetapkan kata laluan baharu sebelum meneruskan.</p><label>Kata laluan baharu</label><input id="cpw1" type="password" autocomplete="new-password"><label>Ulang kata laluan baharu</label><input id="cpw2" type="password" autocomplete="new-password"><button class="btn" id="cok">Simpan &amp; Masuk</button><div class="msg" id="cerr"></div><button class="del" id="cback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Batal</button></div></section>
+<section id="p5" class="hide"><div class="card"><h2>Log Masuk</h2><label>ID penyelia</label><input id="lid" autocomplete="username"><label>Kata laluan</label><input id="lpw" type="password" autocomplete="current-password"><button class="btn" id="lgin">Log Masuk</button><div class="msg" id="lerr"></div><button class="del" id="lback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Kembali</button></div></section>
+<section id="p4" class="hide">
+ <div class="dash">
+  <aside class="side">
+   <div class="brand"><span class="logo">&#128652;</span><div><b>MRSM Arau</b><small>Panel Penyelia</small></div></div>
+   <nav class="sl">
+    <a data-v="ov" class="on">&#128202; Ringkasan</a>
+    <a data-v="app">&#9989; Kelulusan <i id="bdg" class="hide"></i></a>
+    <a data-v="bk">&#128203; Semua Tempahan</a>
+    <a data-v="veh">&#128652; Kenderaan</a>
+    <a data-v="drv">&#129489; Pemandu</a>
+    <a data-v="pm">&#128197; Dashboard Pemandu</a>
+    <a data-v="ros">&#128198; Jadual Giliran</a>
+    <a data-v="sup">&#128273; Pengguna</a>
+   </nav>
+   <div class="sf"><a id="toMain">&lsaquo; Status Tempahan</a><a id="lout">&#128682; Log Keluar</a></div>
+  </aside>
+  <div class="dmain">
+   <div id="v-ov" class="dv">
+    <h2 class="dt">Ringkasan</h2>
+    <div class="stats" id="stats"></div>
+    <div class="grid2">
+     <div class="card"><h2>Tempahan diluluskan mengikut bulan</h2><div id="chart"></div></div>
+     <div class="card"><h2>Beban pemandu bulan ini</h2><div id="dload"></div></div>
+    </div>
+    <div class="card"><h2>Tempahan akan datang</h2><div class="row" style="margin-bottom:8px"><div><label style="margin-top:0">Tahun</label><select id="uy"></select></div><div><label style="margin-top:0">Bulan</label><select id="um"></select></div></div><div id="upn"></div></div>
+    <div class="card"><h2>Peringatan tamat tempoh</h2><div id="alerts"></div></div>
+   </div>
+   <div id="v-app" class="dv hide"><h2 class="dt">Menunggu Kelulusan</h2><div class="card"><div id="pend"></div></div></div>
+   <div id="v-bk" class="dv hide"><h2 class="dt">Semua Tempahan</h2>
+    <div class="card wrap"><button class="btn" id="addbk" style="margin:0 0 10px;width:auto;padding:10px 18px">+ Tambah Tempahan</button><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Pemohon</th><th>Pelajar</th><th>Destinasi</th><th>Kenderaan</th><th>Pemandu</th><th></th></tr></thead><tbody id="rows2"></tbody></table></div></div>
+   <div id="v-veh" class="dv hide"><h2 class="dt">Kenderaan</h2><h3 class="sec">Senarai Kenderaan</h3><div class="card"><div id="vlist"></div><label>Tambah kenderaan</label><input id="vnew" placeholder="cth: Van 3"><button class="btn" id="vadd">Tambah Kenderaan</button></div>
+   <h3 class="sec" style="margin-top:22px">Butiran Kenderaan</h3>
+   <div id="v-reg">
+    <div class="grid2">
+     <div class="card"><h2>Senarai Kenderaan</h2><div id="rlist"></div></div>
+     <div class="card"><h2 id="rhead">Maklumat Kenderaan</h2>
+      <label>Kenderaan</label><select id="rveh"></select>
+      <div class="row"><div><label>Jenis</label><select id="rjenis"><option>Bas</option><option>Van</option><option>Lain-lain</option></select></div><div><label>Tahun buatan</label><input id="rtahun" type="number" min="1980"></div></div>
+      <label>Jenama &amp; model</label><input id="rmodel">
+      <label>No. pendaftaran</label><input id="rplat" placeholder="cth: KV 1234 A" autocomplete="off">
+      <div class="row"><div><label>Syarikat insurans</label><input id="rsyar"></div><div><label>No. polisi</label><input id="rpol"></div></div>
+      <div class="row"><div><label>Insurans mula</label><input id="rin1" type="date"></div><div><label>Insurans tamat</label><input id="rin2" type="date"></div></div>
+      <div class="row"><div><label>Road tax tamat</label><input id="rtax" type="date"></div><div><label>PUSPAKOM / permit tamat</label><input id="rpusp" type="date"></div></div>
+      <button class="btn" id="rsave">Simpan Maklumat</button><button class="del hide" id="rcancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="rmsg"></div>
+     </div>
+    </div>
+   </div>
+   <h3 class="sec" style="margin-top:22px">Rekod Senggaraan</h3>
+   <div id="v-mnt">
+    <div class="grid2">
+     <div class="card"><h2>Sejarah Senggaraan</h2><label style="margin-top:0">Papar kenderaan</label><select id="mfilter"></select><p class="small" id="mtot"></p><div id="mlist"></div></div>
+     <div class="card"><h2 id="mhead">Tambah Rekod Senggaraan</h2>
+      <label>Kenderaan</label><select id="mveh"></select>
+      <div class="row"><div><label>Tarikh</label><input id="mtgl" type="date"></div><div><label>Jenis</label><select id="mjenis"><option>Servis berkala</option><option>Tukar minyak enjin</option><option>Tayar</option><option>Brek</option><option>Bateri</option><option>Aircond</option><option>Pembaikan / kerosakan</option><option>Pemeriksaan PUSPAKOM</option><option>Lain-lain</option></select></div></div>
+      <label>Butiran kerja</label><input id="mbut">
+      <label>Bengkel</label><input id="mbeng">
+      <div class="row"><div><label>Bacaan odometer (km)</label><input id="modo" type="number" min="0"></div><div><label>Kos (RM)</label><input id="mkos" type="number" min="0" step="0.01"></div></div>
+      <label>Servis seterusnya (tarikh)</label><input id="mnext" type="date">
+      <button class="btn" id="msave">Simpan Rekod</button><button class="del hide" id="mcancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="mmsg"></div>
+     </div>
+    </div>
+   </div>
+  </div>
+   <div id="v-drv" class="dv hide"><h2 class="dt">Pemandu</h2>
+    <div class="grid2">
+     <div class="card"><h2>Senarai Pemandu</h2><div id="dlist"></div></div>
+     <div class="card"><h2 id="dhead">Daftar Pemandu</h2>
+      <label>Nama penuh</label><input id="dnama">
+      <div class="row"><div><label>No. gaji</label><input id="dgaji"></div><div><label>No. telefon</label><input id="dtel" type="tel"></div></div>
+      <label>Email</label><input id="demel" type="email" autocomplete="off">
+      <div class="row"><div><label>Kelas lesen</label><input id="dlesen" placeholder="cth: D, E, PSV"></div><div><label>Tarikh tamat lesen</label><input id="dtamat" type="date"></div></div>
+      <label>Status</label><select id="dstat"><option value="aktif">Aktif</option><option value="nonaktif">Tidak aktif (cuti / tidak bertugas)</option></select>
+      <p class="small">Pemandu tidak aktif tidak boleh dipilih dalam tempahan.</p>
+      <button class="btn" id="dsave">Daftar Pemandu</button><button class="del hide" id="dcancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="drvmsg"></div>
+     </div>
+    </div>
+   </div>
+   <div id="v-pm" class="dv hide"><h2 class="dt">Dashboard Pemandu</h2><div class="card"><label style="margin-top:0">Pemandu</label><select id="pmsel"></select><div class="row"><div><label>Tahun</label><select id="pmy"></select></div><div><label>Bulan</label><select id="pmm"></select></div></div></div><div id="pmbody"></div></div>
+   <div id="v-ros" class="dv hide"><h2 class="dt">Jadual Giliran Pemandu</h2>
+    <div class="card"><div id="calS"></div></div>
+    <div class="grid2">
+     <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini</button><div class="msg" id="roMsg"></div></div>
+     <div class="card"><h2>Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><button class="btn" id="roGo">Isi Giliran</button><div class="msg" id="roMsg2"></div></div>
+    </div>
+   </div>
+   <div id="v-sup" class="dv hide"><h2 class="dt">Daftar Pengguna</h2>
+    <div class="grid2">
+     <div class="card"><h2>Senarai Pengguna</h2><div id="slist"></div></div>
+     <div class="card"><h2 id="shead">Tambah Pengguna</h2><label>Peranan</label><select id="srole"><option value="penyelia">Penyelia</option><option value="pemandu">Pemandu</option></select><label>Nama pengguna</label><input id="snama"><div class="row" id="spenbox"><div><label>Jawatan</label><input id="sjaw" placeholder="cth: Warden"></div><div><label>No. gaji</label><input id="sgaji"></div></div><label>Emel (untuk notifikasi tempahan baharu)</label><input id="semail" type="email" autocomplete="off"><label>ID log masuk</label><input id="snew" autocomplete="off"><div id="spwbox"><div class="row"><div><label>Kata laluan sementara</label><input id="spw" type="password" autocomplete="new-password"></div><div><label>Ulang kata laluan</label><input id="spw2" type="password" autocomplete="new-password"></div></div><p class="small">Pengguna baharu akan diminta tukar kata laluan semasa log masuk pertama.</p></div><button class="btn" id="sadd">Tambah Pengguna</button><button class="del hide" id="scancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="smsg"></div></div>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+</main>
+<div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
+<div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun (untuk cetak)</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun, buka fail tersebut dan cetak.</p><div id="pbody"></div></div>
+<div class="toast hide" id="toast"></div>
+<script>
+// Senarai ini boleh diubah (nama sebenar kenderaan dan pemandu)
+var VEHICLES=[],DRIVERS=[],vehDocs=[],drvDocs=[],supDocs=[],regDocs=[],mntDocs=[];
+var bookings=[],apv=[],db=null,me=null,canEdit=false,cur=null;
+var $=function(i){return document.getElementById(i)};
+function toast(t){var e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.add("hide")},4000)}
+function ask(msg,inp){return new Promise(function(res){var d=$("dlg"),i=$("dinp");$("dmsg").textContent=msg;i.classList.toggle("hide",!inp);i.value="";d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");res(inp?i.value:true)};$("dno").onclick=function(){d.classList.add("hide");res(null)}})}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
+function ts(v){return v?new Date(v).getTime():NaN}
+function overlap(b,s,e){return s<b.end&&e>b.start}
+function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;document.querySelector("nav").classList.toggle("hide",n===4||n===7);for(var i=1;i<=7;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
+[1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){tab(n)}});
+
+function bd(b){return Array.isArray(b.drivers)?b.drivers:(b.driver?[b.driver]:[])}
+function has(b,field,name){return field==="driver"?bd(b).indexOf(name)>=0:b[field]===name}
+var pick={},userPk={};
+function fillSelect(sel,list,field,s,e){
+  var cur=sel.value,ok=!isNaN(s)&&!isNaN(e)&&e>s;
+  sel.innerHTML='<option value="">-- pilih --</option>'+list.map(function(x){
+    var busy=ok&&apv.some(function(b){return has(b,field,x)&&overlap(b,s,e)});
+    return '<option value="'+esc(x)+'"'+(busy?" disabled":"")+'>'+esc(x)+(busy?" (sudah ditempah)":"")+'</option>'});
+  if(cur&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
+}
+function refreshForm(){var s=ts($("mula").value),e=ts($("tamat").value);fillSelect($("veh"),VEHICLES,"vehicle",s,e)}
+$("mula").onchange=$("tamat").onchange=refreshForm;
+
+function card(name,field){
+  var n=Date.now(),cur=apv.find(function(b){return has(b,field,name)&&b.start<=n&&n<b.end});
+  var nxt=apv.filter(function(b){return has(b,field,name)&&b.start>n}).sort(function(a,b){return a.start-b.start})[0];
+  var h='<div class="card"><b>'+esc(name)+'</b> <span class="tag '+(cur?"busy":nxt?"pend":"free")+'">'+(cur?"Sedang digunakan":nxt?"Ada tempahan":"Tersedia")+'</span>';
+  if(cur)h+='<div class="small">'+esc(cur.program)+' &middot; hingga '+fmt(cur.end)+'</div>';
+  if(nxt)h+='<div class="small">Seterusnya: '+esc(nxt.program)+' ('+fmt(nxt.start)+')</div>';
+  else if(!cur)h+='<div class="small">Tiada tempahan akan datang</div>';
+  return h+'</div>';
+}
+var BULAN=["Januari","Februari","Mac","April","Mei","Jun","Julai","Ogos","September","Oktober","November","Disember"];
+function fillFilters(all){
+  var fy=$("fy"),fm=$("fm"),cy=String(new Date().getFullYear()),ys={};ys[cy]=1;
+  all.forEach(function(b){ys[new Date(b.start).getFullYear()]=1});
+  var cur=fy.value;
+  fy.innerHTML=Object.keys(ys).sort().map(function(y){return '<option>'+y+'</option>'}).join("");
+  fy.value=cur&&ys[cur]?cur:cy;
+  if(!fm.options.length){fm.innerHTML='<option value="-1">Semua bulan</option>'+BULAN.map(function(m,i){return '<option value="'+i+'">'+m+'</option>'}).join("");fm.value=String(new Date().getMonth())}
+}
+function dstr(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)}
+function today(){return dstr(new Date())}
+function cardD(name,field){
+  var ds=ts(($("sdate").value||today())+"T00:00"),de=ds+864e5;
+  var l=apv.filter(function(b){return has(b,field,name)&&overlap(b,ds,de)}).sort(function(a,b){return a.start-b.start});
+  var h='<div class="card"><b>'+esc(name)+'</b> <span class="tag '+(l.length?"busy":"free")+'">'+(l.length?"Ditempah":"Tersedia")+'</span>';
+  l.forEach(function(b){h+='<div class="small">'+esc(b.program)+'<br>'+fmt(b.start)+' hingga '+fmt(b.end)+'</div>'});
+  return h+'</div>';
+}
+function render(){
+  if(!$("sdate").value)$("sdate").value=today();
+  $("now").textContent="Dikemas kini: "+fmt(Date.now());
+  $("vcards").innerHTML=VEHICLES.map(function(v){return cardD(v,"vehicle")}).join("");
+  $("dcards").innerHTML=DRIVERS.map(function(v){return cardD(v,"driver")}).join("");
+  var up=apv.filter(function(b){return b.end>Date.now()}).sort(function(a,b){return a.start-b.start});
+  $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
+  var list=bookings.filter(function(b){return (b.status||"approved")!=="pending"}).sort(function(a,b){return a.start-b.start});
+  fillFilters(list);
+  var fyv=+$("fy").value,fmv=+$("fm").value;
+  list=list.filter(function(b){var d=new Date(b.start);return d.getFullYear()===fyv&&(fmv<0||d.getMonth()===fmv)});
+  var rh=list.length?list.map(function(b){
+    var mine=canEdit||(me&&b.by===me);
+    return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'<br>'+stag(b)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+(canEdit&&(b.status||"approved")==="pending"?'<button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button> ':"")+((b.status||"approved")==="approved"?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':"")+(mine?'<button class="del" data-id="'+esc(b.id)+'">Padam</button>':"")+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
+  var rh3=list.length?list.map(function(b){return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+stag(b)+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
+  $("rows").innerHTML=rh3;$("rows2").innerHTML=rh;renderAdmin();
+  refreshForm();
+}
+var delH=function(ev){var t=ev.target,a=t.getAttribute&&t.getAttribute("data-a");if(a){decide(t.getAttribute("data-id"),a);return}var id=t.getAttribute&&t.getAttribute("data-id");if(id&&db)ask("Padam tempahan ini?").then(function(r){if(r)db.collection("bookings").doc(id).delete().then(function(){toast("Tempahan dipadam.")}).catch(function(){toast("Gagal memadam. Anda mungkin tiada kebenaran.")})})};
+$("rows").onclick=delH;$("rows2").onclick=delH;$("pend").onclick=delH;
+$("pend").addEventListener("change",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-pk");if(!id)return;userPk[id]=true;pick[id]=Array.prototype.map.call($("pend").querySelectorAll('[data-pk="'+id+'"]:checked'),function(c){return c.value})});
+function stag(b){var s=b.status||"approved";if(s==="pending")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="rejected")return '<span class="tag busy">Ditolak</span>'+(b.reason?'<div class="small">'+esc(b.reason)+'</div>':"");return '<span class="tag free">Diluluskan</span>'}
+function decide(id,a){
+  var b=bookings.find(function(x){return x.id===id});if(!b||!db||!canEdit)return;
+  var ref=db.collection("bookings").doc(id);
+  if(a==="ok"){
+    var ds=(pick[id]||[]).filter(function(d){return DRIVERS.indexOf(d)>=0});
+    if(!ds.length){toast("Pilih sekurang-kurangnya seorang pemandu sebelum meluluskan.");return}
+    var vc=apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
+    if(vc){toast("Tidak boleh lulus: kenderaan sudah ditempah pada masa itu.");return}
+    var dc=ds.filter(function(d){return apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
+    if(dc.length){toast("Tidak boleh lulus: "+dc.join(", ")+" sudah bertugas pada masa itu.");return}
+    ref.update({status:"approved",drivers:ds,decidedAt:Date.now()}).then(function(){delete pick[id];return syncRoster(b,ds)}).then(function(n){toast(n?"Tempahan diluluskan. Kalendar giliran dikemas kini.":"Tempahan diluluskan.")}).catch(function(){toast("Gagal mengemas kini.")});
+  }else{
+    ask("Sebab penolakan (pilihan):",true).then(function(r){if(r===null)return;ref.update({status:"rejected",reason:r.trim(),decidedAt:Date.now()}).then(function(){delete pick[id];toast("Tempahan ditolak.")}).catch(function(){toast("Gagal mengemas kini.")})});
+  }
+}
+function renderDash(){
+  var now=new Date(),y=now.getFullYear(),mo=now.getMonth(),i;
+  function inM(b){var d=new Date(b.start);return d.getFullYear()===y&&d.getMonth()===mo}
+  var pend=bookings.filter(function(b){return b.status==="pending"}),apm=apv.filter(inM);
+  var pel=apm.reduce(function(t,b){return t+(+b.students||0)},0);
+  $("bdg").textContent=pend.length;$("bdg").classList.toggle("hide",!pend.length);
+  $("stats").innerHTML=[["Menunggu kelulusan",pend.length,"#f5b335"],["Diluluskan bulan ini",apm.length,"var(--ac)"],["Ditolak bulan ini",bookings.filter(function(b){return b.status==="rejected"&&inM(b)}).length,"#d9534f"],["Pelajar bulan ini",pel,"#3b82c4"]].map(function(x){return '<div class="st" style="--c:'+x[2]+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>'}).join("");
+  var cnt=[];for(i=0;i<12;i++)cnt.push(0);
+  apv.forEach(function(b){var d=new Date(b.start);if(d.getFullYear()===y)cnt[d.getMonth()]++});
+  var mx=Math.max.apply(null,cnt.concat(1));
+  $("chart").innerHTML='<div class="bars">'+cnt.map(function(c,k){return '<div title="'+BULAN[k]+'">'+c+'<i style="height:'+Math.max(3,Math.round(c/mx*80))+'px"></i>'+BULAN[k].slice(0,3)+'</div>'}).join("")+'</div>';
+  var dc=DRIVERS.map(function(d){return apm.filter(function(b){return bd(b).indexOf(d)>=0}).length}),md=Math.max.apply(null,dc.concat(1));
+  $("dload").innerHTML=DRIVERS.length?DRIVERS.map(function(d,k){return '<div class="hb"><div class="t"><span>'+esc(d)+'</span><b>'+dc[k]+' trip</b></div><div class="tr"><i style="width:'+Math.round(dc[k]/md*100)+'%"></i></div></div>'}).join(""):'<p class="small">Belum ada pemandu.</p>';
+  fillYM($("uy"),$("um"));var uy=+$("uy").value,um=+$("um").value;
+  var up=apv.filter(function(b){var d=new Date(b.start);return b.end>Date.now()&&d.getFullYear()===uy&&(um<0||d.getMonth()===um)}).sort(function(a,b){return a.start-b.start});
+  $("upn").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
+  var al=[];
+  function chk(who,label,d){var n=dleft(d);if(n!==null&&n<=30)al.push({n:n,h:'<div class="li" style="display:block"><b>'+esc(who)+'</b> <span class="small">&middot; '+label+' &middot; '+esc(d)+'</span> '+etag(d)+'</div>'})}
+  regDocs.forEach(function(v){var w=v.name+(v.plate?" ("+v.plate+")":"");chk(w,"Road tax",v.taxEnd);chk(w,"Insurans",v.insEnd);chk(w,"PUSPAKOM / permit",v.inspEnd)});
+  drvDocs.forEach(function(d){chk(d.name,"Lesen pemandu",d.lesenTamat)});
+  mntDocs.forEach(function(m){chk(mname(m),"Servis seterusnya",m.next)});
+  al.sort(function(a,b){return a.n-b.n});
+  $("alerts").innerHTML=al.length?al.map(function(x){return x.h}).join(""):'<p class="small">Tiada dokumen atau servis yang akan tamat dalam 30 hari.</p>';
+}
+function renderAdmin(){
+  renderDash();renderReg();renderMnt();renderDriver();renderPm();renderRoster();renderCals();
+  function lst(el,docs,col){el.innerHTML=docs.length?docs.map(function(d){return '<div class="li"><span>'+esc(d.name)+'</span><button class="del" data-c="'+col+'" data-id="'+esc(d.id)+'">Padam</button></div>'}).join(""):'<p class="small">Belum ada senarai.</p>'}
+  $("vlist").innerHTML=vehDocs.length?vehDocs.map(function(v){var r=regDocs.find(function(x){return x.id===v.id});return '<div class="li"><span>'+esc(v.name)+(r&&r.plate?' <span class="small">('+esc(r.plate)+')</span>':'')+'</span><span style="display:flex;gap:6px"><button class="del" style="color:var(--tx)" data-ve="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehicles" data-id="'+esc(v.id)+'">Padam</button></span></div>'}).join(""):'<p class="small">Belum ada kenderaan.</p>';$("dlist").innerHTML=drvDocs.length?drvDocs.map(function(d){
+    var ex=d.lesenTamat?new Date(d.lesenTamat+"T23:59"):null,days=ex?Math.floor((ex-Date.now())/864e5):null,warn=ex&&days<=30;
+    return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> '+(d.status==="nonaktif"?'<span class="tag pend">Tidak aktif</span>':'')+'<div class="small">No. gaji: '+esc(d.noGaji||"-")+' &middot; '+esc(d.email||"-")+' &middot; '+esc(d.phone||"-")+'</div><div class="small">Lesen: '+esc(d.lesen||"-")+(d.lesenTamat?' &middot; tamat '+esc(d.lesenTamat):'')+(warn?' <span class="tag busy">'+(days<0?"Lesen tamat tempoh":"Lesen tamat dalam "+days+" hari")+'</span>':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-de="'+esc(d.id)+'">Edit</button><button class="del" data-c="drivers" data-id="'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada pemandu didaftarkan.</p>';
+  $("slist").innerHTML=supDocs.length?supDocs.map(function(d){return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> <span class="tag pend">'+(d.role==="pemandu"?"Pemandu":"Penyelia")+'</span><div class="small">'+(d.role==="pemandu"?"Akses paparan pemandu":esc(d.jawatan||"-")+' &middot; No. gaji: '+esc(d.noGaji||"-"))+' &middot; ID: '+esc(d.id)+(d.mustChange?' &middot; belum tukar kata laluan':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-se="'+esc(d.id)+'">Edit</button><button class="del" style="color:var(--tx)" data-sr="'+esc(d.id)+'">Reset Kata Laluan</button><button class="del" data-c="supervisors" data-id="s_'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada penyelia dalam pangkalan data.</p>';
+  var pc=bookings.filter(function(b){return b.status==="pending"}).length;$("goAdm").textContent=(canEdit?"Panel Penyelia":cur?"Program Saya":"Log Masuk")+(canEdit&&pc?" ("+pc+" menunggu)":"");
+  var pl=bookings.filter(function(b){return b.status==="pending"}).sort(function(a,b){return a.start-b.start});
+  $("pend").innerHTML=pl.length?pl.map(function(b){
+    if(!userPk[b.id])pick[b.id]=DRIVERS.filter(function(d){return onDuty(b,d)&&!apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)})});
+    var sel=pick[b.id]||[];
+    var ck=DRIVERS.map(function(d){var busy=apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)});var on=sel.indexOf(d)>=0&&!busy;
+      return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" data-pk="'+esc(b.id)+'" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(onDuty(b,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join("");
+    return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu kelulusan.</p>';
+}
+$("p4").addEventListener("click",function(ev){
+  var c=ev.target.getAttribute&&ev.target.getAttribute("data-c"),id=ev.target.getAttribute&&ev.target.getAttribute("data-id");
+  if(c==="supervisors"&&(supDocs.find(function(x){return "s_"+x.id===id})||{}).role!=="pemandu"&&supDocs.filter(function(x){return x.role!=="pemandu"}).length<=1){toast("Mesti ada sekurang-kurangnya seorang penyelia.");return}
+  if(c&&id&&db)ask(c==="drivers"||c==="vehicles"?"Padam item ini? Tempahan sedia ada kekal dalam rekod.":"Padam rekod ini?").then(function(r){if(r)db.collection(c).doc(id).delete().catch(function(){toast("Gagal memadam.")})});
+});
+function addItem(col,inp,docs){
+  var name=$(inp).value.trim();if(!name){toast("Sila isi nama dahulu.");return}if(!db){toast("Pangkalan data tidak tersedia.");return}
+  if(docs.some(function(d){return d.name.toLowerCase()===name.toLowerCase()})){toast("Nama sudah ada.");return}
+  var id=col.charAt(0)+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  db.collection(col).doc(id).set({id:id,name:name,n:Date.now()}).then(function(){$(inp).value="";toast("Berjaya ditambah.")}).catch(function(e){toast("Gagal menyimpan: "+(e&&e.message?e.message:e))});
+}
+$("vadd").onclick=function(){addItem("vehicles","vnew",vehDocs)};
+var editDrv=null,DF=["dnama","dgaji","dtel","demel","dlesen","dtamat"];
+function dReset(){editDrv=null;DF.forEach(function(k){$(k).value=""});$("dstat").value="aktif";$("dsave").textContent="Daftar Pemandu";$("dhead").textContent="Daftar Pemandu";$("dcancel").classList.add("hide")}
+$("dcancel").onclick=function(){dReset();$("drvmsg").textContent=""};
+$("dlist").addEventListener("click",function(ev){
+  var id=ev.target.getAttribute&&ev.target.getAttribute("data-de"),d=drvDocs.find(function(x){return x.id===id});if(!d)return;
+  editDrv=d.id;$("dnama").value=d.name||"";$("dgaji").value=d.noGaji||"";$("dtel").value=d.phone||"";$("demel").value=d.email||"";$("dlesen").value=d.lesen||"";$("dtamat").value=d.lesenTamat||"";$("dstat").value=d.status==="nonaktif"?"nonaktif":"aktif";
+  $("dsave").textContent="Simpan Perubahan";$("dhead").textContent="Edit Pemandu";$("dcancel").classList.remove("hide");$("drvmsg").textContent="";$("dnama").focus();
+});
+$("dsave").onclick=async function(){
+  var m=$("drvmsg");m.className="msg";
+  var nm=$("dnama").value.trim(),gj=$("dgaji").value.trim(),em=$("demel").value.trim();
+  if(!nm||!gj){m.textContent="Nama penuh dan no. gaji wajib diisi.";return}
+  if(em&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){m.textContent="Format email tidak sah.";return}
+  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
+  if(drvDocs.some(function(x){return x.id!==editDrv&&x.name.toLowerCase()===nm.toLowerCase()})){m.textContent="Nama pemandu ini sudah didaftarkan.";return}
+  var data={name:nm,noGaji:gj,phone:$("dtel").value.trim(),email:em,lesen:$("dlesen").value.trim(),lesenTamat:$("dtamat").value,status:$("dstat").value};
+  try{
+    if(editDrv){
+      var old=drvDocs.find(function(x){return x.id===editDrv});
+      await db.collection("drivers").doc(editDrv).update(data);
+      if(old&&old.name!==nm)await Promise.all(bookings.filter(function(b){return bd(b).indexOf(old.name)>=0}).map(function(b){return db.collection("bookings").doc(b.id).update({drivers:bd(b).map(function(x){return x===old.name?nm:x})})}).concat(rosterDocs.filter(function(r){return (r.drivers||[]).indexOf(old.name)>=0}).map(function(r){return db.collection("roster").doc(r.id).update({drivers:r.drivers.map(function(x){return x===old.name?nm:x})})})));
+    }else{
+      var id="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);data.id=id;data.n=Date.now();
+      await db.collection("drivers").doc(id).set(data);
+    }
+    var was=!!editDrv;dReset();m.className="msg ok";m.textContent=was?"Maklumat pemandu dikemas kini.":"Pemandu berjaya didaftarkan."
+  }catch(x){m.textContent="Gagal menyimpan."}
+};
+$("addbk").onclick=function(){tab(2)};
+$("goBook").onclick=function(){var s=$("sdate").value;if(s&&!$("mula").value){$("mula").value=s+"T08:00";$("tamat").value=s+"T17:00";refreshForm()}tab(2)};
+var API_URL="PASTE_URL_WEB_APP_DI_SINI",TOKEN="";
+try{TOKEN=sessionStorage.getItem("tok")||""}catch(e){}
+var STORE={},LST={},VER="",polling=false,again=false,warned=false;
+function apiOn(){return API_URL&&API_URL.indexOf("PASTE")!==0}
+function apiCall(body){return fetch(API_URL,{method:"POST",body:JSON.stringify(body),redirect:"follow"}).then(function(r){return r.json()})}
+function dk(c,d){return c==="supervisors"?"s_"+d.id:d.id}
+function emit(c){var cb=LST[c];if(!cb)return;var M=STORE[c]||{};cb({docs:Object.keys(M).map(function(k){var d=M[k];return{data:function(){return d}}})})}
+function authLost(){if(!cur&&!TOKEN)return;TOKEN="";try{sessionStorage.removeItem("tok")}catch(e){}doLogout();toast("Sesi tamat. Sila log masuk semula.")}
+function poll(force){
+  if(!apiOn())return;if(polling){again=true;return}polling=true;
+  apiCall({action:"all",token:TOKEN,ver:force?"":VER}).then(function(j){
+    if(!j||!j.ok)throw new Error("api");
+    if(!j.same){VER=j.ver;Object.keys(j.data).forEach(function(c){var m={};j.data[c].forEach(function(d){m[dk(c,d)]=d});STORE[c]=m;emit(c)})}
+    if(TOKEN&&j.role==="guest"&&!pendSup)authLost();
+    warned=false;
+  }).catch(function(){if(!warned){warned=true;toast("Tidak dapat menghubungi pelayan. Cuba lagi sebentar.")}}).then(function(){polling=false;if(again){again=false;poll()}});
+}
+function write(op,c,id,d){
+  var M=STORE[c]=STORE[c]||{};
+  if(op==="delete")delete M[id];else{var l=Object.assign({},op==="update"?(M[id]||{}):{},d);delete l.h;M[id]=l}
+  emit(c);
+  return apiCall({action:"write",token:TOKEN,op:op,c:c,id:id,data:d}).then(function(j){
+    if(!j||!j.ok){poll(true);if(j&&j.error==="auth"&&TOKEN)authLost();throw new Error((j&&j.error)||"gagal")}
+    poll(true);return j;
+  },function(e){poll(true);throw e});
+}
+function makeDb(){return{collection:function(c){return{
+  onSnapshot:function(cb){LST[c]=cb;if(STORE[c])emit(c)},
+  doc:function(id){return{set:function(d){return write("set",c,id,d)},update:function(d){return write("update",c,id,d)},delete:function(){return write("delete",c,id)}}}
+}}}}
+function deviceId(){try{var v=localStorage.getItem("devid");if(!v){v="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem("devid",v)}return v}catch(e){return "d"+Math.random().toString(36).slice(2,10)}}
+async function sha(s){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return("0"+x.toString(16)).slice(-2)}).join("")}
+try{var u0=JSON.parse(sessionStorage.getItem("usr")||"null");if(u0&&TOKEN){cur=u0;canEdit=cur.role==="penyelia"}}catch(e){}
+$("goAdm").onclick=function(){tab(cur&&cur.role==="pemandu"?7:4)};
+$("lgin").onclick=async function(){
+  var id=$("lid").value.trim().toLowerCase(),pw=$("lpw").value,e=$("lerr");e.textContent="";
+  if(!apiOn()){e.textContent="Alamat API belum ditetapkan.";return}
+  try{var h=await sha("mrsm-arau:"+id+":"+pw);var j=await apiCall({action:"login",id:id,h:h});
+    if(j&&j.ok){TOKEN=j.token;try{sessionStorage.setItem("tok",TOKEN)}catch(x){}VER="";$("lpw").value="";var acc=j.user;
+      if(acc.mustChange){pendSup={id:id,h:h,acc:acc};$("cpw1").value="";$("cpw2").value="";$("cerr").textContent="";tab(6)}else{enter(acc);poll(true)}}
+    else e.textContent=(j&&j.error==="locked")?"Terlalu banyak percubaan. Cuba lagi selepas 10 minit.":"ID atau kata laluan salah.";
+  }catch(x){e.textContent="Tidak dapat menghubungi pelayan. Semak sambungan internet."}
+};
+var editSup=null;
+function sReset(){editSup=null;["snama","sjaw","sgaji","semail","snew","spw","spw2"].forEach(function(k){$(k).value=""});$("snew").disabled=false;$("spwbox").classList.remove("hide");$("sadd").textContent="Tambah Pengguna";$("shead").textContent="Tambah Pengguna";$("srole").value="penyelia";toggleRole();$("scancel").classList.add("hide")}
+$("scancel").onclick=function(){sReset();$("smsg").textContent=""};
+$("slist").addEventListener("click",function(ev){
+  var t=ev.target,e=t.getAttribute&&t.getAttribute("data-se"),r=t.getAttribute&&t.getAttribute("data-sr");
+  var d=supDocs.find(function(x){return x.id===(e||r)});if(!d)return;
+  if(e){editSup=d.id;$("snama").value=d.name||"";$("sjaw").value=d.jawatan||"";$("sgaji").value=d.noGaji||"";$("semail").value=d.email||"";$("snew").value=d.id;$("snew").disabled=true;$("srole").value=d.role||"penyelia";toggleRole();$("spwbox").classList.add("hide");$("sadd").textContent="Simpan Perubahan";$("shead").textContent="Edit Pengguna";$("scancel").classList.remove("hide");$("smsg").textContent="";$("snama").focus()}
+  else ask("Kata laluan sementara baharu untuk "+d.name+" (sekurang-kurangnya 8 aksara):",true).then(async function(v){
+    if(v===null)return;if(v.length<8){toast("Kata laluan sekurang-kurangnya 8 aksara.");return}
+    try{var h=await sha("mrsm-arau:"+d.id+":"+v);await db.collection("supervisors").doc("s_"+d.id).update({h:h,mustChange:true});toast("Kata laluan ditetapkan semula. Penyelia perlu menukarnya semasa log masuk seterusnya.")}catch(x){toast("Gagal menetapkan semula kata laluan.")}
+  });
+});
+$("sadd").onclick=async function(){
+  var id=$("snew").value.trim().toLowerCase(),nm=$("snama").value.trim(),jw=$("sjaw").value.trim(),gj=$("sgaji").value.trim(),em=$("semail").value.trim(),p1=$("spw").value,p2=$("spw2").value,m=$("smsg");m.className="msg";
+  var role=$("srole").value;
+  if(!nm){m.textContent="Sila isi nama pengguna.";return}
+  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
+  if(editSup){
+    try{await db.collection("supervisors").doc("s_"+editSup).update({name:nm,jawatan:jw,noGaji:gj,email:em,role:role});sReset();m.className="msg ok";m.textContent="Maklumat pengguna dikemas kini."}catch(x){m.textContent="Gagal menyimpan."}
+    return;
+  }
+  if(!/^[a-z0-9._-]{3,20}$/.test(id)){m.textContent="ID: 3 hingga 20 aksara (huruf kecil, nombor, titik, sempang atau garis bawah).";return}
+  if(p1.length<8){m.textContent="Kata laluan sekurang-kurangnya 8 aksara.";return}
+  if(p1!==p2){m.textContent="Kata laluan tidak sama.";return}
+  if(supDocs.some(function(x){return x.id===id})){m.textContent="ID ini sudah digunakan.";return}
+  try{var h=await sha("mrsm-arau:"+id+":"+p1);await db.collection("supervisors").doc("s_"+id).set({id:id,name:nm,jawatan:jw,noGaji:gj,email:em,role:role,h:h,n:Date.now(),mustChange:true});
+    sReset();m.className="msg ok";m.textContent="Pengguna ditambah. Beliau perlu tukar kata laluan semasa log masuk pertama."}
+  catch(x){m.textContent="Gagal menyimpan."}
+};
+function dview(v){document.querySelectorAll(".dv").forEach(function(e){e.classList.toggle("hide",e.id!=="v-"+v)});document.querySelectorAll("#p4 .sl a").forEach(function(a){a.classList.toggle("on",a.getAttribute("data-v")===v)})}
+document.querySelectorAll("#p4 .sl a").forEach(function(a){a.onclick=function(){dview(a.getAttribute("data-v"))}});
+$("toMain").onclick=function(){tab(1)};
+function dleft(d){return d?Math.floor((new Date(d+"T23:59")-Date.now())/864e5):null}
+function etag(d){var n=dleft(d);if(n===null)return '<span class="small">-</span>';return n<0?'<span class="tag busy">Tamat tempoh</span>':n<=30?'<span class="tag warn">Tamat dalam '+n+' hari</span>':'<span class="tag free">Sah</span>'}
+function mname(m){var v=vehDocs.find(function(x){return x.id===m.vehId}),r=regDocs.find(function(x){return x.id===m.vehId});return v?v.name+(r&&r.plate?" ("+r.plate+")":""):(m.vehName||"-")}
+var RM={rmodel:"model",rtahun:"tahun",rplat:"plate",rsyar:"insurer",rpol:"policy",rin1:"insStart",rin2:"insEnd",rtax:"taxEnd",rpusp:"inspEnd"};
+function loadReg(id){var r=regDocs.find(function(x){return x.id===id})||{};$("rveh").value=id||"";Object.keys(RM).forEach(function(k){$(k).value=r[RM[k]]||""});$("rjenis").value=r.jenis||"Bas";$("rmsg").textContent=""}
+function regCard(v){
+  var r=regDocs.find(function(x){return x.id===v.id});
+  var h='<div class="li" style="display:block"><b>'+esc(v.name)+'</b> '+(r&&r.plate?'<span class="tag pend">'+esc(r.plate)+'</span>':'');
+  if(!r)return h+'<div class="small">Maklumat belum diisi.</div><div style="margin-top:6px"><button class="btn" style="margin:0;width:auto;padding:8px 16px" data-re="'+esc(v.id)+'">Isi Maklumat</button></div></div>';
+  return h+'<div class="small">'+esc(r.jenis||"")+' &middot; '+esc(r.model||"-")+(r.tahun?' &middot; '+esc(r.tahun):'')+'</div><div class="small">Road tax: '+esc(r.taxEnd||"-")+' '+etag(r.taxEnd)+'</div><div class="small">Insurans: '+esc(r.insurer||"-")+(r.policy?' ('+esc(r.policy)+')':'')+' &middot; '+esc(r.insStart||"-")+' hingga '+esc(r.insEnd||"-")+' '+etag(r.insEnd)+'</div><div class="small">PUSPAKOM / permit: '+esc(r.inspEnd||"-")+' '+etag(r.inspEnd)+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-re="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehreg" data-id="'+esc(v.id)+'">Padam Maklumat</button></div></div>';
+}
+function renderReg(){
+  var cur=$("rveh").value;
+  $("rveh").innerHTML='<option value="">-- pilih kenderaan --</option>'+vehDocs.map(function(v){return '<option value="'+esc(v.id)+'">'+esc(v.name)+'</option>'}).join("");$("rveh").value=cur;
+  $("rlist").innerHTML=vehDocs.length?vehDocs.map(regCard).join(""):'<p class="small">Belum ada kenderaan. Tambah dahulu di menu Kenderaan.</p>';
+}
+$("rveh").onchange=function(){loadReg($("rveh").value)};
+$("rlist").addEventListener("click",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-re");if(id){loadReg(id);$("rplat").focus()}});
+$("vlist").addEventListener("click",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-ve");if(id){loadReg(id);$("rveh").scrollIntoView({behavior:"smooth",block:"center"});$("rplat").focus()}});
+$("rsave").onclick=async function(){
+  var m=$("rmsg");m.className="msg";var vid=$("rveh").value,v=vehDocs.find(function(x){return x.id===vid});
+  if(!v){m.textContent="Sila pilih kenderaan.";return}
+  var d={id:vid,name:v.name,jenis:$("rjenis").value};
+  Object.keys(RM).forEach(function(k){d[RM[k]]=$(k).value.trim()});d.plate=d.plate.toUpperCase();
+  if(!d.plate){m.textContent="No. pendaftaran wajib diisi.";return}
+  if(d.insStart&&d.insEnd&&d.insEnd<d.insStart){m.textContent="Tarikh insurans tamat mesti selepas tarikh mula.";return}
+  if(regDocs.some(function(x){return x.id!==vid&&x.plate===d.plate})){m.textContent="No. pendaftaran ini sudah digunakan oleh kenderaan lain.";return}
+  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
+  var old=regDocs.find(function(x){return x.id===vid});d.n=old&&old.n?old.n:Date.now();
+  try{await db.collection("vehreg").doc(vid).set(d);m.className="msg ok";m.textContent="Maklumat kenderaan disimpan."}
+  catch(x){m.textContent="Gagal menyimpan: "+(x&&x.message?x.message:x)}
+};
+var MM={mtgl:"date",mjenis:"type",mbut:"detail",mbeng:"workshop",modo:"odo",mkos:"cost",mnext:"next"},editMnt=null;
+function mReset(){editMnt=null;Object.keys(MM).forEach(function(k){$(k).value=""});$("mjenis").value="Servis berkala";$("msave").textContent="Simpan Rekod";$("mhead").textContent="Tambah Rekod Senggaraan";$("mcancel").classList.add("hide")}
+function renderMnt(){
+  var opts=vehDocs.map(function(v){var r=regDocs.find(function(x){return x.id===v.id});return '<option value="'+esc(v.id)+'">'+esc(v.name)+(r&&r.plate?" ("+esc(r.plate)+")":"")+'</option>'}).join("");
+  var cf=$("mfilter").value,cv=$("mveh").value;
+  $("mfilter").innerHTML='<option value="">Semua kenderaan</option>'+opts;$("mfilter").value=cf;
+  $("mveh").innerHTML='<option value="">-- pilih --</option>'+opts;$("mveh").value=cv;
+  var l=mntDocs.filter(function(m){return !$("mfilter").value||m.vehId===$("mfilter").value}).sort(function(a,b){return (b.date||"").localeCompare(a.date||"")});
+  var tot=l.reduce(function(t,m){return t+(+m.cost||0)},0);
+  $("mtot").textContent=l.length?l.length+" rekod &middot; jumlah kos RM "+tot.toFixed(2):"";
+  $("mtot").innerHTML=$("mtot").textContent.replace("&middot;","\u00b7");
+  $("mlist").innerHTML=l.length?l.map(function(m){return '<div class="li" style="display:block"><b>'+esc(m.type||"-")+'</b> <span class="small">&middot; '+esc(m.date||"-")+'</span><div class="small">'+esc(mname(m))+'</div>'+(m.detail?'<div class="small">'+esc(m.detail)+'</div>':'')+'<div class="small">'+(m.workshop?'Bengkel: '+esc(m.workshop)+' &middot; ':'')+(m.odo!==""&&m.odo!=null?esc(m.odo)+' km &middot; ':'')+(m.cost!==""&&m.cost!=null?'RM '+esc((+m.cost).toFixed(2)):'')+'</div>'+(m.next?'<div class="small">Servis seterusnya: '+esc(m.next)+' '+etag(m.next)+'</div>':'')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-me="'+esc(m.id)+'">Edit</button><button class="del" data-c="maintenance" data-id="'+esc(m.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada rekod senggaraan.</p>';
+}
+$("mfilter").onchange=renderMnt;$("mcancel").onclick=function(){mReset();$("mmsg").textContent=""};
+$("mlist").addEventListener("click",function(ev){
+  var m=mntDocs.find(function(x){return x.id===(ev.target.getAttribute&&ev.target.getAttribute("data-me"))});if(!m)return;
+  editMnt=m.id;Object.keys(MM).forEach(function(k){$(k).value=m[MM[k]]==null?"":m[MM[k]]});$("mveh").value=m.vehId||"";
+  $("msave").textContent="Simpan Perubahan";$("mhead").textContent="Edit Rekod Senggaraan";$("mcancel").classList.remove("hide");$("mmsg").textContent="";
+});
+$("msave").onclick=async function(){
+  var m=$("mmsg");m.className="msg";var d={vehId:$("mveh").value};
+  Object.keys(MM).forEach(function(k){d[MM[k]]=$(k).value.trim()});
+  if(!d.vehId||!d.date){m.textContent="Sila pilih kenderaan dan tarikh.";return}
+  if((d.odo!==""&&+d.odo<0)||(d.cost!==""&&+d.cost<0)){m.textContent="Odometer dan kos tidak boleh negatif.";return}
+  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
+  var v=vehDocs.find(function(x){return x.id===d.vehId});d.vehName=v?v.name:"";
+  try{
+    if(editMnt)await db.collection("maintenance").doc(editMnt).update(d);
+    else{var id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);d.id=id;d.n=Date.now();await db.collection("maintenance").doc(id).set(d)}
+    var was=!!editMnt;mReset();m.className="msg ok";m.textContent=was?"Rekod senggaraan dikemas kini.":"Rekod senggaraan disimpan."
+  }catch(x){m.textContent="Gagal menyimpan."}
+};
+var PCSS='.paper{font:13px/1.45 Arial,Helvetica,sans-serif;color:#000;background:#fff;max-width:760px;margin:0 auto;padding:24px}.paper h1{font-size:16px;text-align:center;margin:0}.paper h2{font-size:14px;text-align:center;margin:2px 0 14px}.paper h3{font-size:13px;background:#eee;padding:4px 8px;margin:14px 0 6px;border:1px solid #999}.paper table{width:100%;border-collapse:collapse}.paper td{border:1px solid #999;padding:6px 8px;vertical-align:top}.paper td.k{width:34%;background:#fafafa}.paper .sg{table-layout:fixed}.paper .sg td{height:100px}.paper .ft{margin-top:14px;font-size:11px;color:#555}@page{size:A4;margin:14mm}';
+function fdt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"long",year:"numeric",hour:"2-digit",minute:"2-digit"})}
+function formBody(b){
+  var v=vehDocs.find(function(x){return x.name===b.vehicle}),r=v?regDocs.find(function(x){return x.id===v.id}):null,drs=bd(b).map(function(n){return drvDocs.find(function(x){return x.name===n})||{name:n}}),one=drs.length===1;
+  function rowH(k,h){return '<tr><td class="k">'+k+'</td><td>'+(h||"-")+'</td></tr>'}
+  function lst(f){return drs.map(function(d){return one?esc(f(d)):esc(d.name)+": "+esc(f(d))}).join("<br>")}
+  function row(k,val){return '<tr><td class="k">'+k+'</td><td>'+esc(val==null||val===""?"-":val)+'</td></tr>'}
+  function blank(k){return '<tr><td class="k">'+k+'</td><td>&nbsp;</td></tr>'}
+  return '<div class="paper"><h1>MAKTAB RENDAH SAINS MARA ARAU</h1><h2>BORANG PENGESAHAN PERJALANAN &amp; TUNTUTAN PEMANDU</h2>'
+   +'<h3>A. Maklumat Program</h3><table>'+row("Nama program",b.program)+row("Destinasi",b.purpose)+row("Tarikh &amp; masa bertolak",fdt(b.start))+row("Tarikh &amp; masa pulang",fdt(b.end))+row("Jumlah pelajar",b.students)+row("Guru / staf pemohon",b.teacher)+'</table>'
+   +'<h3>B. Maklumat Kenderaan &amp; Pemandu</h3><table>'+row("Kenderaan",b.vehicle)+row("No. pendaftaran",r&&r.plate)+rowH("Nama pemandu",drs.map(function(d){return esc(d.name)}).join("<br>"))+rowH("No. gaji",lst(function(d){return d.noGaji||"-"}))+rowH("No. telefon",lst(function(d){return d.phone||"-"}))+'</table>'
+   +'<h3>C. Butiran Tuntutan (diisi oleh pemandu)</h3><table>'+blank("Bacaan odometer (mula)")+blank("Bacaan odometer (akhir)")+blank("Jumlah jarak (km)")+blank("Tol (RM)")+blank("Tempat letak kereta (RM)")+blank("Lain-lain (RM)")+blank("<b>Jumlah tuntutan (RM)</b>")+'</table>'
+   +'<h3>D. Pengesahan</h3><table class="sg"><tr>'+(drs.length?drs.map(function(d){return '<td>Tandatangan pemandu<br><br><br>Nama: '+esc(d.name)+'<br>Tarikh:</td>'}).join(""):'<td>Tandatangan pemandu<br><br><br>Nama:<br>Tarikh:</td>')+'<td>Pengesahan guru / staf pemohon<br><br><br>Nama: '+esc(b.teacher)+'<br>Tarikh:</td><td>Disahkan oleh penyelia<br><br><br>Nama:<br>Jawatan:<br>Tarikh:</td></tr></table>'
+   +'<div class="ft">Rujukan tempahan: '+esc(b.id)+' &middot; Dijana pada '+fdt(Date.now())+' melalui Sistem Tempahan Bas &amp; Van MRSM Arau</div></div>';
+}
+var curForm=null;
+function showForm(id){var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0}
+document.addEventListener("click",function(ev){var pr=ev.target.getAttribute&&ev.target.getAttribute("data-pr");if(pr)showForm(pr)});
+$("pclose").onclick=function(){$("pform").classList.add("hide")};
+$("pprint").onclick=function(){try{window.print()}catch(e){toast("Cetakan terus tidak dibenarkan. Guna Muat Turun, kemudian buka fail dan cetak.")}};
+$("pdl").onclick=async function(){
+  if(!curForm)return;var dn={save:function(o){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([o.data],{type:"text/html"}));a.download=o.filename;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500);return Promise.resolve()}};
+  if(!dn){toast("Muat turun tidak tersedia pada paparan ini.");return}
+  var html='<!DOCTYPE html><html lang="ms"><head><meta charset="utf-8"><title>Borang Tuntutan Pemandu</title><style>body{margin:0;background:#fff}'+PCSS+'@media print{.paper{padding:0}}</style></head><body>'+formBody(curForm)+'<script>window.onload=function(){setTimeout(function(){window.print()},400)}<\/script></body></html>';
+  var nm="borang-tuntutan-"+(curForm.program||"program").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)+".html";
+  try{await dn.save({filename:nm,data:html})}catch(e){if(!e||e.code!=="declined")toast("Gagal memuat turun: "+((e&&e.message)||e))}
+};
+function progCard(b,any){
+  var n=Date.now(),st=b.end<=n?'<span class="tag free">Selesai</span>':b.start<=n?'<span class="tag busy">Sedang berlangsung</span>':'<span class="tag warn">Akan datang</span>';
+  var v=vehDocs.find(function(x){return x.name===b.vehicle}),r=v?regDocs.find(function(x){return x.id===v.id}):null;
+  var pr=(any||b.end<=n)?'<div style="margin-top:6px"><button class="btn" style="margin:0;width:auto;padding:8px 16px" data-pr="'+esc(b.id)+'">Cetak Borang Tuntutan</button></div>':'<div class="small" style="margin-top:4px">Borang boleh dicetak selepas program tamat.</div>';
+  return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> '+st+'<div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+'</div><div class="small">Destinasi: '+esc(b.purpose)+' &middot; '+esc(b.students)+' pelajar &middot; Pemohon: '+esc(b.teacher)+'</div><div class="small">'+esc(b.vehicle)+(r&&r.plate?' ('+esc(r.plate)+')':'')+'</div><div style="margin-top:4px"><span class="small">Pemandu bertugas:</span> '+(bd(b).length?bd(b).map(function(d){return '<span class="tag pend">'+esc(d)+'</span>'}).join(' '):'<span class="small">-</span>')+'</div>'+pr+'</div>';
+}
+function stCards(a){return a.map(function(x){return '<div class="st" style="--c:'+x[2]+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>'}).join("")}
+function fillDrvSel(sel){var c0=sel.value;sel.innerHTML='<option value="">Semua</option>'+drvDocs.map(function(d){return '<option value="'+esc(d.name)+'">'+esc(d.name)+'</option>'}).join("");if(c0&&drvDocs.some(function(d){return d.name===c0}))sel.value=c0}
+function fillYM(ys,ms){
+  var cy=String(new Date().getFullYear()),yo={};yo[cy]=1;bookings.forEach(function(b){yo[new Date(b.start).getFullYear()]=1});
+  var c=ys.value;ys.innerHTML=Object.keys(yo).sort().map(function(y){return '<option>'+y+'</option>'}).join("");ys.value=c&&yo[c]?c:cy;
+  if(!ms.options.length){ms.innerHTML='<option value="-1">Semua bulan</option>'+BULAN.map(function(m,i){return '<option value="'+i+'">'+m+'</option>'}).join("");ms.value=String(new Date().getMonth())}
+}
+function pmTable(nm,y,mo){
+  var l=bookings.filter(function(b){var d=new Date(b.start);return (b.status||"approved")!=="pending"&&(!nm||bd(b).indexOf(nm)>=0)&&d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)}).sort(function(a,b){return b.start-a.start});
+  return '<div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Destinasi</th><th>Pelajar</th><th>Pemohon</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th><th></th></tr></thead><tbody>'
+   +(l.length?l.map(function(b){var st=stag(b),ok=(b.status||"approved")==="approved";
+     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+st+'</td><td>'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button>':'<span class="small">-</span>')+'</td></tr>'}).join(""):'<tr><td colspan="9" class="small">Tiada program untuk tempoh ini.</td></tr>')
+   +'</tbody></table></div>';
+}
+function renderDriver(){
+  if(!cur||cur.role!=="pemandu")return;
+  $("pwel").textContent="Selamat datang, "+(cur.name||cur.id);
+  fillDrvSel($("pdsel"));fillYM($("pdy"),$("pdm"));$("pdbody").innerHTML=pmTable($("pdsel").value,$("pdy").value,$("pdm").value);
+}
+function renderPm(){fillDrvSel($("pmsel"));fillYM($("pmy"),$("pmm"));$("pmbody").innerHTML=pmTable($("pmsel").value,$("pmy").value,$("pmm").value)}
+$("pdsel").onchange=$("pdy").onchange=$("pdm").onchange=renderDriver;
+$("pmsel").onchange=$("pmy").onchange=$("pmm").onchange=renderPm;
+function toggleRole(){var pm=$("srole").value==="pemandu";$("spenbox").classList.toggle("hide",pm)}
+$("srole").onchange=toggleRole;
+function enter(acc){cur={id:acc.id,name:acc.name||acc.id,role:acc.role||"penyelia"};canEdit=cur.role==="penyelia";try{sessionStorage.setItem("usr",JSON.stringify(cur))}catch(e){}render();tab(canEdit?4:7)}
+function doLogout(){var t=TOKEN;TOKEN="";VER="";canEdit=false;cur=null;pendSup=null;try{sessionStorage.removeItem("usr");sessionStorage.removeItem("tok")}catch(e){}if(t&&apiOn())apiCall({action:"logout",token:t}).catch(function(){});render();tab(1);poll(true)}
+$("dlout").onclick=doLogout;
+document.querySelectorAll("#p7 .sl a").forEach(function(a){a.onclick=function(){var v=a.getAttribute("data-p");document.querySelectorAll(".pv").forEach(function(e){e.classList.toggle("hide",e.id!=="pv-"+v)});document.querySelectorAll("#p7 .sl a").forEach(function(x){x.classList.toggle("on",x===a)})}});
+var PAL=["#2e7d5b","#3b82c4","#d9822b","#8a5cc2","#c2456b","#2aa6a0","#9a8a1f","#6b7a8f"];
+var rosterDocs=[],rmap={},_n=new Date(),calSt={calS:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)},calD:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)}},roSel=null;
+function dkey(y,m,d){return y+"-"+("0"+(m+1)).slice(-2)+"-"+("0"+d).slice(-2)}
+function fdate(k){return new Date(k+"T00:00").toLocaleDateString("ms-MY",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function dcol(n){var i=drvDocs.findIndex(function(x){return x.name===n});return i<0?"#6b7a8f":PAL[i%PAL.length]}
+function ini(n){var w=String(n).trim().split(/\s+/);return((w[0]||"?").charAt(0)+(w[1]?w[1].charAt(0):"")).toUpperCase()}
+function pill(n){return '<span class="pl" style="background:'+dcol(n)+'" title="'+esc(n)+'"><span class="ini">'+esc(ini(n))+'</span><span class="fn">'+esc(n)+'</span></span>'}
+function chip(n){return '<span class="tag" style="background:'+dcol(n)+';color:#fff">'+esc(n)+'</span>'}
+function dayProgs(k){var s0=new Date(k+"T00:00").getTime();return apv.filter(function(b){return overlap(b,s0,s0+864e5)})}
+function onDuty(b,d){var r=rmap[dstr(new Date(b.start))];return !!(r&&(r.drivers||[]).indexOf(d)>=0)}
+function renderCal(id){
+  var box=$(id);if(!box)return;
+  var st=calSt[id],first=new Date(st.y,st.m,1),lead=(first.getDay()+6)%7,dim=new Date(st.y,st.m+1,0).getDate(),tk=dstr(new Date());
+  var h='<div class="calhd"><button class="del" style="color:var(--tx);padding:6px 14px" data-cal="'+id+'" data-cn="-1">&lsaquo;</button><b>'+BULAN[st.m]+' '+st.y+'</b><button class="del" style="color:var(--tx);padding:6px 14px" data-cal="'+id+'" data-cn="1">&rsaquo;</button></div><div class="cal">';
+  ["Isn","Sel","Rab","Kha","Jum","Sab","Ahd"].forEach(function(x){h+='<div class="ch">'+x+'</div>'});
+  for(var i=0;i<lead;i++)h+='<div class="cd blank"></div>';
+  for(var d=1;d<=dim;d++){var k=dkey(st.y,st.m,d),r=rmap[k],ds=(r&&r.drivers)||[],n=dayProgs(k).length;
+    h+='<div class="cd'+(k===tk?" today":"")+(k===st.sel?" sel":"")+'" data-cal="'+id+'" data-day="'+k+'"><span class="dn">'+d+'</span>'+(n?'<span class="cb" title="'+n+' program">'+n+'</span>':'')+ds.map(pill).join("")+'</div>'}
+  h+='</div><div class="leg">'+drvDocs.map(function(x,i){return '<span><i style="background:'+PAL[i%PAL.length]+'"></i>'+esc(x.name)+'</span>'}).join("")+'</div><div class="small" style="margin-top:6px">Nombor kecil di sudut hari = bilangan program diluluskan pada hari itu.</div>';
+  if(st.sel){var r2=rmap[st.sel],ds2=(r2&&r2.drivers)||[],ps=dayProgs(st.sel);
+    h+='<div class="caldet"><b>'+esc(fdate(st.sel))+'</b><div style="margin-top:6px">'+(ds2.length?'Giliran: '+ds2.map(chip).join(" ")+(r2.note?' <span class="small">&middot; '+esc(r2.note)+'</span>':''):'<span class="small">Giliran belum ditetapkan.</span>')+'</div>'+(ps.length?ps.map(function(b){return '<div class="small" style="margin-top:4px">&bull; '+esc(b.program)+' &middot; '+esc(b.vehicle)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join(""):'<div class="small" style="margin-top:4px">Tiada program diluluskan pada hari ini.</div>')+'</div>';
+  }
+  box.innerHTML=h;
+}
+function renderGiliran(){
+  var el=$("giliranNow");if(!el)return;var t=new Date(),k=dstr(t),k2=dstr(new Date(t.getTime()+864e5));
+  function line(lbl,key){var r=rmap[key],ds=(r&&r.drivers)||[];return '<div style="margin:4px 0"><b>'+lbl+':</b> '+(ds.length?ds.map(chip).join(" ")+(r.note?' <span class="small">&middot; '+esc(r.note)+'</span>':''):'<span class="small">belum ditetapkan</span>')+dayProgs(key).map(function(b){return '<div class="small">&bull; '+esc(b.program)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join("")+'</div>'}
+  el.innerHTML=line("Hari ini",k)+line("Esok",k2);
+}
+function syncRoster(b,ds){
+  var d=new Date(b.start);d.setHours(0,0,0,0);var last=new Date(b.end-1);last.setHours(0,0,0,0);var w=[],i=0;
+  for(;d<=last&&i<31;d.setDate(d.getDate()+1),i++){
+    var k=dstr(d),r=rmap[k],cur=(r&&r.drivers)||[],add=ds.filter(function(x){return cur.indexOf(x)<0});
+    if(add.length)w.push(db.collection("roster").doc(k).set({id:k,date:k,drivers:cur.concat(add),note:(r&&r.note)||""}));
+  }
+  return Promise.all(w).then(function(){return w.length});
+}
+function renderCals(){renderCal("calS");renderCal("calD");renderGiliran()}
+function renderRoster(){
+  var c=$("roStart").value;$("roStart").innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)$("roStart").value=c;
+  if(!$("roFrom").value){var n=new Date();$("roFrom").value=dstr(n);$("roTo").value=dkey(n.getFullYear(),n.getMonth(),new Date(n.getFullYear(),n.getMonth()+1,0).getDate())}
+}
+function loadRoster(k){
+  roSel=k;var r=rmap[k]||{};$("roEd").classList.remove("hide");$("roDate").textContent=fdate(k);$("roMsg").textContent="";
+  $("roPick").innerHTML=DRIVERS.map(function(d){return '<label class="ck"><input type="checkbox" value="'+esc(d)+'"'+((r.drivers||[]).indexOf(d)>=0?" checked":"")+'> '+esc(d)+'</label>'}).join("")||'<span class="small">Belum ada pemandu aktif.</span>';
+  $("roNote").value=r.note||"";
+}
+document.addEventListener("click",function(ev){
+  var t=ev.target.closest&&ev.target.closest("[data-cal]");if(!t)return;
+  var id=t.getAttribute("data-cal"),st=calSt[id],nv=t.getAttribute("data-cn"),dy=t.getAttribute("data-day");
+  if(nv){st.m+=+nv;if(st.m<0){st.m=11;st.y--}else if(st.m>11){st.m=0;st.y++}}
+  else if(dy){st.sel=dy;if(id==="calS")loadRoster(dy)}
+  renderCal(id);
+});
+$("roSave").onclick=async function(){
+  var m=$("roMsg");m.className="msg";if(!roSel||!db)return;
+  var ds=Array.prototype.map.call($("roPick").querySelectorAll("input:checked"),function(c){return c.value});
+  if(!ds.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu, atau tekan Kosongkan.";return}
+  try{await db.collection("roster").doc(roSel).set({id:roSel,date:roSel,drivers:ds,note:$("roNote").value.trim()});m.className="msg ok";m.textContent="Giliran disimpan."}catch(x){m.textContent="Gagal menyimpan."}
+};
+$("roClear").onclick=async function(){
+  var m=$("roMsg");m.className="msg";if(!roSel||!db)return;
+  if(!rmap[roSel]){m.textContent="Tiada giliran untuk dikosongkan.";return}
+  try{await db.collection("roster").doc(roSel).delete();loadRoster(roSel);m.className="msg ok";m.textContent="Giliran dikosongkan."}catch(x){m.textContent="Gagal memadam."}
+};
+$("roGo").onclick=async function(){
+  var m=$("roMsg2");m.className="msg";var f=$("roFrom").value,t=$("roTo").value;
+  if(!f||!t||t<f){m.textContent="Sila pilih tarikh dari dan hingga dengan betul.";return}
+  if(!DRIVERS.length){m.textContent="Belum ada pemandu aktif.";return}
+  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
+  var d0=new Date(f+"T00:00"),d1=new Date(t+"T00:00");if((d1-d0)/864e5>366){m.textContent="Julat maksimum 366 hari.";return}
+  var si=Math.max(0,DRIVERS.indexOf($("roStart").value)),list=[],i=0;
+  for(var d=new Date(d0);d<=d1;d.setDate(d.getDate()+1)){list.push({k:dstr(d),n:DRIVERS[(si+i)%DRIVERS.length]});i++}
+  if(!list.length){m.textContent="Tiada hari dalam julat yang dipilih.";return}
+  var ok=await ask("Isi giliran untuk "+list.length+" hari ("+f+" hingga "+t+")? Giliran sedia ada pada tarikh tersebut akan diganti.");if(!ok)return;
+  try{await Promise.all(list.map(function(x){var ex=rmap[x.k];return db.collection("roster").doc(x.k).set({id:x.k,date:x.k,drivers:[x.n],note:ex&&ex.note?ex.note:""})}));m.className="msg ok";m.textContent="Giliran diisi untuk "+list.length+" hari."}catch(e){m.textContent="Gagal menyimpan sebahagian giliran."}
+};
+var pendSup=null;
+$("cback").onclick=function(){pendSup=null;tab(1)};
+$("cok").onclick=async function(){
+  var e=$("cerr");e.textContent="";if(!pendSup){tab(5);return}
+  var p1=$("cpw1").value,p2=$("cpw2").value;
+  if(p1.length<8){e.textContent="Kata laluan sekurang-kurangnya 8 aksara.";return}
+  if(p1!==p2){e.textContent="Kata laluan tidak sama.";return}
+  try{var h=await sha("mrsm-arau:"+pendSup.id+":"+p1);
+    if(h===pendSup.h){e.textContent="Kata laluan baharu mesti berbeza daripada kata laluan sementara.";return}
+    var j=await apiCall({action:"setpw",token:TOKEN,h:h});
+    if(!j||!j.ok){e.textContent=(j&&j.error==="same")?"Kata laluan baharu mesti berbeza daripada kata laluan sementara.":"Gagal menyimpan. Cuba lagi.";return}
+    var a0=pendSup.acc;pendSup=null;
+    $("cpw1").value="";$("cpw2").value="";enter(a0);poll(true);toast("Kata laluan dikemas kini.");
+  }catch(x){e.textContent="Gagal menyimpan. Cuba lagi."}
+};
+$("lback").onclick=function(){tab(1)};
+$("lout").onclick=doLogout;
+function shiftDay(n){var d=new Date(($("sdate").value||today())+"T00:00");d.setDate(d.getDate()+n);$("sdate").value=dstr(d);render()}
+$("dprev").onclick=function(){shiftDay(-1)};$("dnext").onclick=function(){shiftDay(1)};$("sdate").onchange=render;$("uy").onchange=function(){renderAdmin()};$("um").onchange=function(){renderAdmin()};$("fy").onchange=render;$("fm").onchange=render;
+
+$("hantar").onclick=function(){
+  var m=$("msg");m.className="msg";
+  var d={program:$("prog").value.trim(),teacher:$("guru").value.trim(),students:parseInt($("pel").value,10),purpose:$("tuj").value.trim(),start:ts($("mula").value),end:ts($("tamat").value),vehicle:$("veh").value,by:me||"",status:"pending"};
+  if(!d.program||!d.teacher||!d.purpose||!(d.students>0)||!d.vehicle||isNaN(d.start)||isNaN(d.end)){m.textContent="Sila lengkapkan semua ruangan.";return}
+  if(d.end<=d.start){m.textContent="Masa tamat mesti selepas masa mula.";return}
+  var clash=apv.some(function(b){return overlap(b,d.start,d.end)&&b.vehicle===d.vehicle});
+  if(clash){m.textContent="Kenderaan sudah ditempah pada masa tersebut.";refreshForm();return}
+  if(!db){m.textContent="Sistem simpanan tidak tersedia. Sila log masuk.";return}
+  $("hantar").disabled=true;
+  var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
+  db.collection("bookings").doc(id).set(d).then(function(){
+    m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
+    ["prog","guru","pel","tuj","mula","tamat"].forEach(function(k){$(k).value=""});refreshForm();
+  }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
+};
+
+render();
+setInterval(render,60000);
+(async function(){
+  try{
+    me=deviceId();
+    render();
+    if(!apiOn()){$("now").textContent="Alamat API belum ditetapkan (lihat PANDUAN).";return}
+    db=makeDb();
+    function by(a,b){return (a.n||0)-(b.n||0)}
+    db.collection("vehicles").onSnapshot(function(s){vehDocs=s.docs.map(function(d){return d.data()}).sort(by);VEHICLES=vehDocs.map(function(x){return x.name});render()},function(){});
+    db.collection("drivers").onSnapshot(function(s){drvDocs=s.docs.map(function(d){return d.data()}).sort(by);DRIVERS=drvDocs.filter(function(x){return x.status!=="nonaktif"}).map(function(x){return x.name});render()},function(){});
+    db.collection("vehreg").onSnapshot(function(s){regDocs=s.docs.map(function(d){return d.data()}).sort(by);renderAdmin()},function(){});
+    db.collection("maintenance").onSnapshot(function(s){mntDocs=s.docs.map(function(d){return d.data()}).sort(by);renderAdmin()},function(){});
+    db.collection("roster").onSnapshot(function(s){rosterDocs=s.docs.map(function(d){return d.data()});rmap={};rosterDocs.forEach(function(d){rmap[d.id]=d});renderCals()},function(){});
+    db.collection("supervisors").onSnapshot(function(s){supDocs=s.docs.map(function(d){return d.data()}).sort(by);renderAdmin()},function(){});
+    db.collection("bookings").onSnapshot(function(s){bookings=s.docs.map(function(d){return d.data()});apv=bookings.filter(function(b){return (b.status||"approved")==="approved"});render()},function(){});
+    poll(true);setInterval(function(){if(!document.hidden)poll()},20000);document.addEventListener("visibilitychange",function(){if(!document.hidden)poll()});
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
