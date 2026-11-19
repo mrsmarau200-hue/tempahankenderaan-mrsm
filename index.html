@@ -205,6 +205,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
+<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun (untuk cetak)</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun, buka fail tersebut dan cetak.</p><div id="pbody"></div></div>
 <div class="toast hide" id="toast"></div>
@@ -589,9 +590,32 @@ function formBody(b){
 }
 var curForm=null;
 function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0}
-document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(rj&&canEdit&&db){var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;
-  ask("Tolak program yang telah diluluskan ini? Sebab penolakan (pilihan):",true).then(function(r){if(r===null)return;db.collection("bookings").doc(rj).update({status:"rejected",reason:r.trim(),decidedAt:Date.now()}).then(function(){toast("Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){toast("Gagal mengemas kini.")})})}
+var edB=null;
+document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
+  var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
+  $("etit").textContent=(bk.program||"Program")+" · "+fmt(bk.start);
+  $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
+  var cur_=bd(bk);$("edrv").innerHTML=drvDocs.map(function(d){return '<label class="small" style="display:block;margin:4px 0;color:var(--tx)"><input type="checkbox" value="'+esc(d.name)+'" '+(cur_.indexOf(d.name)>=0?"checked":"")+' style="width:auto;margin-right:6px">'+esc(d.name)+'</label>'}).join("");
+  $("enota").value=bk.nota||bk.reason||"";$("emsg").textContent="";edToggle();$("edlg").classList.remove("hide");
 });
+function edToggle(){$("edrvbox").classList.toggle("hide",$("estat").value!=="approved")}
+$("estat").onchange=edToggle;
+$("ecancel").onclick=function(){$("edlg").classList.add("hide");edB=null};
+$("esave").onclick=function(){
+  var b=bookings.find(function(x){return x.id===edB});if(!b||!db||!canEdit)return;var m=$("emsg"),st=$("estat").value,nota=$("enota").value.trim();
+  var ds=[].slice.call($("edrv").querySelectorAll("input:checked")).map(function(x){return x.value});
+  var data={status:st,nota:nota,reason:st==="rejected"?nota:"",decidedAt:Date.now()};
+  if(st==="approved"){
+    if(!ds.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
+    var vc=apv.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
+    if(vc){m.textContent="Kenderaan sudah ditempah pada masa itu.";return}
+    var dc=ds.filter(function(d){return apv.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
+    if(dc.length){m.textContent=dc.join(", ")+" sudah bertugas pada masa itu.";return}
+    data.drivers=ds;
+  }
+  var id=b.id;$("edlg").classList.add("hide");edB=null;
+  db.collection("bookings").doc(id).update(data).then(function(){return st==="approved"?syncRoster(b,ds):0}).then(function(){toast(st==="approved"?"Maklumat program dikemas kini.":"Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){toast("Gagal mengemas kini.")});
+};
 document.addEventListener("click",function(ev){var pr=ev.target.getAttribute&&ev.target.getAttribute("data-pr");if(pr)showForm(pr)});
 $("pclose").onclick=function(){$("pform").classList.add("hide")};
 $("pprint").onclick=function(){try{window.print()}catch(e){toast("Cetakan terus tidak dibenarkan. Guna Muat Turun, kemudian buka fail dan cetak.")}};
@@ -611,9 +635,9 @@ function fillYM(ys,ms){
 }
 function pmTable(nm,y,mo,pr){
   var l=bookings.filter(function(b){var d=new Date(b.start);return (b.status||"approved")!=="pending"&&(!nm||bd(b).indexOf(nm)>=0)&&d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)}).sort(function(a,b){return b.start-a.start});
-  return '<div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Destinasi</th><th>Pelajar</th><th>Pemohon</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th>'+(pr?'<th></th>':'')+'</tr></thead><tbody>'
-   +(l.length?l.map(function(b){var st=stag(b),ok=(b.status||"approved")==="approved";
-     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+st+'</td>'+(pr?'<td>'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> <button class="del" data-rj="'+esc(b.id)+'">Tolak</button>':'<span class="small">-</span>')+'</td>':'')+'</tr>'}).join(""):'<tr><td colspan="'+(pr?9:8)+'" class="small">Tiada program untuk tempoh ini.</td></tr>')
+  return '<div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Destinasi</th><th>Pelajar</th><th>Pemohon</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th><th>Catatan</th>'+(pr?'<th></th>':'')+'</tr></thead><tbody>'
+   +(l.length?l.map(function(b){var ok=(b.status||"approved")==="approved",tg=ok?'<span class="tag free">Diluluskan</span>':'<span class="tag busy">Ditolak</span>';
+     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td>'+(pr?'<td style="white-space:nowrap">'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':'')+'<button class="del" style="color:var(--tx)" data-rj="'+esc(b.id)+'">Edit</button></td>':'')+'</tr>'}).join(""):'<tr><td colspan="'+(pr?10:9)+'" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
 }
 function renderDriver(){
