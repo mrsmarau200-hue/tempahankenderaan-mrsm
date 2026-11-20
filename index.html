@@ -210,7 +210,8 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px"><button class="del" id="jwPrev" style="color:var(--tx);padding:8px 14px">&lsaquo; Sebelum</button><button class="del" id="jwNow" style="color:var(--tx);padding:8px 14px">Minggu ini</button><button class="del" id="jwNext" style="color:var(--tx);padding:8px 14px">Seterusnya &rsaquo;</button><span class="small" id="jwRange"></span></div><div class="jtw" id="jwTbl" style="margin-top:12px"></div>
     <div id="stCard" style="margin-top:22px;padding-top:16px;border-top:2px solid var(--bd)"><h2>Tetapan Giliran Pemandu</h2><p class="small">Pilih pemandu, julat tarikh dan status. Jadual A/B/C di atas dikemas kini sendiri untuk setiap hari dalam julat itu. Ulang untuk pemandu lain.</p>
      <label>Pemandu</label><select id="stDrv"></select>
-     <div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div>
+     <div class="row"><div><label>Dari minggu</label><select id="stFW"></select></div><div><label>Hingga minggu</label><select id="stTW"></select></div></div>
+     <details style="margin-top:8px"><summary class="small" style="cursor:pointer">Atau pilih tarikh sendiri (julat lain, contoh 2 hari sahaja)</summary><div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div></details>
      <label>Status</label><div class="small" style="margin-top:2px">Boleh tanda lebih daripada satu (contoh Shift A dan C).</div><div class="stopts" id="stOpts"><label class="stop"><input type="checkbox" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="checkbox" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="checkbox" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="checkbox" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="checkbox" name="stR" value="STANDBY"><span>STANDBY</span></label></div>
      <div class="row"><div><label>Tempat bertugas (pilihan)</label><input id="stPl" list="stPlList" placeholder="cth: PEJABAT"><datalist id="stPlList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>BENGKEL</option></datalist></div><div><label>Label minggu (pilihan)</label><input id="stLb" placeholder="cth: MINGGU 47 (KHAS)"></div></div>
      <div class="small">Tempat bertugas dipakai pada shift A/B/C yang ditanda. Biarkan kosong kalau tidak mahu ubah. Untuk membuang nama pemandu daripada jadual, pilih pemandu dan tarikh, kemudian tekan <b>Kosongkan Pemandu Ini</b>.</div>
@@ -900,11 +901,19 @@ function css_jt(){return '.jt{border-collapse:collapse;width:100%;font-size:11px
 $("stOpts").onchange=function(e){var t=e.target;if(t.name!=="stR"||!t.checked)return;var sh=/^[ABC]$/;
   [].slice.call($("stOpts").querySelectorAll("input")).forEach(function(o){if(o===t)return;
     if(sh.test(t.value)?!sh.test(o.value):true)o.checked=false})};
-function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c}
+function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c;
+  var ae=document.activeElement;if(ae&&(ae.id==="stFW"||ae.id==="stTW"))return;
+  var it=jwList(addD(mon0(),-14),24,false),sh=function(k){return k.slice(8)+"/"+k.slice(5,7)},
+  ops='<option value="">- pilih minggu -</option>'+it.map(function(x){return '<option value="'+x.ws+'|'+x.we+'">'+esc((x.wk||"MINGGU "+isoWk(new Date(x.ws+"T00:00")))+" \u00b7 "+sh(x.ws)+" hingga "+sh(x.we)+(x.set?"":" (kosong)"))+'</option>'}).join("");
+  ["stFW","stTW"].forEach(function(id){var el=$(id),v=el.value;el.innerHTML=ops;if(v&&el.querySelector('option[value="'+v+'"]'))el.value=v})}
+$("stFW").onchange=function(){var f=$("stFW").value,t=$("stTW");if(f&&(!t.value||t.value.split("|")[0]<f.split("|")[0]))t.value=f;$("stFrom").value="";$("stTo").value=""};
+$("stTW").onchange=function(){if($("stTW").value&&!$("stFW").value)$("stFW").value=$("stTW").value;$("stFrom").value="";$("stTo").value=""};
+$("stFrom").oninput=$("stTo").oninput=function(){$("stFW").value="";$("stTW").value=""};
 async function stRun(clear){
   var m=$("stMsg");m.className="msg";if(!db||!canEdit)return;
-  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,codes=clear?["-"]:[].slice.call($("stOpts").querySelectorAll("input:checked")).map(function(o){return o.value}),wd=$("stWd").checked,plv=$("stPl").value.trim(),lbv=$("stLb").value.trim();
-  if(!nm||!f){m.textContent="Pilih pemandu dan tarikh dari.";return}
+  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,fw=$("stFW").value,tw=$("stTW").value||fw,codes=clear?["-"]:[].slice.call($("stOpts").querySelectorAll("input:checked")).map(function(o){return o.value}),wd=$("stWd").checked,plv=$("stPl").value.trim(),lbv=$("stLb").value.trim();
+  if(!f&&fw){f=fw.split("|")[0];t=tw.split("|")[1]}
+  if(!nm||!f){m.textContent="Pilih pemandu dan minggu (atau tarikh).";return}
   if(!codes.length){m.textContent="Tanda sekurang-kurangnya satu status.";return}
   if(t<f){m.textContent="Tarikh hingga mesti selepas tarikh dari.";return}
   var s0=new Date(f+"T00:00"),days=Math.round((new Date(t+"T00:00")-s0)/864e5)+1;if(days>93){m.textContent="Maksimum 93 hari sekali.";return}
