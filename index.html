@@ -430,6 +430,19 @@ function apiCall(body){return new Promise(function(res,rej){
   sc.onerror=function(){if(done)return;fin();rej(new Error("network"))};
   sc.src=API_URL+"?cb="+name+"&q="+encodeURIComponent(JSON.stringify(body));
   document.head.appendChild(sc)})}
+async function batchWrite(ops){
+  if(!ops.length)return true;
+  var M=STORE.roster||(STORE.roster={});
+  ops.forEach(function(o){if(o.c!=="roster")return;if(o.op==="delete")delete M[o.id];else M[o.id]=Object.assign({},o.data)});emit("roster");
+  async function one(o){for(var t=0;t<3;t++){try{var j=await apiCall({action:"write",token:TOKEN,op:o.op,c:o.c,id:o.id,data:o.data});if(j&&j.ok)return true}catch(e){}}return false}
+  for(var i=0;i<ops.length;i+=7){
+    var ch=ops.slice(i,i+7),ok=false,legacy=false;
+    for(var t=0;t<2&&!ok&&!legacy;t++){try{var j=await apiCall({action:"writebatch",token:TOKEN,ops:ch});if(j&&j.ok)ok=true;else if(j&&j.error==="bad")legacy=true}catch(e){}}
+    if(legacy){ok=true;for(var k=0;k<ch.length;k++){if(!(await one(ch[k]))){ok=false;break}}}
+    if(!ok){poll(true);return false}
+  }
+  poll(true);return true
+}
 function dk(c,d){return c==="supervisors"?"s_"+d.id:d.id}
 function emit(c){var cb=LST[c];if(!cb)return;var M=STORE[c]||{};cb({docs:Object.keys(M).map(function(k){var d=M[k];return{data:function(){return d}}})})}
 function authLost(){if(!cur&&!TOKEN)return;TOKEN="";try{sessionStorage.removeItem("tok")}catch(e){}doLogout();toast("Sesi tamat. Sila log masuk semula.")}
@@ -834,7 +847,8 @@ async function jwSaveBlock(id){
   var res=jwQ.then(function(){
     var old=(blocksAll().find(function(b){return b.ws===id})||{keys:[]}).keys,nk=[],docs=[];
     for(var i=0;i<snap.days;i++){var k=dstr(addD(snap.s0,i));nk.push(k);docs.push(dayDocFor(k,snap.ro,snap.pl,snap.sk,snap.ek,snap.wl))}
-    return Promise.all(docs.map(function(x){return db.collection("roster").doc(x.id).set(x)}).concat(old.filter(function(k){return nk.indexOf(k)<0}).map(function(k){return db.collection("roster").doc(k).delete()}))).then(function(){return true},function(){toast("Gagal menyimpan.");return false})
+    var ops=docs.map(function(x){return {op:"set",c:"roster",id:x.id,data:x}}).concat(old.filter(function(k){return nk.indexOf(k)<0}).map(function(k){return {op:"delete",c:"roster",id:k}}));
+    return batchWrite(ops).then(function(ok){if(!ok)toast("Gagal menyimpan sebahagian hari. Sila cuba lagi.");return ok})
   });
   jwQ=res.then(function(){},function(){});return res
 }
@@ -859,7 +873,8 @@ $("jwGen").onclick=async function(){
   var ok=await ask("Jana jadual "+n+" minggu bermula "+fdmy(from)+"? Giliran sedia ada pada tarikh itu akan diganti.");if(!ok)return;
   var ws=[],ro={A:a,B:b,C:c},olds=[];
   for(var w=0;w<n;w++){var mon=addD(from,w*7),ms=dstr(mon),me=dstr(addD(mon,6));for(var i=0;i<7;i++)ws.push(dayDocFor(dstr(addD(mon,i)),ro,{},ms,me,"MINGGU "+isoWk(mon)));ro=rot(ro)}
-  try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));m.className="msg ok";m.textContent="Jadual dijana untuk "+n+" minggu."}catch(e){m.textContent="Gagal menyimpan sebahagian jadual."}
+  m.textContent="Menyimpan...";var okk=await batchWrite(ws.map(function(x){return {op:"set",c:"roster",id:x.id,data:x}}));
+  if(okk){m.className="msg ok";m.textContent="Jadual dijana untuk "+n+" minggu."}else m.textContent="Gagal menyimpan sebahagian jadual. Tekan Jana Jadual sekali lagi."
 };
 function jwIsSet(id){return blocksAll().some(function(b){return b.ws===id})}
 $("jwTbl").addEventListener("change",async function(ev){
@@ -875,7 +890,7 @@ $("jwTbl").addEventListener("click",async function(ev){
   var t=ev.target,sv=t.getAttribute&&t.getAttribute("data-jwsave"),cl=t.getAttribute&&t.getAttribute("data-jwclr");
   if(!canEdit||!db)return;
   if(sv){if(await jwSaveBlock(sv))toast("Minggu disimpan.")}
-  if(cl){var ok=await ask("Kosongkan giliran blok ini?");if(!ok)return;var b=blocksAll().find(function(x){return x.ws===cl});try{await Promise.all((b?b.keys:[]).map(function(k){return db.collection("roster").doc(k).delete()}));toast("Dikosongkan.")}catch(e){toast("Gagal memadam.")}}
+  if(cl){var ok=await ask("Kosongkan giliran blok ini?");if(!ok)return;var b=blocksAll().find(function(x){return x.ws===cl});var okc=await batchWrite((b?b.keys:[]).map(function(k){return {op:"delete",c:"roster",id:k}}));toast(okc?"Dikosongkan.":"Gagal memadam sebahagian.")}
 });
 var JNOTES=["PEMANDU HENDAKLAH MENGEMASKINI BUKU LOG","PEMANDU BOLEH MEMBUAT TUNTUTAN LEBIH MASA BERTUGAS SEBELUM JAM 8.00 PAGI DAN SELEPAS PUKUL 5.00 PETANG PADA HARI BERTUGAS","PEMANDU DIMINTA BERADA DI PEJABAT SEKIRANYA TIADA TUGASAN DI LUAR (WORKSTATION AKAN DISEDIAKAN) BAGI MEMBANTU KERJA-KERJA DI PEJABAT (MEMBANTU PEMBANTU OPERASI DI PEJABAT)","PEMANDU PERLU MEMBUAT PERANCANGAN CUTI REHAT BAGI MEMASTIKAN TERDAPAT PEMANDU BERTUGAS SETIAP HARI","PERUBAHAN DARI SEMASA KE SEMASA MENGIKUT ARAHAN PENGAWAL PUSAT / YANG MENJALANKAN TUGAS PENGAWAL PUSAT","DUA ORANG PEMANDU (BAS) BAGI PERJALANAN LUAR NEGERI PERLIS MINIMUM 200KM BERGANTUNG ATAS BUDI BICARA PENGAWAL PUSAT/YANG MENJALANKAN TUGAS PENGAWAL PUSAT","BAS KELUAR - PEMANDU BAS &amp; PEMANDU VAN PETANG","SEKIRANYA PEMANDU \"STANDBY BAS\" SABTU &amp; AHAD TIADA - PEMANDU VAN PETANG AKAN MENGAMBIL TUGASAN"];
 $("jwPrint").onclick=function(){
@@ -924,7 +939,7 @@ $("roRng").onclick=async function(){
   var ks=Object.keys(rmap).filter(function(k){return k>=f&&k<=t});
   if(!ks.length){m.textContent="Tiada giliran dalam julat itu.";return}
   var ok=await ask("Kosongkan giliran "+ks.length+" hari ("+f+" hingga "+t+")?");if(!ok)return;
-  try{await Promise.all(ks.map(function(k){return db.collection("roster").doc(k).delete()}));m.className="msg ok";m.textContent="Giliran dikosongkan untuk "+ks.length+" hari."}catch(e){m.textContent="Gagal memadam sebahagian giliran."}
+  var okr=await batchWrite(ks.map(function(k){return {op:"delete",c:"roster",id:k}}));if(okr){m.className="msg ok";m.textContent="Giliran dikosongkan untuk "+ks.length+" hari."}else m.textContent="Gagal memadam sebahagian giliran."
 };
 $("roGo").onclick=async function(){
   var m=$("roMsg2");m.className="msg";var f=$("roFrom").value,t=$("roTo").value;
@@ -937,7 +952,7 @@ $("roGo").onclick=async function(){
   for(var d=new Date(d0);d<=d1;d.setDate(d.getDate()+1)){if(wk&&(d.getDay()===0||d.getDay()===6))continue;list.push({k:dstr(d),n:DRIVERS[(si+Math.floor(i/nn))%DRIVERS.length]});i++}
   if(!list.length){m.textContent="Tiada hari dalam julat yang dipilih.";return}
   var ok=await ask("Isi giliran untuk "+list.length+" hari ("+f+" hingga "+t+")? Giliran sedia ada pada tarikh tersebut akan diganti.");if(!ok)return;
-  try{await Promise.all(list.map(function(x){var ex=rmap[x.k];return db.collection("roster").doc(x.k).set({id:x.k,date:x.k,drivers:[x.n],note:ex&&ex.note?ex.note:""})}));m.className="msg ok";m.textContent="Giliran diisi untuk "+list.length+" hari."}catch(e){m.textContent="Gagal menyimpan sebahagian giliran."}
+  var oka=await batchWrite(list.map(function(x){var ex=rmap[x.k];return {op:"set",c:"roster",id:x.k,data:{id:x.k,date:x.k,drivers:[x.n],note:ex&&ex.note?ex.note:""}}}));if(oka){m.className="msg ok";m.textContent="Giliran diisi untuk "+list.length+" hari."}else m.textContent="Gagal menyimpan sebahagian giliran."
 };
 var pendSup=null;
 $("cback").onclick=function(){pendSup=null;tab(1)};
