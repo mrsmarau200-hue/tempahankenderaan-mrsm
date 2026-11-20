@@ -662,9 +662,9 @@ function fillYM(ys,ms){
 function pmList(nm,y,mo){return bookings.filter(function(b){var d=new Date(b.start);return (b.status||"approved")!=="pending"&&(!nm||bd(b).indexOf(nm)>=0)&&d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)})}
 function pmTable(nm,y,mo,pr){
   var l=pmList(nm,y,mo).sort(function(a,b){return b.start-a.start});
-  return '<div class="card wrap"><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Destinasi</th><th>Pelajar/Staf/Guru</th><th>Pemohon</th><th>Kenderaan</th><th>Pemandu</th><th>Status</th><th>Catatan</th>'+(pr?'<th></th>':'')+'</tr></thead><tbody>'
-   +(l.length?l.map(function(b){var ok=(b.status||"approved")==="approved",tg=ok?'<span class="tag free">Diluluskan</span>':'<span class="tag busy">Ditolak</span>';
-     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td>'+(pr?'<td style="white-space:nowrap">'+(ok?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':'')+'</td>':'')+'</tr>'}).join(""):'<tr><td colspan="'+(pr?10:9)+'" class="small">Tiada program untuk tempoh ini.</td></tr>')
+  return '<div class="card wrap"><table><thead><tr><th style="min-width:120px">Tarikh &amp; masa</th><th style="min-width:160px">Program</th><th>Pelajar/ Staf/ Guru</th><th>Pemohon</th><th>Kenderaan</th><th style="min-width:110px">Pemandu</th><th style="min-width:120px">Status</th></tr></thead><tbody>'
+   +(l.length?l.map(function(b){var ok=(b.status||"approved")==="approved",tg=ok?'<span class="tag free">Diluluskan</span>':'<span class="tag busy">Ditolak</span>',ct=b.nota||b.reason||"";
+     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+(ct?'<br><span class="small">'+esc(ct)+'</span>':'')+(pr&&ok?'<br><button class="del" style="color:var(--tx);margin-top:6px" data-pr="'+esc(b.id)+'">Cetak</button>':'')+'</td></tr>'}).join(""):'<tr><td colspan="7" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
 }
 function renderDriver(){
