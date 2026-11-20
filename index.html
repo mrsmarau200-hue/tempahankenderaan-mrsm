@@ -211,11 +211,11 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div id="stCard" style="margin-top:22px;padding-top:16px;border-top:2px solid var(--bd)"><h2>Tetapan Giliran Pemandu</h2><p class="small">Pilih pemandu, julat tarikh dan status. Jadual A/B/C di atas dikemas kini sendiri untuk setiap hari dalam julat itu. Ulang untuk pemandu lain.</p>
      <label>Pemandu</label><select id="stDrv"></select>
      <div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div>
-     <label>Status</label><div class="small" style="margin-top:2px">Boleh tanda lebih daripada satu (contoh Shift A dan C).</div><div class="stopts" id="stOpts"><label class="stop"><input type="checkbox" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="checkbox" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="checkbox" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="checkbox" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="checkbox" name="stR" value="STANDBY"><span>STANDBY</span></label><label class="stop"><input type="checkbox" name="stR" value="-"><span>Kosongkan pemandu ini</span></label></div>
+     <label>Status</label><div class="small" style="margin-top:2px">Boleh tanda lebih daripada satu (contoh Shift A dan C).</div><div class="stopts" id="stOpts"><label class="stop"><input type="checkbox" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="checkbox" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="checkbox" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="checkbox" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="checkbox" name="stR" value="STANDBY"><span>STANDBY</span></label></div>
      <div class="row"><div><label>Tempat bertugas (pilihan)</label><input id="stPl" list="stPlList" placeholder="cth: PEJABAT"><datalist id="stPlList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>BENGKEL</option></datalist></div><div><label>Label minggu (pilihan)</label><input id="stLb" placeholder="cth: MINGGU 47 (KHAS)"></div></div>
-     <div class="small">Tempat bertugas dipakai pada shift A/B/C yang ditanda. Biarkan kosong kalau tidak mahu ubah.</div>
+     <div class="small">Tempat bertugas dipakai pada shift A/B/C yang ditanda. Biarkan kosong kalau tidak mahu ubah. Untuk membuang nama pemandu daripada jadual, pilih pemandu dan tarikh, kemudian tekan <b>Kosongkan Pemandu Ini</b>.</div>
      <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="stWd" style="width:auto;margin:0"> Langkau Sabtu &amp; Ahad</label>
-     <button class="btn" id="stSave">Simpan Tetapan</button><div class="msg" id="stMsg"></div></div></div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" id="stSave" style="margin:0;flex:1">Simpan Tetapan</button><button class="del" id="stClr" style="margin:0;padding:10px 16px;color:var(--tx)">Kosongkan Pemandu Ini</button></div><div class="msg" id="stMsg"></div></div></div>
     <div class="grid2">
      <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini (buang semua pemandu)</button><div class="msg" id="roMsg"></div></div>
      <details class="card"><summary style="cursor:pointer;font-weight:700">Isi harian automatik (cara lama, bergilir setiap hari)</summary><h2 style="display:none">Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Tetapkan berapa hari setiap pemandu bertugas sebelum bertukar (contoh 5 = seorang pemandu untuk 5 hari berturut-turut). Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><label>Bilangan hari setiap pemandu sebelum bertukar</label><input id="roN" type="number" min="1" max="31" value="1"><label class="ck" style="margin-top:8px"><input type="checkbox" id="roWk" style="width:auto"> Langkau Sabtu &amp; Ahad (tak dikira, tiada giliran)</label><button class="btn" id="roGo">Isi Giliran</button><button class="del" id="roRng" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Giliran Dari&ndash;Hingga</button><div class="msg" id="roMsg2"></div></details>
@@ -901,14 +901,15 @@ $("stOpts").onchange=function(e){var t=e.target;if(t.name!=="stR"||!t.checked)re
   [].slice.call($("stOpts").querySelectorAll("input")).forEach(function(o){if(o===t)return;
     if(sh.test(t.value)?!sh.test(o.value):true)o.checked=false})};
 function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c}
-$("stSave").onclick=async function(){
+async function stRun(clear){
   var m=$("stMsg");m.className="msg";if(!db||!canEdit)return;
-  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,codes=[].slice.call($("stOpts").querySelectorAll("input:checked")).map(function(o){return o.value}),wd=$("stWd").checked,plv=$("stPl").value.trim(),lbv=$("stLb").value.trim();
+  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,codes=clear?["-"]:[].slice.call($("stOpts").querySelectorAll("input:checked")).map(function(o){return o.value}),wd=$("stWd").checked,plv=$("stPl").value.trim(),lbv=$("stLb").value.trim();
   if(!nm||!f){m.textContent="Pilih pemandu dan tarikh dari.";return}
   if(!codes.length){m.textContent="Tanda sekurang-kurangnya satu status.";return}
   if(t<f){m.textContent="Tarikh hingga mesti selepas tarikh dari.";return}
   var s0=new Date(f+"T00:00"),days=Math.round((new Date(t+"T00:00")-s0)/864e5)+1;if(days>93){m.textContent="Maksimum 93 hari sekali.";return}
-  $("stSave").disabled=true;m.textContent="Menyimpan...";
+  if(clear&&!(await ask("Kosongkan "+nm+" daripada jadual pada "+fdmy(s0)+" hingga "+fdmy(new Date(t+"T00:00"))+"?")))return;
+  $("stSave").disabled=true;$("stClr").disabled=true;m.textContent="Menyimpan...";
   var work=jwQ.then(function(){
     var docs={},before={},touched={},oldWs={};
     rosterDocs.forEach(function(r){docs[r.id]=JSON.parse(JSON.stringify(r));before[r.id]=JSON.stringify(r)});
@@ -938,9 +939,10 @@ $("stSave").onclick=async function(){
   });
   jwQ=work.then(function(){},function(){});
   var r=await work.catch(function(){return {ok:false}});
-  $("stSave").disabled=false;
+  $("stSave").disabled=false;$("stClr").disabled=false;
   if(r.ok){$("stPl").value="";$("stLb").value="";m.className="msg ok";m.textContent="Disimpan untuk "+nm+" ("+r.n+" hari dikemas kini)."}else m.textContent="Gagal menyimpan sebahagian hari. Tekan Simpan sekali lagi."
-};
+}
+$("stSave").onclick=function(){stRun(false)};$("stClr").onclick=function(){stRun(true)};
 function renderCals(){renderCal("calS");renderCal("calD");renderGiliran();renderJw();stFill()}
 function renderRoster(){
   var c=$("roStart").value;$("roStart").innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)$("roStart").value=c;
