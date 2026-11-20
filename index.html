@@ -614,6 +614,18 @@ function fitPaper(){var e=$("pbody").querySelector(".paper");if(!e||$("pform").c
 window.addEventListener("resize",fitPaper);
 function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;showFormB(b)}
 function showFormB(b,note){curForm=b;curRpt=null;$("pbody").innerHTML=(note?'<div class="small ok-note" style="max-width:760px;margin:0 auto 10px;padding:10px 12px;border-radius:10px;background:#e6f4ea;color:#14573b;font-weight:600">'+note+'</div>':"")+'<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper()}
+var justSent="";
+function openBorang(id){
+  var tr=0;$("pbody").innerHTML='<p class="small" style="text-align:center;padding:30px">Memuatkan borang...</p>';$("pform").classList.remove("hide");$("pclose").textContent="Laman Utama";
+  (function w(){var b=bookings.find(function(x){return x.id===id});
+    if((b&&(b.noBorang||tr>8))||(!b&&tr>20)){
+      if(!b){$("pbody").innerHTML='<p style="text-align:center;padding:30px">Borang tidak dijumpai. Sila semak pautan atau hubungi penyelia.</p>';return}
+      var note=justSent===id?"Tempahan berjaya dihantar. Sila cetak borang ini (butang Cetak) dan serahkan kepada penyelia untuk kelulusan. Simpan pautan halaman ini jika perlu mencetak semula.":"";
+      showFormB(b,note);$("pclose").textContent="Laman Utama"}
+    else{tr++;poll(true);setTimeout(w,500)}})();
+}
+function routeBorang(){var m=/^#borang-([A-Za-z0-9]+)$/.exec(location.hash);if(m)openBorang(m[1]);else{$("pform").classList.add("hide");$("pclose").textContent="Tutup"}}
+window.addEventListener("hashchange",routeBorang);
 var edB=null;
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
@@ -643,7 +655,7 @@ $("esave").onclick=function(){
   db.collection("bookings").doc(id).update(data).then(function(){return st==="approved"?syncRoster(b,ds):0}).then(function(){toast(st==="approved"?"Maklumat program dikemas kini.":"Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){toast("Gagal mengemas kini.")});
 };
 document.addEventListener("click",function(ev){var pr=ev.target.getAttribute&&ev.target.getAttribute("data-pr");if(pr)showForm(pr)});
-$("pclose").onclick=function(){$("pform").classList.add("hide")};
+$("pclose").onclick=function(){$("pform").classList.add("hide");if(/^#borang-/.test(location.hash)){history.replaceState(null,"",location.pathname+location.search);$("pclose").textContent="Tutup";window.scrollTo(0,0)}};
 $("pprint").onclick=function(){try{window.print()}catch(e){toast("Cetakan terus tidak dibenarkan. Guna Muat Turun, kemudian buka fail dan cetak.")}};
 $("pdl").onclick=async function(){
   if(!curForm&&!curRpt)return;var dn={save:function(o){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([o.data],{type:"text/html"}));a.download=o.filename;document.body.appendChild(a);a.click();setTimeout(function(){a.remove()},500);return Promise.resolve()}};
@@ -839,12 +851,12 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
-    var sent=d,tr=0;(function w(){var b=bookings.find(function(x){return x.id===id});if((b&&b.noBorang)||tr++>8){try{showFormB(b||sent,"Tempahan berjaya dihantar. Sila cetak borang ini (butang Cetak) dan serahkan kepada penyelia untuk kelulusan.")}catch(e){}}else{poll(true);setTimeout(w,500)}})();
+    justSent=id;location.hash="borang-"+id;
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
 
-render();
+render();routeBorang();
 setInterval(render,60000);
 (async function(){
   try{
