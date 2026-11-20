@@ -612,7 +612,8 @@ function formBody(b){
 var curForm=null;
 function fitPaper(){var e=$("pbody").querySelector(".paper");if(!e||$("pform").classList.contains("hide"))return;var W=e.classList.contains("rp")?1060:760;e.style.zoom="";e.style.width="";e.style.maxWidth="none";var av=$("pform").clientWidth-20;if(av<W){e.style.width=W+"px";e.style.margin="0";e.style.zoom=(av/W).toFixed(3)}else{e.style.maxWidth="";e.style.margin=""}}
 window.addEventListener("resize",fitPaper);
-function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;curRpt=null;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper()}
+function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;showFormB(b)}
+function showFormB(b,note){curForm=b;curRpt=null;$("pbody").innerHTML=(note?'<div class="small ok-note" style="max-width:760px;margin:0 auto 10px;padding:10px 12px;border-radius:10px;background:#e6f4ea;color:#14573b;font-weight:600">'+note+'</div>':"")+'<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper()}
 var edB=null;
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
@@ -838,6 +839,7 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
+    var sent=d,tr=0;(function w(){var b=bookings.find(function(x){return x.id===id});if((b&&b.noBorang)||tr++>8){try{showFormB(b||sent,"Tempahan berjaya dihantar. Sila cetak borang ini (butang Cetak) dan serahkan kepada penyelia untuk kelulusan.")}catch(e){}}else{poll(true);setTimeout(w,500)}})();
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
