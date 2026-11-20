@@ -618,7 +618,9 @@ document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
   $("etit").textContent=(bk.program||"Program")+" · "+fmt(bk.start);
   $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
-  var cur_=bd(bk);$("edrv").innerHTML=drvDocs.map(function(d){return '<label class="small" style="display:block;margin:4px 0;color:var(--tx)"><input type="checkbox" value="'+esc(d.name)+'" '+(cur_.indexOf(d.name)>=0?"checked":"")+' style="width:auto;margin-right:6px">'+esc(d.name)+'</label>'}).join("");
+  var cur_=bd(bk),had=cur_.length>0;
+  $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=apv.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
+    return '<label class="small" style="display:block;margin:4px 0;color:var(--tx)"><input type="checkbox" value="'+esc(n)+'" '+(on?"checked":"")+(busy?" disabled":"")+' style="width:auto;margin-right:6px">'+esc(n)+(busy?" (sudah bertugas masa itu)":od?" (giliran hari itu)":"")+'</label>'}).join("");
   $("enota").value=bk.nota||bk.reason||"";$("emsg").textContent="";edToggle();$("edlg").classList.remove("hide");
 });
 function edToggle(){$("edrvbox").classList.toggle("hide",$("estat").value!=="approved")}
