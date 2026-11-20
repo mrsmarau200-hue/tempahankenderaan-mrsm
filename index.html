@@ -211,6 +211,12 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" id="jwGen" style="margin:0">Jana Jadual (bertukar setiap minggu)</button><button class="btn" id="jwPrint" style="margin:0;background:#355;">Cetak Jadual</button></div><div class="msg" id="jwMsg"></div>
      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px"><button class="del" id="jwPrev" style="color:var(--tx);padding:8px 14px">&lsaquo; Sebelum</button><button class="del" id="jwNow" style="color:var(--tx);padding:8px 14px">Minggu ini</button><button class="del" id="jwNext" style="color:var(--tx);padding:8px 14px">Seterusnya &rsaquo;</button><span class="small" id="jwRange"></span></div><div class="jtw" id="jwTbl" style="margin-top:12px"></div></div>
     <div class="card"><h2>Kalendar Giliran Harian</h2><div id="calS"></div></div>
+    <div class="card" id="stCard"><h2>Tetapan Giliran Pemandu</h2><p class="small">Pilih pemandu, julat tarikh dan status. Jadual A/B/C dan kalendar di atas dikemas kini sendiri untuk setiap hari dalam julat itu. Ulang untuk pemandu lain.</p>
+     <label>Pemandu</label><select id="stDrv"></select>
+     <div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div>
+     <label>Status</label><select id="stCode"><option value="A">Shift A &ndash; Bas</option><option value="B">Shift B &ndash; Van PG (pagi)</option><option value="C">Shift C &ndash; Van PTG (petang)</option><option value="OFF">OFF</option><option value="STANDBY">STANDBY</option><option value="-">Kosongkan pemandu ini</option></select>
+     <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="stWd" style="width:auto;margin:0"> Langkau Sabtu &amp; Ahad</label>
+     <button class="btn" id="stSave">Simpan Tetapan</button><div class="msg" id="stMsg"></div></div>
     <div class="grid2">
      <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini (buang semua pemandu)</button><div class="msg" id="roMsg"></div></div>
      <details class="card"><summary style="cursor:pointer;font-weight:700">Isi harian automatik (cara lama, bergilir setiap hari)</summary><h2 style="display:none">Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Tetapkan berapa hari setiap pemandu bertugas sebelum bertukar (contoh 5 = seorang pemandu untuk 5 hari berturut-turut). Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><label>Bilangan hari setiap pemandu sebelum bertukar</label><input id="roN" type="number" min="1" max="31" value="1"><label class="ck" style="margin-top:8px"><input type="checkbox" id="roWk" style="width:auto"> Langkau Sabtu &amp; Ahad (tak dikira, tiada giliran)</label><button class="btn" id="roGo">Isi Giliran</button><button class="del" id="roRng" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Giliran Dari&ndash;Hingga</button><div class="msg" id="roMsg2"></div></details>
@@ -777,14 +783,16 @@ function renderCal(id){
   ["Isn","Sel","Rab","Kha","Jum","Sab","Ahd"].forEach(function(x){h+='<div class="ch">'+x+'</div>'});
   for(var i=0;i<lead;i++)h+='<div class="cd blank"></div>';
   for(var d=1;d<=dim;d++){var k=dkey(st.y,st.m,d),r=rmap[k],ds=(r&&r.drivers)||[],n=dayProgs(k).length;
-    h+='<div class="cd'+(k===tk?" today":"")+(k===st.sel?" sel":"")+'" data-cal="'+id+'" data-day="'+k+'"><span class="dn">'+d+'</span>'+(n?'<span class="cb" title="'+n+' program">'+n+'</span>':'')+(r&&r.roles?["A","B","C"].filter(function(k){return r.roles[k]}).map(function(k){return rpill(k,r.roles[k])}).join(""):ds.map(pill).join(""))+'</div>'}
+    h+='<div class="cd'+(k===tk?" today":"")+(k===st.sel?" sel":"")+'" data-cal="'+id+'" data-day="'+k+'"><span class="dn">'+d+'</span>'+(n?'<span class="cb" title="'+n+' program">'+n+'</span>':'')+(r&&r.roles?["A","B","C"].filter(function(k){return r.roles[k]}).map(function(k){return rpill(k,r.roles[k])}).join("")+stPills(r):ds.map(pill).join(""))+'</div>'}
   h+='</div><div class="leg">'+drvDocs.map(function(x,i){return '<span><i style="background:'+PAL[i%PAL.length]+'"></i>'+esc(x.name)+'</span>'}).join("")+'</div><div class="small" style="margin-top:6px">Nombor kecil di sudut hari = bilangan program diluluskan pada hari itu. Huruf A/B/C = shift (A Bas, B Van PG, C Van PTG).</div>';
   if(st.sel){var r2=rmap[st.sel],ds2=(r2&&r2.drivers)||[],ps=dayProgs(st.sel);
     h+='<div class="caldet"><b>'+esc(fdate(st.sel))+'</b><div style="margin-top:6px">'+(r2&&r2.roles?rolesDetail(st.sel,r2)+(r2.note?' <div class="small">'+esc(r2.note)+'</div>':''):ds2.length?'Giliran: '+ds2.map(chip).join(" ")+(r2.note?' <span class="small">&middot; '+esc(r2.note)+'</span>':''):'<span class="small">Giliran belum ditetapkan.</span>')+'</div>'+(ps.length?ps.map(function(b){return '<div class="small" style="margin-top:4px">&bull; '+esc(b.program)+' &middot; '+esc(b.vehicle)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join(""):'<div class="small" style="margin-top:4px">Tiada program diluluskan pada hari ini.</div>')+'</div>';
   }
   box.innerHTML=h;
 }
-function rolesDetail(k,r){var d=new Date(k+"T00:00"),we=d.getDay()===0||d.getDay()===6,pl=r.places||{};return ['A','B','C'].map(function(x){var c=JW[x],stt=we?c.we:c.wk;return '<div style="margin:3px 0"><span class="tag" style="background:'+c.col+';color:#222">'+x+' &middot; '+c.vh+'</span> '+esc(r.roles[x]||'-')+' <span class="small">&middot; '+stt+' &middot; '+esc(pl[x]||c.pl)+'</span></div>'}).join("")}
+function stPills(r){return r&&r.st?Object.keys(r.st).map(function(n){var o=r.st[n]==="OFF";return '<span class="pl" style="background:'+(o?'#e5e7eb':'#dbeafe')+';color:#333" title="'+r.st[n]+' '+esc(n)+'"><span class="ini">'+(o?'OFF':'SB')+' '+esc(ini(n))+'</span><span class="fn">'+r.st[n]+' '+esc(sn(n))+'</span></span>'}).join(""):""}
+function stDetail(r){return r&&r.st?Object.keys(r.st).map(function(n){return '<div style="margin:3px 0"><span class="tag" style="background:'+(r.st[n]==="OFF"?'#e5e7eb':'#dbeafe')+';color:#222">'+r.st[n]+'</span> '+esc(n)+'</div>'}).join(""):""}
+function rolesDetail(k,r){var d=new Date(k+"T00:00"),we=d.getDay()===0||d.getDay()===6,pl=r.places||{};return ['A','B','C'].map(function(x){var c=JW[x],stt=we?c.we:c.wk;return '<div style="margin:3px 0"><span class="tag" style="background:'+c.col+';color:#222">'+x+' &middot; '+c.vh+'</span> '+esc(r.roles[x]||'-')+' <span class="small">&middot; '+stt+' &middot; '+esc(pl[x]||c.pl)+'</span></div>'}).join("")+stDetail(r)}
 function renderGiliran(){
   var el=$("giliranNow");if(!el)return;var t=new Date(),k=dstr(t),k2=dstr(new Date(t.getTime()+864e5));
   function line(lbl,key){var r=rmap[key],ds=(r&&r.drivers)||[];return '<div style="margin:4px 0"><b>'+lbl+':</b> '+(ds.length?ds.map(chip).join(" ")+(r.note?' <span class="small">&middot; '+esc(r.note)+'</span>':''):'<span class="small">belum ditetapkan</span>')+dayProgs(key).map(function(b){return '<div class="small">&bull; '+esc(b.program)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join("")+'</div>'}
@@ -817,7 +825,7 @@ function jwList(from,n,print){
     x.roles=last?rot(last):($("jwA")&&$("jwA").value?{A:$("jwC").value,B:$("jwA").value,C:$("jwB").value}:{A:DRIVERS[0]||"",B:DRIVERS[1]||"",C:DRIVERS[2]||""});last=x.roles}});
   return items
 }
-function jwSel(id,k,val){var o=DRIVERS.slice();if(val&&o.indexOf(val)<0)o.unshift(val);return '<select class="jsel" data-wk="'+id+'" data-r="'+k+'" data-old="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;min-width:190px">'+o.map(function(d){return '<option'+(d===val?' selected':'')+'>'+esc(d)+'</option>'}).join("")+'</select>'}
+function jwSel(id,k,val){var o=DRIVERS.slice();if(val&&o.indexOf(val)<0)o.unshift(val);return '<select class="jsel" data-wk="'+id+'" data-r="'+k+'" data-old="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;min-width:190px">'+(val?'':'<option value="" selected>(kosong)</option>')+o.map(function(d){return '<option'+(d===val?' selected':'')+'>'+esc(d)+'</option>'}).join("")+'</select>'}
 function jwPl(id,k,val){return '<input class="jpl" list="jplList" data-wk="'+id+'" data-r="'+k+'" value="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;width:130px;text-align:center">'}
 function jwTable(from,n,print,list){
   var h='<table class="jt"><thead><tr><th rowspan="4">MINGGU</th><th rowspan="4">NAMA</th><th rowspan="4">NO GAJI</th><th rowspan="4">TARIKH</th><th colspan="3">JADUAL WAKTU BERKERJA '+from.getFullYear()+'</th><th>JENIS KENDERAAN</th><th class="y" rowspan="4">ISNIN-JUMAAT</th><th class="y" rowspan="4">SABTU-AHAD</th><th class="y" rowspan="4">TEMPAT BERTUGAS</th></tr>';
@@ -835,11 +843,12 @@ function jwTable(from,n,print,list){
   });
   return h+'</tbody></table>'+(print?'':'<datalist id="jplList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>STANDBY LUAR</option></datalist>')
 }
-function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:wd?[ro.A]:[ro.B,ro.C],roles:ro,places:pl||{},ws:ws,we:we,wk:wk||"",note:(ex&&ex.note)||""}}
+function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:(wd?[ro.A]:[ro.B,ro.C]).filter(Boolean),roles:ro,places:pl||{},ws:ws,we:we,wk:wk||"",note:(ex&&ex.note)||"",st:keepSt(ex,ro)}}
+function keepSt(ex,ro){var o={},n=0,v=Object.keys(ro).map(function(k){return ro[k]});if(ex&&ex.st)Object.keys(ex.st).forEach(function(k){if(v.indexOf(k)<0){o[k]=ex.st[k];n++}});return o}
 async function jwSaveBlock(id){
   var q=function(sel){return document.querySelectorAll('#jwTbl '+sel+'[data-wk="'+id+'"]')},ro={},pl={};
   q('select').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});q('input.jpl').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
-  if(!ro.A||!ro.B||!ro.C||ro.A===ro.B||ro.B===ro.C||ro.A===ro.C){toast("Pilih tiga pemandu berbeza.");return false}
+  var vs=["A","B","C"].map(function(k){return ro[k]}).filter(Boolean);if(vs.some(function(v,i){return vs.indexOf(v)!==i})){toast("Pemandu yang sama dipilih lebih sekali.");return false}
   var sD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="s"]'),eD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="e"]'),wl=(document.querySelector('#jwTbl input.jwk[data-wk="'+id+'"]')||{}).value||"";
   var sk=sD.value,ek=eD.value;if(!sk||!ek||ek<sk){toast("Tarikh tidak sah. Tarikh hingga mesti selepas tarikh dari.");return false}
   var s0=new Date(sk+"T00:00"),days=Math.round((new Date(ek+"T00:00")-s0)/864e5)+1;if(days>31){toast("Satu blok maksimum 31 hari.");return false}
@@ -904,7 +913,45 @@ $("jwPrint").onclick=function(){
   $("pbody").innerHTML='<style>'+PCSS+'</style>'+html;$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper();
 };
 function css_jt(){return '.jt{border-collapse:collapse;width:100%;font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.jt th,.jt td{border:1px solid #444;padding:3px 5px;text-align:center;vertical-align:middle}.jt th{background:#4472c4;color:#fff;font-weight:600}.jt th.y{background:#ffc000;color:#000}.jt td.l{text-align:left}.jt td.nm{white-space:nowrap}.jt tr{page-break-inside:avoid}'}
-function renderCals(){renderCal("calS");renderCal("calD");renderGiliran();renderJw()}
+
+function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c}
+$("stSave").onclick=async function(){
+  var m=$("stMsg");m.className="msg";if(!db||!canEdit)return;
+  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,code=$("stCode").value,wd=$("stWd").checked;
+  if(!nm||!f){m.textContent="Pilih pemandu dan tarikh dari.";return}
+  if(t<f){m.textContent="Tarikh hingga mesti selepas tarikh dari.";return}
+  var s0=new Date(f+"T00:00"),days=Math.round((new Date(t+"T00:00")-s0)/864e5)+1;if(days>93){m.textContent="Maksimum 93 hari sekali.";return}
+  $("stSave").disabled=true;m.textContent="Menyimpan...";
+  var work=jwQ.then(function(){
+    var docs={},before={},touched={},oldWs={};
+    rosterDocs.forEach(function(r){docs[r.id]=JSON.parse(JSON.stringify(r));before[r.id]=JSON.stringify(r)});
+    for(var i=0;i<days;i++){var d=addD(s0,i),dw=d.getDay();if(wd&&(dw===0||dw===6))continue;var k=dstr(d),x=docs[k]||{id:k,date:k,drivers:[],note:""};
+      if(x.ws)oldWs[x.ws]=1;
+      var ro=Object.assign({A:"",B:"",C:""},x.roles||{}),st=Object.assign({},x.st||{});
+      ["A","B","C"].forEach(function(c){if(ro[c]===nm)ro[c]=""});delete st[nm];
+      if(/^[ABC]$/.test(code))ro[code]=nm;else if(code==="OFF"||code==="STANDBY")st[nm]=code;
+      x.roles=ro;x.st=st;docs[k]=x;touched[k]=1}
+    [dstr(addD(s0,-1)),dstr(addD(s0,days))].forEach(function(k){if(docs[k]&&docs[k].ws)oldWs[docs[k].ws]=1});
+    Object.keys(docs).forEach(function(k){if(docs[k].roles&&docs[k].ws&&oldWs[docs[k].ws])touched[k]=touched[k]||2});
+    var del=[];
+    Object.keys(touched).forEach(function(k){var x=docs[k],ro=x.roles,we=new Date(k+"T00:00").getDay(),wk=we===0||we===6;
+      x.drivers=(wk?[ro.A]:[ro.B,ro.C]).filter(Boolean);
+      if(!Object.keys(x.st||{}).length)delete x.st;
+      if(!ro.A&&!ro.B&&!ro.C&&!x.st){del.push(k);delete touched[k]}});
+    var ids=Object.keys(touched).sort(),runs=[],cur=null;
+    ids.forEach(function(k){var x=docs[k],key=JSON.stringify([x.roles,x.places||{},x.wk||""]);
+      if(cur&&cur.key===key&&dstr(addD(new Date(cur.last+"T00:00"),1))===k){cur.ids.push(k);cur.last=k}else{cur={key:key,ids:[k],last:k,wk:x.wk||""};runs.push(cur)}});
+    runs.forEach(function(r){r.ids.forEach(function(k){docs[k].ws=r.ids[0];docs[k].we=r.last;docs[k].wk=r.wk})});
+    var ops=del.filter(function(k){return before[k]}).map(function(k){return {op:"delete",c:"roster",id:k}});
+    ids.forEach(function(k){if(JSON.stringify(docs[k])!==before[k])ops.push({op:"set",c:"roster",id:k,data:docs[k]})});
+    return batchWrite(ops).then(function(ok){return {ok:ok,n:ops.length}})
+  });
+  jwQ=work.then(function(){},function(){});
+  var r=await work.catch(function(){return {ok:false}});
+  $("stSave").disabled=false;
+  if(r.ok){m.className="msg ok";m.textContent="Disimpan untuk "+nm+" ("+r.n+" hari dikemas kini)."}else m.textContent="Gagal menyimpan sebahagian hari. Tekan Simpan sekali lagi."
+};
+function renderCals(){renderCal("calS");renderCal("calD");renderGiliran();renderJw();stFill()}
 function renderRoster(){
   var c=$("roStart").value;$("roStart").innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)$("roStart").value=c;
   if(!$("roFrom").value){var n=new Date();$("roFrom").value=dstr(n);$("roTo").value=dkey(n.getFullYear(),n.getMonth(),new Date(n.getFullYear(),n.getMonth()+1,0).getDate())}
