@@ -99,6 +99,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <h2>Borang Tempahan</h2>
     <label>Kegiatan aktiviti</label><select id="keg"><option>Sukan / Permainan</option><option>Lawatan</option><option>Perkhemahan</option><option>Kursus / Mesyuarat</option><option>Lain-lain</option></select>
     <label>Tujuan aktiviti / nama program</label><input id="prog">
+    <label>No. gaji pemohon (nama keluar automatik)</label><input id="gajiP" inputmode="numeric" autocomplete="off" placeholder="cth: 227375"><div class="small" id="gajiMsg" style="margin-top:4px"></div>
     <label>Guru / staf pemohon</label><input id="guru">
     <div class="row"><div><label>Bil. ahli rombongan</label><input id="pel" type="number" min="1"></div><div><label>Tempat aktiviti</label><input id="tuj" placeholder="cth: Dataran Kangar Jaya, Kangar"></div></div>
     <div class="row"><div><label>Mula</label><input id="mula" type="datetime-local"></div><div><label>Tamat</label><input id="tamat" type="datetime-local"></div></div>
@@ -679,6 +680,15 @@ function respTables(){
         var w=document.createElement("div");w.className="cv";while(td.firstChild)w.appendChild(td.firstChild);td.appendChild(w)})})}
 }
 var rtT=null;new MutationObserver(function(){clearTimeout(rtT);rtT=setTimeout(respTables,30)}).observe(document.body,{childList:true,subtree:true});
+var gajiT=null,gajiSeq=0;
+$("gajiP").oninput=function(){
+  clearTimeout(gajiT);var v=this.value.replace(/\D/g,""),m=$("gajiMsg");m.textContent="";
+  if(v.length<5||!apiOn())return;var q=++gajiSeq;
+  gajiT=setTimeout(function(){m.textContent="Mencari...";
+    apiCall({action:"staffname",noGaji:v}).then(function(r){if(q!==gajiSeq)return;
+      if(r&&r.ok&&r.name){$("guru").value=r.name;m.textContent="Dijumpai: "+r.name+(r.jawatan?" ("+r.jawatan+")":"")}
+      else if(r&&r.error==="limit")m.textContent="Terlalu banyak carian. Isi nama guru sendiri.";
+      else m.textContent="No. gaji tiada dalam senarai. Isi nama guru sendiri."}).catch(function(){if(q===gajiSeq)m.textContent="Tidak dapat mencari. Isi nama guru sendiri."})},350)};
 function stCards(a){return a.map(function(x){return '<div class="st" style="--c:'+x[2]+'"><b>'+x[1]+'</b><span>'+x[0]+'</span></div>'}).join("")}
 function fillDrvSel(sel){var c0=sel.value;sel.innerHTML='<option value="">Semua</option>'+drvDocs.map(function(d){return '<option value="'+esc(d.name)+'">'+esc(d.name)+'</option>'}).join("");if(c0&&drvDocs.some(function(d){return d.name===c0}))sel.value=c0}
 function fillYM(ys,ms){
@@ -808,7 +818,7 @@ $("dprev").onclick=function(){shiftDay(-1)};$("dnext").onclick=function(){shiftD
 $("mkn").onchange=function(){$("mknbox").classList.toggle("hide",!$("mkn").checked)};
 $("hantar").onclick=function(){
   var m=$("msg");m.className="msg";
-  var d={program:$("prog").value.trim(),teacher:$("guru").value.trim(),students:parseInt($("pel").value,10),purpose:$("tuj").value.trim(),start:ts($("mula").value),end:ts($("tamat").value),vehicle:$("veh").value,by:me||"",status:"pending",kegiatan:$("keg").value,taklimat:$("takl").value};
+  var d={program:$("prog").value.trim(),teacher:$("guru").value.trim(),noGaji:$("gajiP").value.replace(/\D/g,""),students:parseInt($("pel").value,10),purpose:$("tuj").value.trim(),start:ts($("mula").value),end:ts($("tamat").value),vehicle:$("veh").value,by:me||"",status:"pending",kegiatan:$("keg").value,taklimat:$("takl").value};
   if($("mkn").checked)d.makanan={menu:$("mmenu").value.trim(),cara:$("mcara").value,bil:$("mbil").value.trim(),tarikh:$("mtkh").value,masa:$("mmasa").value};
   if(!d.program||!d.teacher||!d.purpose||!(d.students>0)||!d.vehicle||isNaN(d.start)||isNaN(d.end)){m.textContent="Sila lengkapkan semua ruangan.";return}
   if(d.end<=d.start){m.textContent="Masa tamat mesti selepas masa mula.";return}
@@ -819,7 +829,7 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
-    ["prog","guru","pel","tuj","mula","tamat","takl","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("mknbox").classList.add("hide");refreshForm();
+    ["prog","gajiP","guru","pel","tuj","mula","tamat","takl","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
 
