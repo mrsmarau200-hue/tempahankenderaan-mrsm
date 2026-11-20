@@ -209,7 +209,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
      <div class="row"><div><label>Shift A (Bas) minggu pertama</label><select id="jwA"></select></div><div><label>Shift B (Van PG)</label><select id="jwB"></select></div></div>
      <label>Shift C (Van PTG)</label><select id="jwC"></select>
      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn" id="jwGen" style="margin:0">Jana Jadual (bertukar setiap minggu)</button><button class="btn" id="jwPrint" style="margin:0;background:#355;">Cetak Jadual</button></div><div class="msg" id="jwMsg"></div>
-     <div class="jtw" id="jwTbl" style="margin-top:12px"></div></div>
+     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px"><button class="del" id="jwPrev" style="color:var(--tx);padding:8px 14px">&lsaquo; Sebelum</button><button class="del" id="jwNow" style="color:var(--tx);padding:8px 14px">Minggu ini</button><button class="del" id="jwNext" style="color:var(--tx);padding:8px 14px">Seterusnya &rsaquo;</button><span class="small" id="jwRange"></span></div><div class="jtw" id="jwTbl" style="margin-top:12px"></div></div>
     <div class="card"><h2>Kalendar Giliran Harian</h2><div id="calS"></div></div>
     <div class="grid2">
      <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini (buang semua pemandu)</button><div class="msg" id="roMsg"></div></div>
@@ -819,9 +819,12 @@ function renderJw(){
   ["jwA","jwB","jwC"].forEach(function(id,i){var e=$(id),c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");e.value=(c&&DRIVERS.indexOf(c)>=0)?c:(DRIVERS[i]||"")});
   var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4));
   if(document.activeElement&&document.activeElement.classList&&(document.activeElement.classList.contains("jsel")||document.activeElement.classList.contains("jpl")))return;
-  $("jwTbl").innerHTML=jwTable(mon0($("jwFrom").value),n,false);
+  var f0=mon0($("jwFrom").value);$("jwRange").textContent=fdmy(f0)+" hingga "+fdmy(addD(f0,n*7-1));
+  $("jwTbl").innerHTML=jwTable(f0,n,false);
 }
 $("jwFrom").onchange=renderJw;$("jwN").onchange=renderJw;
+function jwShift(w){var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4));$("jwFrom").value=dstr(addD(mon0($("jwFrom").value),w*n*7));renderJw()}
+$("jwPrev").onclick=function(){jwShift(-1)};$("jwNext").onclick=function(){jwShift(1)};$("jwNow").onclick=function(){$("jwFrom").value=dstr(mon0());renderJw()};
 $("jwGen").onclick=async function(){
   var m=$("jwMsg");m.className="msg";if(!db||!canEdit)return;
   var a=$("jwA").value,b=$("jwB").value,c=$("jwC").value,n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4)),from=mon0($("jwFrom").value);
