@@ -834,7 +834,7 @@ function jwTable(from,n,print,list){
     var s0=new Date(x.ws+"T00:00"),e0=new Date(x.we+"T00:00"),wkl=x.wk||("MINGGU "+isoWk(s0));
     ["A","B","C"].forEach(function(k,i){var c=JW[k];
       var minggu=esc(wkl)+(!x.set&&!print?'<br><span class="small" style="color:#b45309;white-space:nowrap">kosong</span>':''),tarikh=fdmy(s0)+"-"+fdmy(e0)+"<br>"+spanTxt(s0,e0);
-      h+='<tr'+(!x.set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+minggu+'</td>':'')+'<td class="l nm">'+esc(x.roles[k]||"-")+'</td><td class="gj">'+esc(gajiOf(x.roles[k]))+'</td>'+(i===0?'<td rowspan="3">'+tarikh+'</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+esc((x.places||{})[k]||c.pl)+'</td></tr>'});
+      h+='<tr'+(!x.set&&!print?' style="background:#fff6e0"':'')+'>'+(i===0?'<td rowspan="3">'+minggu+'</td>':'')+'<td class="l nm">'+esc(x.roles[k]||"-")+'</td><td class="gj">'+esc(gajiOf(x.roles[k]))+'</td>'+(i===0?'<td rowspan="3">'+tarikh+'</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+esc((x.places||{})[k]||c.pl)+'</td></tr>'});
   });
   return h+'</tbody></table>'
 }
