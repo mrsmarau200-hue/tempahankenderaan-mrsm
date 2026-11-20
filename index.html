@@ -130,6 +130,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <a data-v="veh">&#128652; Kenderaan</a>
     <a data-v="drv">&#129489; Pemandu</a>
     <a data-v="pm">&#128197; Dashboard Pemandu</a>
+    <a data-v="lap">&#128424; Cetak Laporan</a>
     <a data-v="ros">&#128198; Jadual Giliran</a>
     <a data-v="sup">&#128273; Pengguna</a>
    </nav>
@@ -144,8 +145,10 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
      <div class="card"><h2>Beban pemandu bulan ini</h2><div id="dload"></div></div>
     </div>
     <div class="card"><h2>Tempahan akan datang</h2><div class="row" style="margin-bottom:8px"><div><label style="margin-top:0">Tahun</label><select id="uy"></select></div><div><label style="margin-top:0">Bulan</label><select id="um"></select></div></div><div id="upn"></div></div>
-    <div class="card"><h2>Laporan Penggunaan Kenderaan</h2><label style="margin-top:0">Pemandu</label><select id="rsel"></select><div class="row"><div><label>Tahun</label><select id="ry"></select></div><div><label>Bulan</label><select id="rm"></select></div></div><button class="btn" id="pmprint" style="width:auto;margin-top:14px;padding:10px 18px">Cetak Laporan</button></div>
     <div class="card"><h2>Peringatan tamat tempoh</h2><div id="alerts"></div></div>
+   </div>
+   <div id="v-lap" class="dv hide"><h2 class="dt">Cetak Laporan</h2>
+    <div class="card"><h2>Laporan Penggunaan Kenderaan</h2><label style="margin-top:0">Pemandu</label><select id="rsel"></select><div class="row"><div><label>Tahun</label><select id="ry"></select></div><div><label>Bulan</label><select id="rm"></select></div></div><button class="btn" id="pmprint" style="width:auto;margin-top:14px;padding:10px 18px">Cetak Laporan</button></div>
    </div>
    <div id="v-app" class="dv hide"><h2 class="dt">Menunggu Kelulusan</h2><div class="card"><div id="pend"></div></div></div>
    <div id="v-bk" class="dv hide"><h2 class="dt">Senarai Tempahan</h2>
