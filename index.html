@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tempahan Bas &amp; Van MRSM Arau</title>
+<link rel="icon" type="image/png" href="favicon.png">
 <style>
 :root{--bg:#f6f7f4;--card:#fff;--tx:#1d2a22;--mut:#5f6f65;--bd:#dfe4dc;--ac:#1f6b4a;--act:#fff;--red:#b3261e;--redbg:#fbe9e7;--grn:#1f6b4a;--grnbg:#e3f3ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--card:#1d2620;--tx:#e8efe9;--mut:#9fb0a5;--bd:#2f3c34;--ac:#5fc08f;--act:#10281b;--red:#ff8a80;--redbg:#3a1f1d;--grn:#7fd6a5;--grnbg:#1a3326;color-scheme:dark}}
@@ -16,7 +17,7 @@ h1{font-size:20px;margin:0}h1+p{margin:2px 0 0;color:var(--mut);font-size:13px}
 nav{display:flex;gap:6px;max-width:1100px;margin:8px auto 0;padding:0 16px}
 nav button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600;cursor:pointer}
 nav button.on{background:var(--ac);color:var(--act);border-color:var(--ac)}
-main{max-width:1680px;margin:12px auto;padding:0 20px 40px}
+main{max-width:1100px;margin:12px auto;padding:0 16px 40px}body.wide main,body.wide header{max-width:1680px}body.wide main{padding:0 20px 40px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 h2{font-size:16px;margin:0 0 8px}
@@ -36,7 +37,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 .hide{display:none}.dlg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}.dlg.hide{display:none}.dlg>div{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;max-width:360px;width:100%}.dlg .row{margin-top:12px}.toast{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:420px;margin:auto;background:var(--tx);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:60;font-size:14px}.toast.hide{display:none}.li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}
 .dash{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start}
 .side{position:sticky;top:8px;background:linear-gradient(180deg,#14573b,#0d3b28);color:#e9f5ee;border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;gap:16px;min-height:480px;box-shadow:0 8px 24px rgba(0,0,0,.15)}
-.brand{display:flex;gap:10px;align-items:center;padding:0 6px}.brand b{display:block}.brand small{opacity:.7;font-size:12px}.logo{font-size:24px;background:rgba(255,255,255,.14);border-radius:12px;padding:6px 8px}
+.hlogo{height:58px;width:auto}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .hlogo{background:#fff;border-radius:10px;padding:3px 6px}}.slogo{height:40px;width:auto;background:rgba(255,255,255,.92);border-radius:10px;padding:4px 6px}.brand{display:flex;gap:10px;align-items:center;padding:0 6px}.brand b{display:block}.brand small{opacity:.7;font-size:12px}.logo{font-size:24px;background:rgba(255,255,255,.14);border-radius:12px;padding:6px 8px}
 .sl{display:flex;flex-direction:column;gap:4px;background:none;padding:0;margin:0;max-width:none}
 .sl a,.sf a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#e9f5ee;cursor:pointer;font-weight:600;font-size:14px}
 .sl a:hover,.sf a:hover{background:rgba(255,255,255,.12)}.sl a.on{background:#fff;color:#14573b}
@@ -81,11 +82,10 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 </style>
 </head>
 <body>
-<header><div><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
+<header><div style="display:flex;gap:12px;align-items:center"><img src="logo.png" alt="MRSM" class="hlogo"><div><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></div></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
 <nav><button id="t1" class="on">Status Tempahan</button><button id="t2">Tempah Baharu</button><button id="t3" class="hide">Senarai Tempahan</button><button id="t4" class="hide">Penyelia</button></nav>
 <main>
 <section id="p1">
-  <button class="btn" id="goBook" style="margin:0 0 10px">+ Tempah Bas / Van</button>
   <label style="margin-top:0">Semak untuk tarikh</label>
   <div style="display:flex;gap:6px;margin-bottom:12px"><button class="del" id="dprev" style="color:var(--tx);padding:8px 14px">&lsaquo;</button><input type="date" id="sdate"><button class="del" id="dnext" style="color:var(--tx);padding:8px 14px">&rsaquo;</button></div>
   <p class="small" id="now"></p>
@@ -113,7 +113,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 </section>
 <section id="p3" class="hide"></section>
 <section id="p7" class="hide"><div class="dash">
-  <aside class="side"><div class="brand"><span class="logo">&#128652;</span><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
+  <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
    <div class="sf"><a id="dlout">&#128682; Log Keluar</a></div></aside>
   <div class="dmain"><h2 class="dt" id="pwel"></h2><div class="card"><h2>Giliran Bertugas</h2><div id="giliranNow"></div><div id="calD" style="margin-top:12px"></div></div><div class="card"><label style="margin-top:0">Pemandu</label><select id="pdsel"></select><div class="row"><div><label>Tahun</label><select id="pdy"></select></div><div><label>Bulan</label><select id="pdm"></select></div></div></div><div id="pdbody"></div></div></div></section>
 <section id="p6" class="hide"><div class="card"><h2>Tukar Kata Laluan</h2><p class="small">Ini log masuk pertama anda. Sila tetapkan kata laluan baharu sebelum meneruskan.</p><label>Kata laluan baharu</label><input id="cpw1" type="password" autocomplete="new-password"><label>Ulang kata laluan baharu</label><input id="cpw2" type="password" autocomplete="new-password"><button class="btn" id="cok">Simpan &amp; Masuk</button><div class="msg" id="cerr"></div><button class="del" id="cback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Batal</button></div></section>
@@ -121,7 +121,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 <section id="p4" class="hide">
  <div class="dash">
   <aside class="side">
-   <div class="brand"><span class="logo">&#128652;</span><div><b>MRSM Arau</b><small>Panel Penyelia</small></div></div>
+   <div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small>Panel Penyelia</small></div></div>
    <nav class="sl">
     <a data-v="ov" class="on">&#128202; Ringkasan</a>
     <a data-v="app">&#9989; Kelulusan <i id="bdg" class="hide"></i></a>
@@ -231,8 +231,8 @@ function esc(s){var d=document.createElement("div");d.textContent=s==null?"":Str
 function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
 function ts(v){return v?new Date(v).getTime():NaN}
 function overlap(b,s,e){return s<b.end&&e>b.start}
-function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;document.querySelector("nav").classList.toggle("hide",n===4||n===7);for(var i=1;i<=7;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
-[1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){tab(n)}});
+function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;document.body.classList.toggle("wide",n===4||n===7);document.querySelector("nav").classList.toggle("hide",n===4||n===7);for(var i=1;i<=7;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
+[1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){if(n===2){var sd=$("sdate").value;if(sd&&!$("mula").value){$("mula").value=sd+"T08:00";$("tamat").value=sd+"T17:00";refreshForm()}}tab(n)}});
 
 function bd(b){return Array.isArray(b.drivers)?b.drivers:(b.driver?[b.driver]:[])}
 function has(b,field,name){return field==="driver"?bd(b).indexOf(name)>=0:b[field]===name}
@@ -407,7 +407,6 @@ $("dsave").onclick=async function(){
   }catch(x){m.textContent="Gagal menyimpan."}
 };
 $("addbk").onclick=function(){tab(2)};
-$("goBook").onclick=function(){var s=$("sdate").value;if(s&&!$("mula").value){$("mula").value=s+"T08:00";$("tamat").value=s+"T17:00";refreshForm()}tab(2)};
 var API_URL="https://script.google.com/macros/s/AKfycbw-tc5dCIlK4-f1Ejpkuj4aJOZlw5fEh-XrHsXCNkGkLb5ik5memPYOuF7UC2Bg4H0L/exec",TOKEN="";
 try{TOKEN=sessionStorage.getItem("tok")||""}catch(e){}
 var STORE={},LST={},VER="",polling=false,again=false,warned=false;
