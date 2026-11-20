@@ -204,7 +204,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
    </div>
    <div id="v-pm" class="dv hide"><h2 class="dt">Dashboard Pemandu</h2><div class="card"><label style="margin-top:0">Pemandu</label><select id="pmsel"></select><div class="row"><div><label>Tahun</label><select id="pmy"></select></div><div><label>Bulan</label><select id="pmm"></select></div></div></div><div id="pmbody"></div></div>
    <div id="v-ros" class="dv hide"><h2 class="dt">Jadual Giliran Pemandu</h2>
-    <div class="card" id="jw"><h2>Jadual Waktu Bekerja Pemandu</h2><p class="small">Ikut format jadual rasmi: Shift A (Bas, pejabat, standby Sabtu&ndash;Ahad), B (Van PG) dan C (Van PTG). Setiap minggu shift bertukar A&rarr;B&rarr;C. Pemandu Isnin&ndash;Jumaat standby ialah B dan C.</p>
+    <div class="card" id="jw"><h2>Jadual Waktu Bekerja Pemandu</h2><p class="small">Ikut format jadual rasmi: Shift A (Bas, pejabat, standby Sabtu&ndash;Ahad), B (Van PG) dan C (Van PTG). <b>Cara ubah:</b> pilih nama pemandu terus dalam jadual. Kalau pilih pemandu yang sudah ada di shift lain, mereka bertukar tempat dan disimpan serta-merta. Minggu bergaris oren belum disimpan: laras nama kemudian tekan <b>Simpan minggu</b>. Butang <b>Kosongkan</b> membuang minggu itu.</p>
      <div class="row"><div><label style="margin-top:0">Mula (mana-mana hari, minggu bermula Isnin)</label><input id="jwFrom" type="date"></div><div><label style="margin-top:0">Bilangan minggu</label><input id="jwN" type="number" min="1" max="26" value="4"></div></div>
      <div class="row"><div><label>Shift A (Bas) minggu pertama</label><select id="jwA"></select></div><div><label>Shift B (Van PG)</label><select id="jwB"></select></div></div>
      <label>Shift C (Van PTG)</label><select id="jwC"></select>
@@ -226,7 +226,6 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
-<div class="dlg hide" id="jdlg"><div style="max-width:420px"><b id="jtit"></b><label>Shift A (Bas)</label><select id="jsa"></select><label>Shift B (Van PG)</label><select id="jsb"></select><label>Shift C (Van PTG)</label><select id="jsc"></select><div class="msg" id="jmsg"></div><div class="row" style="margin-top:10px"><button class="del" id="jcancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="jsave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun (untuk cetak)</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun, buka fail tersebut dan cetak.</p><div id="pbody"></div></div>
@@ -785,23 +784,35 @@ function weekRoles(mon){for(var i=0;i<7;i++){var r=rmap[dstr(addD(mon,i))];if(r&
 function gajiOf(n){var d=drvDocs.find(function(x){return x.name===n});return d&&d.noGaji||""}
 function dayDocFor(mon,i,ro){var d=addD(mon,i),k=dstr(d),we=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:we?[ro.A]:[ro.B,ro.C],roles:ro,note:(ex&&ex.note)||""}}
 function dutyFor(b,r){var ro=r.roles,dt=new Date(b.start),dw=dt.getDay();if(dw===0||dw===6)return [ro.A];if(/bas/i.test(b.vehicle||""))return [ro.A,ro.C];return [dt.getHours()>=12?ro.C:ro.B]}
+function jwSel(mon,k,val){var o=DRIVERS.slice();if(val&&o.indexOf(val)<0)o.unshift(val);return '<select class="jsel" data-wk="'+mon+'" data-r="'+k+'" data-old="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;min-width:190px">'+o.map(function(d){return '<option'+(d===val?' selected':'')+'>'+esc(d)+'</option>'}).join("")+'</select>'}
 function jwTable(from,n,print){
   var h='<table class="jt"><thead><tr><th rowspan="4">MINGGU</th><th rowspan="4">NAMA</th><th rowspan="4">NO GAJI</th><th rowspan="4">TARIKH</th><th colspan="3">JADUAL WAKTU BERKERJA '+from.getFullYear()+'</th><th>JENIS KENDERAAN</th><th class="y" rowspan="4">ISNIN-JUMAAT</th><th class="y" rowspan="4">SABTU-AHAD</th><th class="y" rowspan="4">TEMPAT BERTUGAS</th></tr>';
   ["A","B","C"].forEach(function(k){h+='<tr><td style="background:'+JW[k].col+'">'+k+'</td><td style="background:'+JW[k].col+'">8.00 PAGI</td><td style="background:'+JW[k].col+'">5.00 PETANG</td><td style="background:'+JW[k].col+'">'+JW[k].vh+'</td></tr>'});
   h+='</thead><tbody>';
+  var prev=weekRoles(addD(from,-7));if(!prev&&!print&&$("jwA")&&$("jwA").value)prev={A:$("jwC").value,B:$("jwA").value,C:$("jwB").value};
   for(var w=0;w<n;w++){
-    var mon=addD(from,w*7),ro=weekRoles(mon),tr=fdmy(mon)+"-"+fdmy(addD(mon,6)),wk="MINGGU "+isoWk(mon);
-    if(!ro){h+='<tr><td>'+wk+'</td><td class="l" colspan="3" style="color:#888">Belum ditetapkan</td><td>'+tr+'<br>ISNIN-AHAD</td><td colspan="7">'+(print?'':'<button class="btn ub" data-jw="'+dstr(mon)+'">Tetapkan</button>')+'</td></tr>';continue}
+    var mon=addD(from,w*7),mk=dstr(mon),ro=weekRoles(mon),set=!!ro,tr=fdmy(mon)+"-"+fdmy(addD(mon,6)),wk="MINGGU "+isoWk(mon);
+    if(!ro){ro=prev?{A:prev.C,B:prev.A,C:prev.B}:{A:DRIVERS[0]||"",B:DRIVERS[1]||"",C:DRIVERS[2]||""};
+      if(print){prev=ro;continue}}
+    prev=ro;
     ["A","B","C"].forEach(function(k,i){var c=JW[k];
-      h+='<tr>'+(i===0?'<td rowspan="3">'+wk+(print?'':'<br><button class="btn ub" data-jw="'+dstr(mon)+'">Ubah</button>')+'</td>':'')+'<td class="l nm">'+esc(ro[k]||"-")+'</td><td>'+esc(gajiOf(ro[k]))+'</td>'+(i===0?'<td rowspan="3">'+tr+'<br>ISNIN-AHAD</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+c.pl+'</td></tr>'});
+      var act=print?"":(set?'<br><button class="del ub" data-jwclr="'+mk+'" style="color:var(--tx)">Kosongkan</button>':'<br><span class="small" style="color:#b45309">belum disimpan</span><br><button class="btn ub" data-jwsave="'+mk+'">Simpan minggu</button>');
+      h+='<tr'+(!set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+wk+act+'</td>':'')+'<td class="l nm">'+(print?esc(ro[k]||"-"):jwSel(mk,k,ro[k])+'')+'</td><td class="gj">'+esc(gajiOf(ro[k]))+'</td>'+(i===0?'<td rowspan="3">'+tr+'<br>ISNIN-AHAD</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+c.pl+'</td></tr>'});
   }
   return h+'</tbody></table>'
+}
+async function jwSaveWeek(mk){
+  var mon=new Date(mk+"T00:00"),ro={};document.querySelectorAll('#jwTbl select[data-wk="'+mk+'"]').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});
+  if(!ro.A||!ro.B||!ro.C||ro.A===ro.B||ro.B===ro.C||ro.A===ro.C){toast("Pilih tiga pemandu berbeza.");return false}
+  var ws=[];for(var i=0;i<7;i++)ws.push(dayDocFor(mon,i,ro));
+  try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));return true}catch(e){toast("Gagal menyimpan.");return false}
 }
 function renderJw(){
   if(!$("jwTbl"))return;
   if(!$("jwFrom").value)$("jwFrom").value=dstr(mon0());
   ["jwA","jwB","jwC"].forEach(function(id,i){var e=$(id),c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");e.value=(c&&DRIVERS.indexOf(c)>=0)?c:(DRIVERS[i]||"")});
   var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4));
+  if(document.activeElement&&document.activeElement.classList&&document.activeElement.classList.contains("jsel"))return;
   $("jwTbl").innerHTML=jwTable(mon0($("jwFrom").value),n,false);
 }
 $("jwFrom").onchange=renderJw;$("jwN").onchange=renderJw;
@@ -815,18 +826,21 @@ $("jwGen").onclick=async function(){
   for(var w=0;w<n;w++){for(var i=0;i<7;i++)ws.push(dayDocFor(addD(from,w*7),i,ro));ro={A:ro.C,B:ro.A,C:ro.B}}
   try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));m.className="msg ok";m.textContent="Jadual dijana untuk "+n+" minggu."}catch(e){m.textContent="Gagal menyimpan sebahagian jadual."}
 };
-var jwEd=null;
-document.addEventListener("click",function(ev){var k=ev.target.getAttribute&&ev.target.getAttribute("data-jw");if(!k||!canEdit)return;
-  jwEd=k;var mon=new Date(k+"T00:00"),ro=weekRoles(mon)||{};$("jtit").textContent="Minggu "+isoWk(mon)+" ("+fdmy(mon)+" - "+fdmy(addD(mon,6))+")";
-  [["jsa","A"],["jsb","B"],["jsc","C"]].forEach(function(x,i){var e=$(x[0]);e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");e.value=ro[x[1]]&&DRIVERS.indexOf(ro[x[1]])>=0?ro[x[1]]:(DRIVERS[i]||"")});
-  $("jmsg").textContent="";$("jdlg").classList.remove("hide")});
-$("jcancel").onclick=function(){$("jdlg").classList.add("hide");jwEd=null};
-$("jsave").onclick=async function(){
-  var a=$("jsa").value,b=$("jsb").value,c=$("jsc").value,m=$("jmsg");
-  if(!a||!b||!c||a===b||b===c||a===c){m.textContent="Pilih tiga pemandu berbeza.";return}
-  var mon=new Date(jwEd+"T00:00"),ro={A:a,B:b,C:c},ws=[];for(var i=0;i<7;i++)ws.push(dayDocFor(mon,i,ro));
-  try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));$("jdlg").classList.add("hide");jwEd=null;toast("Minggu dikemas kini.")}catch(e){m.textContent="Gagal menyimpan."}
-};
+$("jwTbl").addEventListener("change",async function(ev){
+  var e=ev.target;if(!e.classList||!e.classList.contains("jsel")||!canEdit||!db)return;
+  var mk=e.getAttribute("data-wk"),r=e.getAttribute("data-r"),old=e.getAttribute("data-old"),sels=[].slice.call($("jwTbl").querySelectorAll('select[data-wk="'+mk+'"]'));
+  sels.forEach(function(o){if(o!==e&&o.value===e.value){o.value=old;o.setAttribute("data-old",old)}});
+  e.setAttribute("data-old",e.value);
+  sels.forEach(function(o){var td=o.parentNode.nextSibling;if(td)td.textContent=gajiOf(o.value)});
+  var mon=new Date(mk+"T00:00");
+  if(weekRoles(mon)){var ok=await jwSaveWeek(mk);if(ok)toast("Minggu dikemas kini.")}
+});
+$("jwTbl").addEventListener("click",async function(ev){
+  var t=ev.target,sv=t.getAttribute&&t.getAttribute("data-jwsave"),cl=t.getAttribute&&t.getAttribute("data-jwclr");
+  if(!canEdit||!db)return;
+  if(sv){if(await jwSaveWeek(sv))toast("Minggu disimpan.")}
+  if(cl){var ok=await ask("Kosongkan giliran minggu ini?");if(!ok)return;var mon=new Date(cl+"T00:00");try{await Promise.all([0,1,2,3,4,5,6].map(function(i){var k=dstr(addD(mon,i));return rmap[k]?db.collection("roster").doc(k).delete():null}));toast("Minggu dikosongkan.")}catch(e){toast("Gagal memadam.")}}
+});
 var JNOTES=["PEMANDU HENDAKLAH MENGEMASKINI BUKU LOG","PEMANDU BOLEH MEMBUAT TUNTUTAN LEBIH MASA BERTUGAS SEBELUM JAM 8.00 PAGI DAN SELEPAS PUKUL 5.00 PETANG PADA HARI BERTUGAS","PEMANDU DIMINTA BERADA DI PEJABAT SEKIRANYA TIADA TUGASAN DI LUAR (WORKSTATION AKAN DISEDIAKAN) BAGI MEMBANTU KERJA-KERJA DI PEJABAT (MEMBANTU PEMBANTU OPERASI DI PEJABAT)","PEMANDU PERLU MEMBUAT PERANCANGAN CUTI REHAT BAGI MEMASTIKAN TERDAPAT PEMANDU BERTUGAS SETIAP HARI","PERUBAHAN DARI SEMASA KE SEMASA MENGIKUT ARAHAN PENGAWAL PUSAT / YANG MENJALANKAN TUGAS PENGAWAL PUSAT","DUA ORANG PEMANDU (BAS) BAGI PERJALANAN LUAR NEGERI PERLIS MINIMUM 200KM BERGANTUNG ATAS BUDI BICARA PENGAWAL PUSAT/YANG MENJALANKAN TUGAS PENGAWAL PUSAT","BAS KELUAR - PEMANDU BAS &amp; PEMANDU VAN PETANG","SEKIRANYA PEMANDU \"STANDBY BAS\" SABTU &amp; AHAD TIADA - PEMANDU VAN PETANG AKAN MENGAMBIL TUGASAN"];
 $("jwPrint").onclick=function(){
   if(!canEdit)return;var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4)),from=mon0($("jwFrom").value),to=addD(from,n*7-1);
