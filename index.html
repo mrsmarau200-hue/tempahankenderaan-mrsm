@@ -212,10 +212,6 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
      <label>Minggu</label><select id="stFW"></select>
      <div id="stRows"></div>
      <button class="btn" id="stSave">Simpan Minggu Ini</button><div class="msg" id="stMsg"></div></div></div>
-    <div class="grid2">
-     <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini (buang semua pemandu)</button><div class="msg" id="roMsg"></div></div>
-     <details class="card"><summary style="cursor:pointer;font-weight:700">Isi harian automatik (cara lama, bergilir setiap hari)</summary><h2 style="display:none">Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Tetapkan berapa hari setiap pemandu bertugas sebelum bertukar (contoh 5 = seorang pemandu untuk 5 hari berturut-turut). Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><label>Bilangan hari setiap pemandu sebelum bertukar</label><input id="roN" type="number" min="1" max="31" value="1"><label class="ck" style="margin-top:8px"><input type="checkbox" id="roWk" style="width:auto"> Langkau Sabtu &amp; Ahad (tak dikira, tiada giliran)</label><button class="btn" id="roGo">Isi Giliran</button><button class="del" id="roRng" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Giliran Dari&ndash;Hingga</button><div class="msg" id="roMsg2"></div></details>
-    </div>
    </div>
    <div id="v-sup" class="dv hide"><h2 class="dt">Daftar Pengguna</h2>
     <div class="grid2">
@@ -354,7 +350,7 @@ function renderDash(){
   $("alerts").innerHTML=al.length?al.map(function(x){return x.h}).join(""):'<p class="small">Tiada dokumen atau servis yang akan tamat dalam 30 hari.</p>';
 }
 function renderAdmin(){
-  renderDash();renderReg();renderMnt();renderDriver();renderPm();renderRoster();renderCals();
+  renderDash();renderReg();renderMnt();renderDriver();renderPm();renderCals();
   function lst(el,docs,col){el.innerHTML=docs.length?docs.map(function(d){return '<div class="li"><span>'+esc(d.name)+'</span><button class="del" data-c="'+col+'" data-id="'+esc(d.id)+'">Padam</button></div>'}).join(""):'<p class="small">Belum ada senarai.</p>'}
   $("vlist").innerHTML=vehDocs.length?vehDocs.map(function(v){var r=regDocs.find(function(x){return x.id===v.id});return '<div class="li"><span>'+esc(v.name)+(r&&r.plate?' <span class="small">('+esc(r.plate)+')</span>':'')+'</span><span style="display:flex;gap:6px"><button class="del" style="color:var(--tx)" data-ve="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehicles" data-id="'+esc(v.id)+'">Padam</button></span></div>'}).join(""):'<p class="small">Belum ada kenderaan.</p>';$("dlist").innerHTML=drvDocs.length?drvDocs.map(function(d){
     var ex=d.lesenTamat?new Date(d.lesenTamat+"T23:59"):null,days=ex?Math.floor((ex-Date.now())/864e5):null,warn=ex&&days<=30;
@@ -760,7 +756,7 @@ function doLogout(){var t=TOKEN;TOKEN="";VER="";canEdit=false;cur=null;pendSup=n
 $("dlout").onclick=doLogout;
 document.querySelectorAll("#p7 .sl a").forEach(function(a){a.onclick=function(){var v=a.getAttribute("data-p");document.querySelectorAll(".pv").forEach(function(e){e.classList.toggle("hide",e.id!=="pv-"+v)});document.querySelectorAll("#p7 .sl a").forEach(function(x){x.classList.toggle("on",x===a)})}});
 var PAL=["#2e7d5b","#3b82c4","#d9822b","#8a5cc2","#c2456b","#2aa6a0","#9a8a1f","#6b7a8f"];
-var rosterDocs=[],rmap={},_n=new Date(),calSt={calS:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)},calD:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)}},roSel=null;
+var rosterDocs=[],rmap={},_n=new Date(),calSt={calS:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)},calD:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)}};
 function dkey(y,m,d){return y+"-"+("0"+(m+1)).slice(-2)+"-"+("0"+d).slice(-2)}
 function fdate(k){return new Date(k+"T00:00").toLocaleDateString("ms-MY",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
 function dcol(n){var i=drvDocs.findIndex(function(x){return x.name===n});return i<0?"#6b7a8f":PAL[i%PAL.length]}
@@ -936,55 +932,13 @@ $("stSave").onclick=async function(){
   if(ok){m.className="msg ok";m.textContent=empty?"Minggu dikosongkan.":"Disimpan.";stLoad()}else m.textContent="Gagal menyimpan sebahagian hari. Tekan Simpan sekali lagi."
 };
 function renderCals(){renderCal("calS");renderCal("calD");renderGiliran();renderJw();stFill()}
-function renderRoster(){
-  var c=$("roStart").value;$("roStart").innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)$("roStart").value=c;
-  if(!$("roFrom").value){var n=new Date();$("roFrom").value=dstr(n);$("roTo").value=dkey(n.getFullYear(),n.getMonth(),new Date(n.getFullYear(),n.getMonth()+1,0).getDate())}
-}
-function loadRoster(k){
-  roSel=k;var r=rmap[k]||{};$("roEd").classList.remove("hide");$("roDate").textContent=fdate(k);$("roMsg").textContent="";
-  $("roPick").innerHTML=DRIVERS.map(function(d){return '<label class="ck"><input type="checkbox" value="'+esc(d)+'"'+((r.drivers||[]).indexOf(d)>=0?" checked":"")+'> '+esc(d)+'</label>'}).join("")||'<span class="small">Belum ada pemandu aktif.</span>';
-  $("roNote").value=r.note||"";
-}
 document.addEventListener("click",function(ev){
   var t=ev.target.closest&&ev.target.closest("[data-cal]");if(!t)return;
   var id=t.getAttribute("data-cal"),st=calSt[id],nv=t.getAttribute("data-cn"),dy=t.getAttribute("data-day");
   if(nv){st.m+=+nv;if(st.m<0){st.m=11;st.y--}else if(st.m>11){st.m=0;st.y++}}
-  else if(dy){st.sel=dy;if(id==="calS")loadRoster(dy)}
+  else if(dy){st.sel=dy}
   renderCal(id);
 });
-$("roSave").onclick=async function(){
-  var m=$("roMsg");m.className="msg";if(!roSel||!db)return;
-  var ds=Array.prototype.map.call($("roPick").querySelectorAll("input:checked"),function(c){return c.value});
-  if(!ds.length){if(!rmap[roSel]){m.textContent="Tiada giliran pada hari ini.";return}try{await db.collection("roster").doc(roSel).delete();loadRoster(roSel);m.className="msg ok";m.textContent="Semua pemandu dibuang. Giliran hari ini dikosongkan."}catch(x){m.textContent="Gagal memadam."}return}
-  try{await db.collection("roster").doc(roSel).set({id:roSel,date:roSel,drivers:ds,note:$("roNote").value.trim()});m.className="msg ok";m.textContent="Giliran disimpan."}catch(x){m.textContent="Gagal menyimpan."}
-};
-$("roClear").onclick=async function(){
-  var m=$("roMsg");m.className="msg";if(!roSel||!db)return;
-  if(!rmap[roSel]){m.textContent="Tiada giliran untuk dikosongkan.";return}
-  try{await db.collection("roster").doc(roSel).delete();loadRoster(roSel);m.className="msg ok";m.textContent="Giliran dikosongkan."}catch(x){m.textContent="Gagal memadam."}
-};
-$("roRng").onclick=async function(){
-  var m=$("roMsg2");m.className="msg";var f=$("roFrom").value,t=$("roTo").value;
-  if(!f||!t||t<f){m.textContent="Sila pilih tarikh dari dan hingga dengan betul.";return}
-  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
-  var ks=Object.keys(rmap).filter(function(k){return k>=f&&k<=t});
-  if(!ks.length){m.textContent="Tiada giliran dalam julat itu.";return}
-  var ok=await ask("Kosongkan giliran "+ks.length+" hari ("+f+" hingga "+t+")?");if(!ok)return;
-  var okr=await batchWrite(ks.map(function(k){return {op:"delete",c:"roster",id:k}}));if(okr){m.className="msg ok";m.textContent="Giliran dikosongkan untuk "+ks.length+" hari."}else m.textContent="Gagal memadam sebahagian giliran."
-};
-$("roGo").onclick=async function(){
-  var m=$("roMsg2");m.className="msg";var f=$("roFrom").value,t=$("roTo").value;
-  if(!f||!t||t<f){m.textContent="Sila pilih tarikh dari dan hingga dengan betul.";return}
-  if(!DRIVERS.length){m.textContent="Belum ada pemandu aktif.";return}
-  if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
-  var d0=new Date(f+"T00:00"),d1=new Date(t+"T00:00");if((d1-d0)/864e5>366){m.textContent="Julat maksimum 366 hari.";return}
-  var si=Math.max(0,DRIVERS.indexOf($("roStart").value)),list=[],i=0;
-  var nn=Math.max(1,Math.min(31,parseInt($("roN").value,10)||1)),wk=$("roWk").checked;
-  for(var d=new Date(d0);d<=d1;d.setDate(d.getDate()+1)){if(wk&&(d.getDay()===0||d.getDay()===6))continue;list.push({k:dstr(d),n:DRIVERS[(si+Math.floor(i/nn))%DRIVERS.length]});i++}
-  if(!list.length){m.textContent="Tiada hari dalam julat yang dipilih.";return}
-  var ok=await ask("Isi giliran untuk "+list.length+" hari ("+f+" hingga "+t+")? Giliran sedia ada pada tarikh tersebut akan diganti.");if(!ok)return;
-  var oka=await batchWrite(list.map(function(x){var ex=rmap[x.k];return {op:"set",c:"roster",id:x.k,data:{id:x.k,date:x.k,drivers:[x.n],note:ex&&ex.note?ex.note:""}}}));if(oka){m.className="msg ok";m.textContent="Giliran diisi untuk "+list.length+" hari."}else m.textContent="Gagal menyimpan sebahagian giliran."
-};
 var pendSup=null;
 $("cback").onclick=function(){pendSup=null;tab(1)};
 $("cok").onclick=async function(){
