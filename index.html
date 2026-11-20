@@ -80,7 +80,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 .cb{position:absolute;right:3px;top:2px;font-size:10px;background:var(--bd);color:var(--tx);border-radius:99px;padding:0 5px}
 .leg{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font-size:12px}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
 .caldet{margin-top:10px;padding:10px;border:1px solid var(--bd);border-radius:10px}
-</style>
+.stopts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.stop{margin:0!important;cursor:pointer}.stop input{display:none}.stop span{display:block;padding:9px 14px;border:2px solid var(--bd);border-radius:10px;font-size:14px;background:var(--card);color:var(--tx)}.stop input:checked+span{background:var(--ac);border-color:var(--ac);color:var(--act);font-weight:700}</style>
 </head>
 <body>
 <header><div style="display:flex;gap:12px;align-items:center"><img src="logo.png" alt="MRSM" class="hlogo"><div><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></div></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
@@ -214,7 +214,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div class="card" id="stCard"><h2>Tetapan Giliran Pemandu</h2><p class="small">Pilih pemandu, julat tarikh dan status. Jadual A/B/C dan kalendar di atas dikemas kini sendiri untuk setiap hari dalam julat itu. Ulang untuk pemandu lain.</p>
      <label>Pemandu</label><select id="stDrv"></select>
      <div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div>
-     <label>Status</label><select id="stCode"><option value="A">Shift A &ndash; Bas</option><option value="B">Shift B &ndash; Van PG (pagi)</option><option value="C">Shift C &ndash; Van PTG (petang)</option><option value="OFF">OFF</option><option value="STANDBY">STANDBY</option><option value="-">Kosongkan pemandu ini</option></select>
+     <label>Status</label><input type="hidden" id="stCode" value="A"><div class="stopts" id="stOpts"><label class="stop"><input type="radio" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="radio" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="radio" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="radio" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="radio" name="stR" value="STANDBY"><span>STANDBY</span></label><label class="stop"><input type="radio" name="stR" value="-"><span>Kosongkan pemandu ini</span></label></div>
      <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="stWd" style="width:auto;margin:0"> Langkau Sabtu &amp; Ahad</label>
      <button class="btn" id="stSave">Simpan Tetapan</button><div class="msg" id="stMsg"></div></div>
     <div class="grid2">
@@ -914,6 +914,7 @@ $("jwPrint").onclick=function(){
 };
 function css_jt(){return '.jt{border-collapse:collapse;width:100%;font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.jt th,.jt td{border:1px solid #444;padding:3px 5px;text-align:center;vertical-align:middle}.jt th{background:#4472c4;color:#fff;font-weight:600}.jt th.y{background:#ffc000;color:#000}.jt td.l{text-align:left}.jt td.nm{white-space:nowrap}.jt tr{page-break-inside:avoid}'}
 
+$("stOpts").onchange=function(e){if(e.target.name==="stR")$("stCode").value=e.target.value};
 function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c}
 $("stSave").onclick=async function(){
   var m=$("stMsg");m.className="msg";if(!db||!canEdit)return;
