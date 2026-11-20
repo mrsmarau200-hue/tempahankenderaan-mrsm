@@ -615,9 +615,10 @@ window.addEventListener("resize",fitPaper);
 function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;showFormB(b)}
 function showFormB(b,note){curForm=b;curRpt=null;$("pbody").innerHTML=(note?'<div class="small ok-note" style="max-width:760px;margin:0 auto 10px;padding:10px 12px;border-radius:10px;background:#e6f4ea;color:#14573b;font-weight:600">'+note+'</div>':"")+'<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper()}
 var justSent="";
+var bseq=0;
 function openBorang(id){
-  var tr=0;$("pbody").innerHTML='<p class="small" style="text-align:center;padding:30px">Memuatkan borang...</p>';$("pform").classList.remove("hide");$("pclose").textContent="Laman Utama";
-  (function w(){var b=bookings.find(function(x){return x.id===id});
+  var tr=0,my=++bseq;$("pbody").innerHTML='<p class="small" style="text-align:center;padding:30px">Memuatkan borang...</p>';$("pform").classList.remove("hide");$("pclose").textContent="Laman Utama";
+  (function w(){if(my!==bseq)return;var b=bookings.find(function(x){return x.id===id});
     if((b&&(b.noBorang||tr>8))||(!b&&tr>20)){
       if(!b){$("pbody").innerHTML='<p style="text-align:center;padding:30px">Borang tidak dijumpai. Sila semak pautan atau hubungi penyelia.</p>';return}
       var note=justSent===id?"Tempahan berjaya dihantar. Sila cetak borang ini (butang Cetak) dan serahkan kepada penyelia untuk kelulusan. Simpan pautan halaman ini jika perlu mencetak semula.":"";
@@ -851,7 +852,7 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
-    justSent=id;location.hash="borang-"+id;
+    justSent=id;try{location.hash="borang-"+id}catch(e){}openBorang(id);
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
