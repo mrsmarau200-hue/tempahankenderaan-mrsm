@@ -206,7 +206,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div class="card"><div id="calS"></div></div>
     <div class="grid2">
      <div class="card hide" id="roEd"><h2 id="roDate"></h2><p class="small">Pilih pemandu yang bertugas pada hari ini (boleh lebih daripada seorang).</p><div class="pk" id="roPick"></div><label>Catatan (pilihan)</label><input id="roNote" placeholder="cth: Hantar pelajar ke klinik"><button class="btn" id="roSave">Simpan Giliran</button><button class="del" id="roClear" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Kosongkan Hari Ini</button><div class="msg" id="roMsg"></div></div>
-     <div class="card"><h2>Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><button class="btn" id="roGo">Isi Giliran</button><div class="msg" id="roMsg2"></div></div>
+     <div class="card"><h2>Isi Giliran Automatik</h2><p class="small">Pemandu aktif akan bergilir mengikut turutan senarai pemandu. Tetapkan berapa hari setiap pemandu bertugas sebelum bertukar (contoh 5 = seorang pemandu untuk 5 hari berturut-turut). Giliran sedia ada pada tarikh dalam julat akan diganti.</p><div class="row"><div><label>Dari</label><input id="roFrom" type="date"></div><div><label>Hingga</label><input id="roTo" type="date"></div></div><label>Mula dengan</label><select id="roStart"></select><label>Bilangan hari setiap pemandu sebelum bertukar</label><input id="roN" type="number" min="1" max="31" value="1"><label class="ck" style="margin-top:8px"><input type="checkbox" id="roWk" style="width:auto"> Langkau Sabtu &amp; Ahad (tak dikira, tiada giliran)</label><button class="btn" id="roGo">Isi Giliran</button><div class="msg" id="roMsg2"></div></div>
     </div>
    </div>
    <div id="v-sup" class="dv hide"><h2 class="dt">Daftar Pengguna</h2>
@@ -796,7 +796,8 @@ $("roGo").onclick=async function(){
   if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
   var d0=new Date(f+"T00:00"),d1=new Date(t+"T00:00");if((d1-d0)/864e5>366){m.textContent="Julat maksimum 366 hari.";return}
   var si=Math.max(0,DRIVERS.indexOf($("roStart").value)),list=[],i=0;
-  for(var d=new Date(d0);d<=d1;d.setDate(d.getDate()+1)){list.push({k:dstr(d),n:DRIVERS[(si+i)%DRIVERS.length]});i++}
+  var nn=Math.max(1,Math.min(31,parseInt($("roN").value,10)||1)),wk=$("roWk").checked;
+  for(var d=new Date(d0);d<=d1;d.setDate(d.getDate()+1)){if(wk&&(d.getDay()===0||d.getDay()===6))continue;list.push({k:dstr(d),n:DRIVERS[(si+Math.floor(i/nn))%DRIVERS.length]});i++}
   if(!list.length){m.textContent="Tiada hari dalam julat yang dipilih.";return}
   var ok=await ask("Isi giliran untuk "+list.length+" hari ("+f+" hingga "+t+")? Giliran sedia ada pada tarikh tersebut akan diganti.");if(!ok)return;
   try{await Promise.all(list.map(function(x){var ex=rmap[x.k];return db.collection("roster").doc(x.k).set({id:x.k,date:x.k,drivers:[x.n],note:ex&&ex.note?ex.note:""})}));m.className="msg ok";m.textContent="Giliran diisi untuk "+list.length+" hari."}catch(e){m.textContent="Gagal menyimpan sebahagian giliran."}
