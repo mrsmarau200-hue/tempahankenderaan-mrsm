@@ -611,7 +611,9 @@ function formBody(b){
    +'<div class="ft">Rujukan sistem: '+esc(b.id)+' &middot; Dijana pada '+fd2(Date.now())+' melalui Sistem Tempahan Bas &amp; Van MRSM Arau</div></div>';
 }
 var curForm=null;
-function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;curRpt=null;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0}
+function fitPaper(){var e=$("pbody").querySelector(".paper");if(!e||$("pform").classList.contains("hide"))return;var W=e.classList.contains("rp")?1060:760;e.style.zoom="";e.style.width="";e.style.maxWidth="none";var av=$("pform").clientWidth-20;if(av<W){e.style.width=W+"px";e.style.margin="0";e.style.zoom=(av/W).toFixed(3)}else{e.style.maxWidth="";e.style.margin=""}}
+window.addEventListener("resize",fitPaper);
+function showForm(id){if(!canEdit)return;var b=bookings.find(function(x){return x.id===id});if(!b)return;curForm=b;curRpt=null;$("pbody").innerHTML='<style>'+PCSS+'</style>'+formBody(b);$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper()}
 var edB=null;
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
@@ -670,7 +672,7 @@ function laporanBody(nm,y,mo){
 $("pmprint").onclick=function(){
   if(!canEdit)return;var nm=$("rsel").value,y=$("ry").value,mo=$("rm").value;
   curForm=null;curRpt={html:laporanBody(nm,y,mo),name:"laporan-penggunaan-kenderaan-"+y+(+mo<0?"":"-"+("0"+(+mo+1)).slice(-2))+".html"};
-  $("pbody").innerHTML='<style>'+PCSS+'</style>'+curRpt.html;$("pform").classList.remove("hide");$("pform").scrollTop=0;
+  $("pbody").innerHTML='<style>'+PCSS+'</style>'+curRpt.html;$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper();
 };
 function respTables(){
   var ts=document.querySelectorAll(".wrap table");
