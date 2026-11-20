@@ -836,9 +836,9 @@ function jwTable(from,n,print,list){
       var minggu,tarikh;
       if(print){minggu=esc(wkl);tarikh=fdmy(s0)+"-"+fdmy(e0)+"<br>"+spanTxt(s0,e0)}
       else{
-        minggu='<input class="jwk" data-wk="'+x.id+'" value="'+esc(wkl)+'" style="padding:4px 6px;font-size:12px;width:105px;text-align:center">'+(x.set?'<br><button class="del ub" data-jwclr="'+x.id+'" style="color:var(--tx)">Kosongkan</button>':'<br><span class="small" style="color:#b45309">belum disimpan</span><br><button class="btn ub" data-jwsave="'+x.id+'">Simpan minggu</button>');
+        minggu='<input class="jwk" data-wk="'+x.id+'" value="'+esc(wkl)+'" style="padding:4px 6px;font-size:12px;width:105px;text-align:center">'+(x.set?'':'<br><span class="small" style="color:#b45309">belum disimpan</span><br><button class="btn ub" data-jwsave="'+x.id+'">Simpan minggu</button>');
         tarikh='<input class="jdt" type="date" data-wk="'+x.id+'" data-e="s" value="'+x.ws+'" style="padding:3px 4px;font-size:12px;width:130px"><br><input class="jdt" type="date" data-wk="'+x.id+'" data-e="e" value="'+x.we+'" style="padding:3px 4px;font-size:12px;width:130px;margin-top:3px"><br><span class="small">'+spanTxt(s0,e0)+'</span>'}
-      h+='<tr'+(!x.set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+minggu+'</td>':'')+'<td class="l nm">'+(print?esc(x.roles[k]||"-"):jwSel(x.id,k,x.roles[k]))+'</td><td class="gj">'+esc(gajiOf(x.roles[k]))+'</td>'+(i===0?'<td rowspan="3">'+tarikh+'</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+(print?esc((x.places||{})[k]||c.pl):jwPl(x.id,k,(x.places||{})[k]||c.pl))+'</td></tr>'});
+      h+='<tr'+(!x.set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+minggu+'</td>':'')+'<td class="l nm">'+(print?esc(x.roles[k]||"-"):'<span class="jnm">'+esc(x.roles[k]||"-")+'</span><input type="hidden" class="jro" data-wk="'+x.id+'" data-r="'+k+'" value="'+esc(x.roles[k]||"")+'">')+'</td><td class="gj">'+esc(gajiOf(x.roles[k]))+'</td>'+(i===0?'<td rowspan="3">'+tarikh+'</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+(print?esc((x.places||{})[k]||c.pl):jwPl(x.id,k,(x.places||{})[k]||c.pl))+'</td></tr>'});
   });
   return h+'</tbody></table>'+(print?'':'<datalist id="jplList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>STANDBY LUAR</option></datalist>')
 }
@@ -846,7 +846,7 @@ function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===
 function keepSt(ex,ro){var o={},n=0,v=Object.keys(ro).map(function(k){return ro[k]});if(ex&&ex.st)Object.keys(ex.st).forEach(function(k){if(v.indexOf(k)<0){o[k]=ex.st[k];n++}});return o}
 async function jwSaveBlock(id){
   var q=function(sel){return document.querySelectorAll('#jwTbl '+sel+'[data-wk="'+id+'"]')},ro={},pl={};
-  q('select').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});q('input.jpl').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
+  q('input.jro').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});q('input.jpl').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
   
   var sD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="s"]'),eD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="e"]'),wl=(document.querySelector('#jwTbl input.jwk[data-wk="'+id+'"]')||{}).value||"";
   var sk=sD.value,ek=eD.value;if(!sk||!ek||ek<sk){toast("Tarikh tidak sah. Tarikh hingga mesti selepas tarikh dari.");return false}
