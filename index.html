@@ -753,14 +753,7 @@ function renderGiliran(){
   function line(lbl,key){var r=rmap[key],ds=(r&&r.drivers)||[];return '<div style="margin:4px 0"><b>'+lbl+':</b> '+(ds.length?ds.map(chip).join(" ")+(r.note?' <span class="small">&middot; '+esc(r.note)+'</span>':''):'<span class="small">belum ditetapkan</span>')+dayProgs(key).map(function(b){return '<div class="small">&bull; '+esc(b.program)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join("")+'</div>'}
   el.innerHTML=line("Hari ini",k)+line("Esok",k2);
 }
-function syncRoster(b,ds){
-  var d=new Date(b.start);d.setHours(0,0,0,0);var last=new Date(b.end-1);last.setHours(0,0,0,0);var w=[],i=0;
-  for(;d<=last&&i<31;d.setDate(d.getDate()+1),i++){
-    var k=dstr(d),r=rmap[k],cur=(r&&r.drivers)||[],add=ds.filter(function(x){return cur.indexOf(x)<0});
-    if(add.length)w.push(db.collection("roster").doc(k).set({id:k,date:k,drivers:cur.concat(add),note:(r&&r.note)||""}));
-  }
-  return Promise.all(w).then(function(){return w.length});
-}
+function syncRoster(b,ds){return Promise.resolve(0)}
 function renderCals(){renderCal("calS");renderCal("calD");renderGiliran()}
 function renderRoster(){
   var c=$("roStart").value;$("roStart").innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)$("roStart").value=c;
