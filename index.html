@@ -783,42 +783,68 @@ function mon0(s){var d=new Date((s||dstr(new Date()))+"T00:00");d.setDate(d.getD
 function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
 function isoWk(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);return Math.ceil(((t-new Date(Date.UTC(t.getUTCFullYear(),0,1)))/864e5+1)/7)}
 function fdmy(d){return ("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+d.getFullYear()}
-function weekRoles(mon){for(var i=0;i<7;i++){var r=rmap[dstr(addD(mon,i))];if(r&&r.roles)return r.roles}return null}
 function gajiOf(n){var d=drvDocs.find(function(x){return x.name===n});return d&&d.noGaji||""}
-function weekPlaces(mon){for(var i=0;i<7;i++){var r=rmap[dstr(addD(mon,i))];if(r&&r.roles)return r.places||{}}return {}}
-function dayDocFor(mon,i,ro,pl){var d=addD(mon,i),k=dstr(d),we=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:we?[ro.A]:[ro.B,ro.C],roles:ro,places:pl||{},note:(ex&&ex.note)||""}}
 function dutyFor(b,r){var ro=r.roles,dt=new Date(b.start),dw=dt.getDay();if(dw===0||dw===6)return [ro.A];if(/bas/i.test(b.vehicle||""))return [ro.A,ro.C];return [dt.getHours()>=12?ro.C:ro.B]}
-function jwSel(mon,k,val){var o=DRIVERS.slice();if(val&&o.indexOf(val)<0)o.unshift(val);return '<select class="jsel" data-wk="'+mon+'" data-r="'+k+'" data-old="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;min-width:190px">'+o.map(function(d){return '<option'+(d===val?' selected':'')+'>'+esc(d)+'</option>'}).join("")+'</select>'}
-function jwPl(mon,k,val){return '<input class="jpl" list="jplList" data-wk="'+mon+'" data-r="'+k+'" value="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;width:130px;text-align:center">'}
-function jwTable(from,n,print){
+var DN=["AHAD","ISNIN","SELASA","RABU","KHAMIS","JUMAAT","SABTU"];
+function spanTxt(a,b){return DN[a.getDay()]+"-"+DN[b.getDay()]}
+function blocksAll(){
+  var m={};rosterDocs.forEach(function(r){if(!r.roles||!r.date)return;var ws=r.ws||dstr(mon0(r.date)),we=r.we||dstr(addD(new Date(ws+"T00:00"),6));
+    var b=m[ws]||(m[ws]={ws:ws,we:we,roles:r.roles,places:r.places||{},wk:r.wk||"",keys:[]});b.keys.push(r.id)});
+  return Object.keys(m).sort().map(function(k){return m[k]})
+}
+function rot(r){return {A:r.C,B:r.A,C:r.B}}
+function jwList(from,n,print){
+  var fk=dstr(from),tk=dstr(addD(from,n*7-1)),all=blocksAll(),items=[];
+  all.forEach(function(b){if(b.we>=fk&&b.ws<=tk)items.push({set:true,id:b.ws,ws:b.ws,we:b.we,roles:b.roles,places:b.places,wk:b.wk})});
+  if(!print){for(var w=0;w<n;w++){var mon=addD(from,w*7),ms=dstr(mon),me=dstr(addD(mon,6));
+    if(!items.some(function(x){return x.we>=ms&&x.ws<=me}))items.push({set:false,id:ms,ws:ms,we:me,roles:null,places:{},wk:""})}}
+  items.sort(function(x,y){return x.ws<y.ws?-1:x.ws>y.ws?1:0});
+  var last=null;all.forEach(function(b){if(b.ws<fk)last=b.roles});
+  items.forEach(function(x){if(x.set){last=x.roles}else{
+    x.roles=last?rot(last):($("jwA")&&$("jwA").value?{A:$("jwC").value,B:$("jwA").value,C:$("jwB").value}:{A:DRIVERS[0]||"",B:DRIVERS[1]||"",C:DRIVERS[2]||""});last=x.roles}});
+  return items
+}
+function jwSel(id,k,val){var o=DRIVERS.slice();if(val&&o.indexOf(val)<0)o.unshift(val);return '<select class="jsel" data-wk="'+id+'" data-r="'+k+'" data-old="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;min-width:190px">'+o.map(function(d){return '<option'+(d===val?' selected':'')+'>'+esc(d)+'</option>'}).join("")+'</select>'}
+function jwPl(id,k,val){return '<input class="jpl" list="jplList" data-wk="'+id+'" data-r="'+k+'" value="'+esc(val||"")+'" style="padding:4px 6px;font-size:12px;width:130px;text-align:center">'}
+function jwTable(from,n,print,list){
   var h='<table class="jt"><thead><tr><th rowspan="4">MINGGU</th><th rowspan="4">NAMA</th><th rowspan="4">NO GAJI</th><th rowspan="4">TARIKH</th><th colspan="3">JADUAL WAKTU BERKERJA '+from.getFullYear()+'</th><th>JENIS KENDERAAN</th><th class="y" rowspan="4">ISNIN-JUMAAT</th><th class="y" rowspan="4">SABTU-AHAD</th><th class="y" rowspan="4">TEMPAT BERTUGAS</th></tr>';
   ["A","B","C"].forEach(function(k){h+='<tr><td style="background:'+JW[k].col+'">'+k+'</td><td style="background:'+JW[k].col+'">8.00 PAGI</td><td style="background:'+JW[k].col+'">5.00 PETANG</td><td style="background:'+JW[k].col+'">'+JW[k].vh+'</td></tr>'});
   h+='</thead><tbody>';
-  var prev=weekRoles(addD(from,-7));if(!prev&&!print&&$("jwA")&&$("jwA").value)prev={A:$("jwC").value,B:$("jwA").value,C:$("jwB").value};
-  for(var w=0;w<n;w++){
-    var mon=addD(from,w*7),mk=dstr(mon),ro=weekRoles(mon),set=!!ro,tr=fdmy(mon)+"-"+fdmy(addD(mon,6)),wk="MINGGU "+isoWk(mon);
-    if(!ro){ro=prev?{A:prev.C,B:prev.A,C:prev.B}:{A:DRIVERS[0]||"",B:DRIVERS[1]||"",C:DRIVERS[2]||""};
-      if(print){prev=ro;continue}}
-    prev=ro;var pls=set?weekPlaces(mon):{};
+  (list||jwList(from,n,print)).forEach(function(x){
+    var s0=new Date(x.ws+"T00:00"),e0=new Date(x.we+"T00:00"),wkl=x.wk||("MINGGU "+isoWk(s0));
     ["A","B","C"].forEach(function(k,i){var c=JW[k];
-      var act=print?"":(set?'<br><button class="del ub" data-jwclr="'+mk+'" style="color:var(--tx)">Kosongkan</button>':'<br><span class="small" style="color:#b45309">belum disimpan</span><br><button class="btn ub" data-jwsave="'+mk+'">Simpan minggu</button>');
-      h+='<tr'+(!set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+wk+act+'</td>':'')+'<td class="l nm">'+(print?esc(ro[k]||"-"):jwSel(mk,k,ro[k])+'')+'</td><td class="gj">'+esc(gajiOf(ro[k]))+'</td>'+(i===0?'<td rowspan="3">'+tr+'<br>ISNIN-AHAD</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+(print?esc(pls[k]||c.pl):jwPl(mk,k,pls[k]||c.pl))+'</td></tr>'});
-  }
+      var minggu,tarikh;
+      if(print){minggu=esc(wkl);tarikh=fdmy(s0)+"-"+fdmy(e0)+"<br>"+spanTxt(s0,e0)}
+      else{
+        minggu='<input class="jwk" data-wk="'+x.id+'" value="'+esc(wkl)+'" style="padding:4px 6px;font-size:12px;width:105px;text-align:center">'+(x.set?'<br><button class="del ub" data-jwclr="'+x.id+'" style="color:var(--tx)">Kosongkan</button>':'<br><span class="small" style="color:#b45309">belum disimpan</span><br><button class="btn ub" data-jwsave="'+x.id+'">Simpan minggu</button>');
+        tarikh='<input class="jdt" type="date" data-wk="'+x.id+'" data-e="s" value="'+x.ws+'" style="padding:3px 4px;font-size:12px;width:130px"><br><input class="jdt" type="date" data-wk="'+x.id+'" data-e="e" value="'+x.we+'" style="padding:3px 4px;font-size:12px;width:130px;margin-top:3px"><br><span class="small">'+spanTxt(s0,e0)+'</span>'}
+      h+='<tr'+(!x.set&&!print?' style="outline:2px dashed #e0a030;outline-offset:-2px"':'')+'>'+(i===0?'<td rowspan="3">'+minggu+'</td>':'')+'<td class="l nm">'+(print?esc(x.roles[k]||"-"):jwSel(x.id,k,x.roles[k]))+'</td><td class="gj">'+esc(gajiOf(x.roles[k]))+'</td>'+(i===0?'<td rowspan="3">'+tarikh+'</td>':'')+'<td colspan="3" style="background:'+c.col+'">'+k+'</td><td style="background:'+c.col+'">'+c.vh+'</td><td><i>'+c.wk+'</i></td><td><i>'+c.we+'</i></td><td>'+(print?esc((x.places||{})[k]||c.pl):jwPl(x.id,k,(x.places||{})[k]||c.pl))+'</td></tr>'});
+  });
   return h+'</tbody></table>'+(print?'':'<datalist id="jplList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>STANDBY LUAR</option></datalist>')
 }
-async function jwSaveWeek(mk){
-  var mon=new Date(mk+"T00:00"),ro={};document.querySelectorAll('#jwTbl select[data-wk="'+mk+'"]').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});
+function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:wd?[ro.A]:[ro.B,ro.C],roles:ro,places:pl||{},ws:ws,we:we,wk:wk||"",note:(ex&&ex.note)||""}}
+async function jwSaveBlock(id){
+  var q=function(sel){return document.querySelectorAll('#jwTbl '+sel+'[data-wk="'+id+'"]')},ro={},pl={};
+  q('select').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});q('input.jpl').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
   if(!ro.A||!ro.B||!ro.C||ro.A===ro.B||ro.B===ro.C||ro.A===ro.C){toast("Pilih tiga pemandu berbeza.");return false}
-  var pl={};document.querySelectorAll('#jwTbl input.jpl[data-wk="'+mk+'"]').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
-  var ws=[];for(var i=0;i<7;i++)ws.push(dayDocFor(mon,i,ro,pl));
-  try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));return true}catch(e){toast("Gagal menyimpan.");return false}
+  var sD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="s"]'),eD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="e"]'),wl=(document.querySelector('#jwTbl input.jwk[data-wk="'+id+'"]')||{}).value||"";
+  var sk=sD.value,ek=eD.value;if(!sk||!ek||ek<sk){toast("Tarikh tidak sah. Tarikh hingga mesti selepas tarikh dari.");return false}
+  var s0=new Date(sk+"T00:00"),days=Math.round((new Date(ek+"T00:00")-s0)/864e5)+1;if(days>31){toast("Satu blok maksimum 31 hari.");return false}
+  var snap={ro:ro,pl:pl,sk:sk,wl:wl.trim(),days:days,s0:s0,ek:ek};
+  var res=jwQ.then(function(){
+    var old=(blocksAll().find(function(b){return b.ws===id})||{keys:[]}).keys,nk=[],docs=[];
+    for(var i=0;i<snap.days;i++){var k=dstr(addD(snap.s0,i));nk.push(k);docs.push(dayDocFor(k,snap.ro,snap.pl,snap.sk,snap.ek,snap.wl))}
+    return Promise.all(docs.map(function(x){return db.collection("roster").doc(x.id).set(x)}).concat(old.filter(function(k){return nk.indexOf(k)<0}).map(function(k){return db.collection("roster").doc(k).delete()}))).then(function(){return true},function(){toast("Gagal menyimpan.");return false})
+  });
+  jwQ=res.then(function(){},function(){});return res
 }
+var jwQ=Promise.resolve();
 function renderJw(){
   if(!$("jwTbl"))return;
   if(!$("jwFrom").value)$("jwFrom").value=dstr(mon0());
   ["jwA","jwB","jwC"].forEach(function(id,i){var e=$(id),c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");e.value=(c&&DRIVERS.indexOf(c)>=0)?c:(DRIVERS[i]||"")});
   var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4));
-  if(document.activeElement&&document.activeElement.classList&&(document.activeElement.classList.contains("jsel")||document.activeElement.classList.contains("jpl")))return;
+  var ae=document.activeElement;if(ae&&ae.classList&&$("jwTbl").contains(ae)&&/^(SELECT|INPUT)$/.test(ae.tagName))return;
   var f0=mon0($("jwFrom").value);$("jwRange").textContent=fdmy(f0)+" hingga "+fdmy(addD(f0,n*7-1));
   $("jwTbl").innerHTML=jwTable(f0,n,false);
 }
@@ -831,32 +857,32 @@ $("jwGen").onclick=async function(){
   if(DRIVERS.length<3){m.textContent="Perlu sekurang-kurangnya 3 pemandu aktif.";return}
   if(!a||!b||!c||a===b||b===c||a===c){m.textContent="Pilih tiga pemandu berbeza untuk shift A, B dan C.";return}
   var ok=await ask("Jana jadual "+n+" minggu bermula "+fdmy(from)+"? Giliran sedia ada pada tarikh itu akan diganti.");if(!ok)return;
-  var ws=[],ro={A:a,B:b,C:c};
-  for(var w=0;w<n;w++){for(var i=0;i<7;i++)ws.push(dayDocFor(addD(from,w*7),i,ro));ro={A:ro.C,B:ro.A,C:ro.B}}
+  var ws=[],ro={A:a,B:b,C:c},olds=[];
+  for(var w=0;w<n;w++){var mon=addD(from,w*7),ms=dstr(mon),me=dstr(addD(mon,6));for(var i=0;i<7;i++)ws.push(dayDocFor(dstr(addD(mon,i)),ro,{},ms,me,"MINGGU "+isoWk(mon)));ro=rot(ro)}
   try{await Promise.all(ws.map(function(x){return db.collection("roster").doc(x.id).set(x)}));m.className="msg ok";m.textContent="Jadual dijana untuk "+n+" minggu."}catch(e){m.textContent="Gagal menyimpan sebahagian jadual."}
 };
+function jwIsSet(id){return blocksAll().some(function(b){return b.ws===id})}
 $("jwTbl").addEventListener("change",async function(ev){
-  var e=ev.target;if(!e.classList||!(e.classList.contains("jsel")||e.classList.contains("jpl"))||!canEdit||!db)return;
-  if(e.classList.contains("jpl")){var mk0=e.getAttribute("data-wk");if(weekRoles(new Date(mk0+"T00:00"))){if(await jwSaveWeek(mk0))toast("Tempat bertugas disimpan.")}return}
-  var mk=e.getAttribute("data-wk"),r=e.getAttribute("data-r"),old=e.getAttribute("data-old"),sels=[].slice.call($("jwTbl").querySelectorAll('select[data-wk="'+mk+'"]'));
-  sels.forEach(function(o){if(o!==e&&o.value===e.value){o.value=old;o.setAttribute("data-old",old)}});
-  e.setAttribute("data-old",e.value);
-  sels.forEach(function(o){var td=o.parentNode.nextSibling;if(td)td.textContent=gajiOf(o.value)});
-  var mon=new Date(mk+"T00:00");
-  if(weekRoles(mon)){var ok=await jwSaveWeek(mk);if(ok)toast("Minggu dikemas kini.")}
+  var e=ev.target;if(!e.classList||!canEdit||!db)return;var id=e.getAttribute("data-wk");if(!id)return;
+  if(e.classList.contains("jsel")){
+    var old=e.getAttribute("data-old"),sels=[].slice.call($("jwTbl").querySelectorAll('select[data-wk="'+id+'"]'));
+    sels.forEach(function(o){if(o!==e&&o.value===e.value){o.value=old;o.setAttribute("data-old",old)}});
+    e.setAttribute("data-old",e.value);sels.forEach(function(o){var td=o.parentNode.nextSibling;if(td)td.textContent=gajiOf(o.value)})
+  }
+  if(jwIsSet(id)){var ok=await jwSaveBlock(id);if(ok)toast("Disimpan.")}
 });
 $("jwTbl").addEventListener("click",async function(ev){
   var t=ev.target,sv=t.getAttribute&&t.getAttribute("data-jwsave"),cl=t.getAttribute&&t.getAttribute("data-jwclr");
   if(!canEdit||!db)return;
-  if(sv){if(await jwSaveWeek(sv))toast("Minggu disimpan.")}
-  if(cl){var ok=await ask("Kosongkan giliran minggu ini?");if(!ok)return;var mon=new Date(cl+"T00:00");try{await Promise.all([0,1,2,3,4,5,6].map(function(i){var k=dstr(addD(mon,i));return rmap[k]?db.collection("roster").doc(k).delete():null}));toast("Minggu dikosongkan.")}catch(e){toast("Gagal memadam.")}}
+  if(sv){if(await jwSaveBlock(sv))toast("Minggu disimpan.")}
+  if(cl){var ok=await ask("Kosongkan giliran blok ini?");if(!ok)return;var b=blocksAll().find(function(x){return x.ws===cl});try{await Promise.all((b?b.keys:[]).map(function(k){return db.collection("roster").doc(k).delete()}));toast("Dikosongkan.")}catch(e){toast("Gagal memadam.")}}
 });
 var JNOTES=["PEMANDU HENDAKLAH MENGEMASKINI BUKU LOG","PEMANDU BOLEH MEMBUAT TUNTUTAN LEBIH MASA BERTUGAS SEBELUM JAM 8.00 PAGI DAN SELEPAS PUKUL 5.00 PETANG PADA HARI BERTUGAS","PEMANDU DIMINTA BERADA DI PEJABAT SEKIRANYA TIADA TUGASAN DI LUAR (WORKSTATION AKAN DISEDIAKAN) BAGI MEMBANTU KERJA-KERJA DI PEJABAT (MEMBANTU PEMBANTU OPERASI DI PEJABAT)","PEMANDU PERLU MEMBUAT PERANCANGAN CUTI REHAT BAGI MEMASTIKAN TERDAPAT PEMANDU BERTUGAS SETIAP HARI","PERUBAHAN DARI SEMASA KE SEMASA MENGIKUT ARAHAN PENGAWAL PUSAT / YANG MENJALANKAN TUGAS PENGAWAL PUSAT","DUA ORANG PEMANDU (BAS) BAGI PERJALANAN LUAR NEGERI PERLIS MINIMUM 200KM BERGANTUNG ATAS BUDI BICARA PENGAWAL PUSAT/YANG MENJALANKAN TUGAS PENGAWAL PUSAT","BAS KELUAR - PEMANDU BAS &amp; PEMANDU VAN PETANG","SEKIRANYA PEMANDU \"STANDBY BAS\" SABTU &amp; AHAD TIADA - PEMANDU VAN PETANG AKAN MENGAMBIL TUGASAN"];
 $("jwPrint").onclick=function(){
-  if(!canEdit)return;var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4)),from=mon0($("jwFrom").value),to=addD(from,n*7-1);
+  if(!canEdit)return;var n=Math.max(1,Math.min(26,parseInt($("jwN").value,10)||4)),from=mon0($("jwFrom").value),to=addD(from,n*7-1),list=jwList(from,n,true);if(list.length){from=new Date(list[0].ws+"T00:00");to=new Date(list.reduce(function(m,x){return x.we>m?x.we:m},list[0].we)+"T00:00")}
   function L(d){return d.getDate()+" "+BULAN[d.getMonth()].toUpperCase()+" "+d.getFullYear()}
   var html='<style>@page{size:A4 landscape;margin:10mm}.paper.rp{max-width:1060px;font-size:11px}'+css_jt()+'.rp .ttl{text-align:center;font-weight:700;font-size:15px;line-height:1.5}.rp .nt{margin-top:10px;font-size:10.5px;line-height:1.55}.rp .sg2{margin:14px 0 0 auto;width:300px;text-align:center;font-size:11px;font-weight:700;color:#1f3a93}</style>'
-   +'<div class="paper rp"><div class="ttl">JADUAL WAKTU BEKERJA PEMANDU MRSM ARAU '+from.getFullYear()+'<br>TARIKH : '+L(from)+' HINGGA '+L(to)+'</div><div style="height:10px"></div>'+jwTable(from,n,true)
+   +'<div class="paper rp"><div class="ttl">JADUAL WAKTU BEKERJA PEMANDU MRSM ARAU '+from.getFullYear()+'<br>TARIKH : '+L(from)+' HINGGA '+L(to)+'</div><div style="height:10px"></div>'+jwTable(from,n,true,list)
    +'<div class="nt">'+JNOTES.map(function(t,i){return '<div>'+(i+1)+'. '+t+'</div>'}).join("")+'</div>'
    +'<div class="sg2"><div style="height:46px"></div>MOHD HASHIM BIN NORPIAH<br><span style="font-weight:400;color:#1f3a93">Pengetua<br>Maktab Rendah Sains MARA Arau</span></div></div>';
   curForm=null;curRpt={html:html,name:"jadual-pemandu-"+dstr(from)+".html"};
