@@ -214,7 +214,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div class="card" id="stCard"><h2>Tetapan Giliran Pemandu</h2><p class="small">Pilih pemandu, julat tarikh dan status. Jadual A/B/C dan kalendar di atas dikemas kini sendiri untuk setiap hari dalam julat itu. Ulang untuk pemandu lain.</p>
      <label>Pemandu</label><select id="stDrv"></select>
      <div class="row"><div><label>Dari tarikh</label><input id="stFrom" type="date"></div><div><label>Hingga tarikh</label><input id="stTo" type="date"></div></div>
-     <label>Status</label><input type="hidden" id="stCode" value="A"><div class="stopts" id="stOpts"><label class="stop"><input type="radio" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="radio" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="radio" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="radio" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="radio" name="stR" value="STANDBY"><span>STANDBY</span></label><label class="stop"><input type="radio" name="stR" value="-"><span>Kosongkan pemandu ini</span></label></div>
+     <label>Status</label><div class="small" style="margin-top:2px">Boleh tanda lebih daripada satu (contoh Shift A dan C).</div><div class="stopts" id="stOpts"><label class="stop"><input type="checkbox" name="stR" value="A" checked><span>Shift A &ndash; Bas</span></label><label class="stop"><input type="checkbox" name="stR" value="B"><span>Shift B &ndash; Van PG (pagi)</span></label><label class="stop"><input type="checkbox" name="stR" value="C"><span>Shift C &ndash; Van PTG (petang)</span></label><label class="stop"><input type="checkbox" name="stR" value="OFF"><span>OFF</span></label><label class="stop"><input type="checkbox" name="stR" value="STANDBY"><span>STANDBY</span></label><label class="stop"><input type="checkbox" name="stR" value="-"><span>Kosongkan pemandu ini</span></label></div>
      <label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="stWd" style="width:auto;margin:0"> Langkau Sabtu &amp; Ahad</label>
      <button class="btn" id="stSave">Simpan Tetapan</button><div class="msg" id="stMsg"></div></div>
     <div class="grid2">
@@ -843,12 +843,12 @@ function jwTable(from,n,print,list){
   });
   return h+'</tbody></table>'+(print?'':'<datalist id="jplList"><option>PEJABAT</option><option>PTG-KAUNTER</option><option>PG-KAUNTER</option><option>KAUNTER</option><option>STANDBY LUAR</option></datalist>')
 }
-function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:(wd?[ro.A]:[ro.B,ro.C]).filter(Boolean),roles:ro,places:pl||{},ws:ws,we:we,wk:wk||"",note:(ex&&ex.note)||"",st:keepSt(ex,ro)}}
+function dayDocFor(k,ro,pl,ws,we,wk){var d=new Date(k+"T00:00"),wd=d.getDay()===0||d.getDay()===6,ex=rmap[k];return {id:k,date:k,drivers:(wd?[ro.A]:[ro.B,ro.C]).filter(function(v,i,a){return v&&a.indexOf(v)===i}),roles:ro,places:pl||{},ws:ws,we:we,wk:wk||"",note:(ex&&ex.note)||"",st:keepSt(ex,ro)}}
 function keepSt(ex,ro){var o={},n=0,v=Object.keys(ro).map(function(k){return ro[k]});if(ex&&ex.st)Object.keys(ex.st).forEach(function(k){if(v.indexOf(k)<0){o[k]=ex.st[k];n++}});return o}
 async function jwSaveBlock(id){
   var q=function(sel){return document.querySelectorAll('#jwTbl '+sel+'[data-wk="'+id+'"]')},ro={},pl={};
   q('select').forEach(function(e){ro[e.getAttribute("data-r")]=e.value});q('input.jpl').forEach(function(e){pl[e.getAttribute("data-r")]=e.value.trim()});
-  var vs=["A","B","C"].map(function(k){return ro[k]}).filter(Boolean);if(vs.some(function(v,i){return vs.indexOf(v)!==i})){toast("Pemandu yang sama dipilih lebih sekali.");return false}
+  
   var sD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="s"]'),eD=document.querySelector('#jwTbl input.jdt[data-wk="'+id+'"][data-e="e"]'),wl=(document.querySelector('#jwTbl input.jwk[data-wk="'+id+'"]')||{}).value||"";
   var sk=sD.value,ek=eD.value;if(!sk||!ek||ek<sk){toast("Tarikh tidak sah. Tarikh hingga mesti selepas tarikh dari.");return false}
   var s0=new Date(sk+"T00:00"),days=Math.round((new Date(ek+"T00:00")-s0)/864e5)+1;if(days>31){toast("Satu blok maksimum 31 hari.");return false}
@@ -914,12 +914,15 @@ $("jwPrint").onclick=function(){
 };
 function css_jt(){return '.jt{border-collapse:collapse;width:100%;font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.jt th,.jt td{border:1px solid #444;padding:3px 5px;text-align:center;vertical-align:middle}.jt th{background:#4472c4;color:#fff;font-weight:600}.jt th.y{background:#ffc000;color:#000}.jt td.l{text-align:left}.jt td.nm{white-space:nowrap}.jt tr{page-break-inside:avoid}'}
 
-$("stOpts").onchange=function(e){if(e.target.name==="stR")$("stCode").value=e.target.value};
+$("stOpts").onchange=function(e){var t=e.target;if(t.name!=="stR"||!t.checked)return;var sh=/^[ABC]$/;
+  [].slice.call($("stOpts").querySelectorAll("input")).forEach(function(o){if(o===t)return;
+    if(sh.test(t.value)?!sh.test(o.value):true)o.checked=false})};
 function stFill(){var e=$("stDrv");if(!e)return;var c=e.value;e.innerHTML=DRIVERS.map(function(d){return '<option>'+esc(d)+'</option>'}).join("");if(c&&DRIVERS.indexOf(c)>=0)e.value=c}
 $("stSave").onclick=async function(){
   var m=$("stMsg");m.className="msg";if(!db||!canEdit)return;
-  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,code=$("stCode").value,wd=$("stWd").checked;
+  var nm=$("stDrv").value,f=$("stFrom").value,t=$("stTo").value||f,codes=[].slice.call($("stOpts").querySelectorAll("input:checked")).map(function(o){return o.value}),wd=$("stWd").checked;
   if(!nm||!f){m.textContent="Pilih pemandu dan tarikh dari.";return}
+  if(!codes.length){m.textContent="Tanda sekurang-kurangnya satu status.";return}
   if(t<f){m.textContent="Tarikh hingga mesti selepas tarikh dari.";return}
   var s0=new Date(f+"T00:00"),days=Math.round((new Date(t+"T00:00")-s0)/864e5)+1;if(days>93){m.textContent="Maksimum 93 hari sekali.";return}
   $("stSave").disabled=true;m.textContent="Menyimpan...";
@@ -930,13 +933,13 @@ $("stSave").onclick=async function(){
       if(x.ws)oldWs[x.ws]=1;
       var ro=Object.assign({A:"",B:"",C:""},x.roles||{}),st=Object.assign({},x.st||{});
       ["A","B","C"].forEach(function(c){if(ro[c]===nm)ro[c]=""});delete st[nm];
-      if(/^[ABC]$/.test(code))ro[code]=nm;else if(code==="OFF"||code==="STANDBY")st[nm]=code;
+      codes.forEach(function(code){if(/^[ABC]$/.test(code))ro[code]=nm;else if(code==="OFF"||code==="STANDBY")st[nm]=code});
       x.roles=ro;x.st=st;docs[k]=x;touched[k]=1}
     [dstr(addD(s0,-1)),dstr(addD(s0,days))].forEach(function(k){if(docs[k]&&docs[k].ws)oldWs[docs[k].ws]=1});
     Object.keys(docs).forEach(function(k){if(docs[k].roles&&docs[k].ws&&oldWs[docs[k].ws])touched[k]=touched[k]||2});
     var del=[];
     Object.keys(touched).forEach(function(k){var x=docs[k],ro=x.roles,we=new Date(k+"T00:00").getDay(),wk=we===0||we===6;
-      x.drivers=(wk?[ro.A]:[ro.B,ro.C]).filter(Boolean);
+      x.drivers=(wk?[ro.A]:[ro.B,ro.C]).filter(function(v,i,a){return v&&a.indexOf(v)===i});
       if(!Object.keys(x.st||{}).length)delete x.st;
       if(!ro.A&&!ro.B&&!ro.C&&!x.st){del.push(k);delete touched[k]}});
     var ids=Object.keys(touched).sort(),runs=[],cur=null;
