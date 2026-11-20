@@ -105,7 +105,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <div class="row"><div><label>Mula</label><input id="mula" type="datetime-local"></div><div><label>Tamat</label><input id="tamat" type="datetime-local"></div></div>
     <label>Taklimat keselamatan dilaksanakan / akan dilaksanakan pada</label><input id="takl" type="date">
     <label>Kenderaan</label><select id="veh"></select>
-    <label style="display:flex;gap:8px;align-items:center;margin-top:14px"><input type="checkbox" id="mkn" style="width:auto"> Tempahan makanan</label>
+    <label class="hide" style="display:none"><input type="checkbox" id="mkn" style="width:auto"></label>
     <div id="mknbox" class="hide"><label>Menu makanan</label><input id="mmenu" placeholder="cth: Minum pagi, makan tengah hari"><div class="row"><div><label>Bungkus / hidang</label><select id="mcara"><option>Bungkus</option><option>Hidang</option></select></div><div><label>Bilangan</label><input id="mbil" placeholder="cth: 6 pack"></div></div><div class="row"><div><label>Tarikh ambil</label><input id="mtkh" type="date"></div><div><label>Masa ambil</label><input id="mmasa" type="time"></div></div></div>
     <p class="small" id="hint">Pilih tarikh dan masa dahulu. Kenderaan yang sudah ditempah pada masa itu akan dikunci. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
     <button class="btn" id="hantar">Hantar Tempahan</button>
