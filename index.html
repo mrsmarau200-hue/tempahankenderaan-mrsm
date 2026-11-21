@@ -117,7 +117,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
   <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
    <div class="sf"><a id="dlout">&#128682; Log Keluar</a></div></aside>
   <div class="dmain"><h2 class="dt" id="pwel"></h2><div class="card"><h2>Giliran Bertugas</h2><div id="giliranNow"></div><div id="calD" style="margin-top:12px"></div></div><div class="card"><h2>Jadual Waktu Bekerja Pemandu</h2><div id="dJw"></div></div><div class="card"><label style="margin-top:0">Pemandu</label><select id="pdsel"></select><div class="row"><div><label>Tahun</label><select id="pdy"></select></div><div><label>Bulan</label><select id="pdm"></select></div></div></div><div id="pdbody"></div></div></div></section>
-<section id="p6" class="hide"><div class="card"><h2>Tukar Kata Laluan</h2><p class="small">Ini log masuk pertama anda. Sila tetapkan kata laluan baharu sebelum meneruskan.</p><label>Kata laluan baharu</label><input id="cpw1" type="password" autocomplete="new-password"><label>Ulang kata laluan baharu</label><input id="cpw2" type="password" autocomplete="new-password"><button class="btn" id="cok">Simpan &amp; Masuk</button><div class="msg" id="cerr"></div><button class="del" id="cback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Batal</button></div></section>
+<section id="p6" class="hide"><div class="card"><h2>Tukar Kata Laluan</h2><p class="small">Ini log masuk pertama anda. Sila tetapkan kata laluan baharu sebelum meneruskan.</p><p class="small">Sekurang-kurangnya 12 aksara, ada huruf besar, huruf kecil, nombor dan simbol (contoh: Bas#Arau2026!).</p><label>Kata laluan baharu</label><input id="cpw1" type="password" autocomplete="new-password"><label>Ulang kata laluan baharu</label><input id="cpw2" type="password" autocomplete="new-password"><button class="btn" id="cok">Simpan &amp; Masuk</button><div class="msg" id="cerr"></div><button class="del" id="cback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Batal</button></div></section>
 <section id="p5" class="hide"><div class="card"><h2>Log Masuk</h2><label>ID penyelia</label><input id="lid" autocomplete="username"><label>Kata laluan</label><input id="lpw" type="password" autocomplete="current-password"><button class="btn" id="lgin">Log Masuk</button><div class="msg" id="lerr"></div><button class="del" id="lback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Kembali</button></div></section>
 <section id="p4" class="hide">
  <div class="dash">
@@ -493,8 +493,8 @@ $("slist").addEventListener("click",function(ev){
   var t=ev.target,e=t.getAttribute&&t.getAttribute("data-se"),r=t.getAttribute&&t.getAttribute("data-sr");
   var d=supDocs.find(function(x){return x.id===(e||r)});if(!d)return;
   if(e){editSup=d.id;$("snama").value=d.name||"";$("sjaw").value=d.jawatan||"";$("sgaji").value=d.noGaji||"";$("semail").value=d.email||"";$("snew").value=d.id;$("snew").disabled=true;$("srole").value=d.role||"penyelia";toggleRole();$("spwbox").classList.add("hide");$("sadd").textContent="Simpan Perubahan";$("shead").textContent="Edit Pengguna";$("scancel").classList.remove("hide");$("smsg").textContent="";$("snama").focus()}
-  else ask("Kata laluan sementara baharu untuk "+d.name+" (sekurang-kurangnya 8 aksara):",true).then(async function(v){
-    if(v===null)return;if(v.length<8){toast("Kata laluan sekurang-kurangnya 8 aksara.");return}
+  else ask("Kata laluan sementara baharu untuk "+d.name+" (sekurang-kurangnya 12 aksara; huruf besar, huruf kecil, nombor dan simbol):",true).then(async function(v){
+    if(v===null)return;var pe=pwErr(v);if(pe){toast(pe);return}
     try{var h=await sha("mrsm-arau:"+d.id+":"+v);await db.collection("supervisors").doc("s_"+d.id).update({h:h,mustChange:true});toast("Kata laluan ditetapkan semula. Penyelia perlu menukarnya semasa log masuk seterusnya.")}catch(x){toast("Gagal menetapkan semula kata laluan.")}
   });
 });
@@ -508,7 +508,7 @@ $("sadd").onclick=async function(){
     return;
   }
   if(!/^[a-z0-9._-]{3,20}$/.test(id)){m.textContent="ID: 3 hingga 20 aksara (huruf kecil, nombor, titik, sempang atau garis bawah).";return}
-  if(p1.length<8){m.textContent="Kata laluan sekurang-kurangnya 8 aksara.";return}
+  var pe=pwErr(p1);if(pe){m.textContent=pe;return}
   if(p1!==p2){m.textContent="Kata laluan tidak sama.";return}
   if(supDocs.some(function(x){return x.id===id})){m.textContent="ID ini sudah digunakan.";return}
   try{var h=await sha("mrsm-arau:"+id+":"+p1);await db.collection("supervisors").doc("s_"+id).set({id:id,name:nm,jawatan:jw,noGaji:gj,email:em,role:role,h:h,n:Date.now(),mustChange:true});
@@ -951,11 +951,12 @@ document.addEventListener("click",function(ev){
   renderCal(id);
 });
 var pendSup=null;
+function pwErr(v){if(v.length<12)return "Kata laluan sekurang-kurangnya 12 aksara.";if(!/[a-z]/.test(v)||!/[A-Z]/.test(v)||!/[0-9]/.test(v)||!/[^A-Za-z0-9]/.test(v))return "Kata laluan mesti ada huruf besar, huruf kecil, nombor dan simbol.";return ""}
 $("cback").onclick=function(){pendSup=null;tab(1)};
 $("cok").onclick=async function(){
   var e=$("cerr");e.textContent="";if(!pendSup){tab(5);return}
   var p1=$("cpw1").value,p2=$("cpw2").value;
-  if(p1.length<8){e.textContent="Kata laluan sekurang-kurangnya 8 aksara.";return}
+  var pe=pwErr(p1);if(pe){e.textContent=pe;return}
   if(p1!==p2){e.textContent="Kata laluan tidak sama.";return}
   try{var h=await sha("mrsm-arau:"+pendSup.id+":"+p1);
     if(h===pendSup.h){e.textContent="Kata laluan baharu mesti berbeza daripada kata laluan sementara.";return}
