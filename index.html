@@ -117,8 +117,14 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
   <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
    <div class="sf"><a id="dlout">&#128682; Log Keluar</a></div></aside>
   <div class="dmain"><h2 class="dt" id="pwel"></h2><div class="card"><h2>Giliran Bertugas</h2><div id="giliranNow"></div><div id="calD" style="margin-top:12px"></div></div><div class="card"><h2>Jadual Waktu Bekerja Pemandu</h2><div id="dJw"></div></div><div class="card"><label style="margin-top:0">Pemandu</label><select id="pdsel"></select><div class="row"><div><label>Tahun</label><select id="pdy"></select></div><div><label>Bulan</label><select id="pdm"></select></div></div></div><div id="pdbody"></div></div></div></section>
+<section id="p8" class="hide"><div class="dash">
+  <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small id="xrole">Panel</small></div></div>
+   <div class="sf"><a id="xlout">&#128682; Log Keluar</a></div></aside>
+  <div class="dmain"><h2 class="dt" id="xwel"></h2>
+   <div class="card"><h2>Menunggu tindakan anda</h2><p class="small">Halaman semakan dan kelulusan sedang disediakan. Akaun anda sudah aktif. Tempahan yang perlu anda putuskan akan keluar di sini.</p></div>
+   <div class="card"><h2>Program akan datang</h2><div id="xup"></div></div></div></div></section>
 <section id="p6" class="hide"><div class="card"><h2>Tukar Kata Laluan</h2><p class="small">Ini log masuk pertama anda. Sila tetapkan kata laluan baharu sebelum meneruskan.</p><p class="small">Sekurang-kurangnya 12 aksara, ada huruf besar, huruf kecil, nombor dan simbol (contoh: Bas#Arau2026!).</p><label>Kata laluan baharu</label><input id="cpw1" type="password" autocomplete="new-password"><label>Ulang kata laluan baharu</label><input id="cpw2" type="password" autocomplete="new-password"><button class="btn" id="cok">Simpan &amp; Masuk</button><div class="msg" id="cerr"></div><button class="del" id="cback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Batal</button></div></section>
-<section id="p5" class="hide"><div class="card"><h2>Log Masuk</h2><label>ID penyelia</label><input id="lid" autocomplete="username"><label>Kata laluan</label><input id="lpw" type="password" autocomplete="current-password"><button class="btn" id="lgin">Log Masuk</button><div class="msg" id="lerr"></div><button class="del" id="lback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Kembali</button></div></section>
+<section id="p5" class="hide"><div class="card"><h2>Log Masuk</h2><label>ID pengguna</label><input id="lid" autocomplete="username"><label>Kata laluan</label><input id="lpw" type="password" autocomplete="current-password"><button class="btn" id="lgin">Log Masuk</button><div class="msg" id="lerr"></div><button class="del" id="lback" style="margin-top:10px;padding:8px 14px;color:var(--tx)">Kembali</button></div></section>
 <section id="p4" class="hide">
  <div class="dash">
   <aside class="side">
@@ -217,7 +223,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
    <div id="v-sup" class="dv hide"><h2 class="dt">Daftar Pengguna</h2>
     <div class="grid2">
      <div class="card"><h2>Senarai Pengguna</h2><div id="slist"></div></div>
-     <div class="card"><h2 id="shead">Tambah Pengguna</h2><label>No. gaji (isi dahulu, maklumat lain keluar automatik)</label><input id="sgaji" inputmode="numeric" autocomplete="off" placeholder="cth: 205339"><div class="small" id="sfind" style="margin-top:4px"></div><label>Peranan</label><select id="srole"><option value="penyelia">Penyelia</option><option value="pemandu">Pemandu</option></select><label>Nama pengguna</label><input id="snama"><div id="spenbox"><label>Jawatan</label><input id="sjaw" placeholder="cth: Warden"></div><label>Emel (untuk notifikasi tempahan baharu)</label><input id="semail" type="email" autocomplete="off"><label>ID log masuk</label><input id="snew" autocomplete="off"><div id="spwbox"><div class="row"><div><label>Kata laluan sementara</label><input id="spw" type="password" autocomplete="new-password"></div><div><label>Ulang kata laluan</label><input id="spw2" type="password" autocomplete="new-password"></div></div><p class="small">Pengguna baharu akan diminta tukar kata laluan semasa log masuk pertama.</p></div><button class="btn" id="sadd">Tambah Pengguna</button><button class="del hide" id="scancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="smsg"></div></div>
+     <div class="card"><h2 id="shead">Tambah Pengguna</h2><label>No. gaji (isi dahulu, maklumat lain keluar automatik)</label><input id="sgaji" inputmode="numeric" autocomplete="off" placeholder="cth: 205339"><div class="small" id="sfind" style="margin-top:4px"></div><label>Peranan</label><select id="srole"><option value="penyelia">Penyelia (pegawai penyemak)</option><option value="penyokong">Penyokong (PPTK / TP)</option><option value="pengetua">Pengetua (pegawai pelulus)</option><option value="pemandu">Pemandu</option></select><label>Nama pengguna</label><input id="snama"><div id="spenbox"><label>Jawatan / gelaran</label><input id="sjaw" placeholder="cth: Warden, PPTK, TP Kokurikulum, Pengetua"></div><label>Emel (untuk notifikasi dan kelulusan)</label><input id="semail" type="email" autocomplete="off"><label>ID log masuk</label><input id="snew" autocomplete="off"><div id="spwbox"><div class="row"><div><label>Kata laluan sementara</label><input id="spw" type="password" autocomplete="new-password"></div><div><label>Ulang kata laluan</label><input id="spw2" type="password" autocomplete="new-password"></div></div><p class="small">Pengguna baharu akan diminta tukar kata laluan semasa log masuk pertama.</p></div><button class="btn" id="sadd">Tambah Pengguna</button><button class="del hide" id="scancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="smsg"></div></div>
     </div>
    </div>
   </div>
@@ -239,7 +245,7 @@ function esc(s){var d=document.createElement("div");d.textContent=s==null?"":Str
 function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).replace(/\bOgo\b/,"Ogos")}
 function ts(v){return v?new Date(v).getTime():NaN}
 function overlap(b,s,e){return s<b.end&&e>b.start}
-function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;document.body.classList.toggle("wide",n===4||n===7);document.querySelector("nav").classList.toggle("hide",n===4||n===7);for(var i=1;i<=7;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
+function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;if(n===8&&!(cur&&(cur.role==="penyokong"||cur.role==="pengetua")))n=5;document.body.classList.toggle("wide",n===4||n===7||n===8);document.querySelector("nav").classList.toggle("hide",n===4||n===7||n===8);for(var i=1;i<=8;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
 [1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){if(n===2){var sd=$("sdate").value;if(sd&&!$("mula").value){$("mula").value=sd+"T08:00";$("tamat").value=sd+"T17:00";formDT.load()}}tab(n)}});
 
 function bd(b){return Array.isArray(b.drivers)?b.drivers:(b.driver?[b.driver]:[])}
@@ -376,12 +382,12 @@ function renderDash(){
   $("alerts").innerHTML=al.length?al.map(function(x){return x.h}).join(""):'<p class="small">Tiada dokumen atau servis yang akan tamat dalam 30 hari.</p>';
 }
 function renderAdmin(){
-  renderDash();renderReg();renderMnt();renderDriver();renderPm();renderCals();
+  renderDash();renderReg();renderMnt();renderDriver();renderPm();renderCals();renderX();
   function lst(el,docs,col){el.innerHTML=docs.length?docs.map(function(d){return '<div class="li"><span>'+esc(d.name)+'</span><button class="del" data-c="'+col+'" data-id="'+esc(d.id)+'">Padam</button></div>'}).join(""):'<p class="small">Belum ada senarai.</p>'}
   $("vlist").innerHTML=vehDocs.length?vehDocs.map(function(v){var r=regDocs.find(function(x){return x.id===v.id});return '<div class="li"><span>'+esc(v.name)+(r&&r.plate?' <span class="small">('+esc(r.plate)+')</span>':'')+'</span><span style="display:flex;gap:6px"><button class="del" style="color:var(--tx)" data-ve="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehicles" data-id="'+esc(v.id)+'">Padam</button></span></div>'}).join(""):'<p class="small">Belum ada kenderaan.</p>';$("dlist").innerHTML=drvDocs.length?drvDocs.map(function(d){
     var ex=d.lesenTamat?new Date(d.lesenTamat+"T23:59"):null,days=ex?Math.floor((ex-Date.now())/864e5):null,warn=ex&&days<=30;
     return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> '+(d.status==="nonaktif"?'<span class="tag pend">Tidak aktif</span>':'')+'<div class="small">No. gaji: '+esc(d.noGaji||"-")+' &middot; '+esc(d.email||"-")+' &middot; '+esc(d.phone||"-")+'</div><div class="small">Lesen: '+esc(d.lesen||"-")+(d.lesenTamat?' &middot; tamat '+esc(d.lesenTamat):'')+(warn?' <span class="tag busy">'+(days<0?"Lesen tamat tempoh":"Lesen tamat dalam "+days+" hari")+'</span>':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-de="'+esc(d.id)+'">Edit</button><button class="del" data-c="drivers" data-id="'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada pemandu didaftarkan.</p>';
-  $("slist").innerHTML=supDocs.length?supDocs.map(function(d){return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> <span class="tag pend">'+(d.role==="pemandu"?"Pemandu":"Penyelia")+'</span><div class="small">'+(d.role==="pemandu"?"Akses paparan pemandu":esc(d.jawatan||"-")+' &middot; No. gaji: '+esc(d.noGaji||"-"))+' &middot; ID: '+esc(d.id)+(d.mustChange?' &middot; belum tukar kata laluan':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-se="'+esc(d.id)+'">Edit</button><button class="del" style="color:var(--tx)" data-sr="'+esc(d.id)+'">Reset Kata Laluan</button><button class="del" data-c="supervisors" data-id="s_'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada penyelia dalam pangkalan data.</p>';
+  $("slist").innerHTML=supDocs.length?supDocs.map(function(d){return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> <span class="tag pend">'+(ROLEN[d.role]||"Penyelia")+'</span><div class="small">'+(d.role==="pemandu"?"Akses paparan pemandu":esc(d.jawatan||"-")+' &middot; No. gaji: '+esc(d.noGaji||"-"))+' &middot; ID: '+esc(d.id)+(d.mustChange?' &middot; belum tukar kata laluan':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-se="'+esc(d.id)+'">Edit</button><button class="del" style="color:var(--tx)" data-sr="'+esc(d.id)+'">Reset Kata Laluan</button><button class="del" data-c="supervisors" data-id="s_'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada penyelia dalam pangkalan data.</p>';
   var pc=bookings.filter(function(b){return b.status==="pending"}).length;$("goAdm").textContent=(canEdit?"Panel Penyelia":cur?"Program Saya":"Log Masuk")+(canEdit&&pc?" ("+pc+" menunggu)":"");
   var pl=bookings.filter(function(b){return b.status==="pending"}).sort(function(a,b){return a.start-b.start});
   $("pend").innerHTML=pl.length?pl.map(function(b){
@@ -393,7 +399,7 @@ function renderAdmin(){
 }
 $("p4").addEventListener("click",function(ev){
   var c=ev.target.getAttribute&&ev.target.getAttribute("data-c"),id=ev.target.getAttribute&&ev.target.getAttribute("data-id");
-  if(c==="supervisors"&&(supDocs.find(function(x){return "s_"+x.id===id})||{}).role!=="pemandu"&&supDocs.filter(function(x){return x.role!=="pemandu"}).length<=1){toast("Mesti ada sekurang-kurangnya seorang penyelia.");return}
+  if(c==="supervisors"&&isPen(supDocs.find(function(x){return "s_"+x.id===id})||{})&&supDocs.filter(isPen).length<=1){toast("Mesti ada sekurang-kurangnya seorang penyelia.");return}
   if(c&&id&&db)ask(c==="drivers"||c==="vehicles"?"Padam item ini? Tempahan sedia ada kekal dalam rekod.":"Padam rekod ini?").then(function(r){if(r)db.collection(c).doc(id).delete().catch(function(){toast("Gagal memadam.")})});
 });
 function addItem(col,inp,docs){
@@ -494,7 +500,7 @@ function makeDb(){return{collection:function(c){return{
 function deviceId(){try{var v=localStorage.getItem("devid");if(!v){v="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem("devid",v)}return v}catch(e){return "d"+Math.random().toString(36).slice(2,10)}}
 async function sha(s){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return("0"+x.toString(16)).slice(-2)}).join("")}
 try{var u0=JSON.parse(sessionStorage.getItem("usr")||"null");if(u0&&TOKEN){cur=u0;canEdit=cur.role==="penyelia"}}catch(e){}
-$("goAdm").onclick=function(){tab(cur&&cur.role==="pemandu"?7:4)};
+$("goAdm").onclick=function(){tab(cur&&cur.role==="pemandu"?7:cur&&(cur.role==="penyokong"||cur.role==="pengetua")?8:4)};
 $("lgin").onclick=async function(){
   var id=$("lid").value.trim().toLowerCase(),pw=$("lpw").value,e=$("lerr");e.textContent="";
   if(!apiOn()){e.textContent="Alamat API belum ditetapkan.";return}
@@ -810,6 +816,12 @@ function pmTable(nm,y,mo,pr){
      return '<tr><td>'+fdd(b.start)+(fdd(b.end)!==fdd(b.start)?'<br><span class="small">hingga '+fdd(b.end)+'</span>':'')+'</td><td>'+ftm(b.start)+'<br><span class="small">hingga '+ftm(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+(ct?'<br><span class="small">'+esc(ct)+'</span>':'')+(pr&&ok?'<br><button class="del" style="color:var(--tx);margin-top:6px" data-pr="'+esc(b.id)+'">Cetak</button>':'')+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
 }
+function renderX(){
+  if(!cur||!(cur.role==="penyokong"||cur.role==="pengetua"))return;
+  $("xrole").textContent="Panel "+ROLEN[cur.role];$("xwel").textContent="Selamat datang, "+(cur.name||cur.id);
+  var up=bookings.filter(function(b){return b.end>Date.now()&&b.status!=="rejected"}).sort(function(a,b){return a.start-b.start});
+  $("xup").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div><div>'+((b.status||"approved")==="pending"?'<span class="tag pend">Menunggu</span>':'<span class="tag free">Diluluskan</span>')+'</div></div>'}).join(""):'<p class="small">Tiada program akan datang.</p>';
+}
 function renderDriver(){
   if(!cur||cur.role!=="pemandu")return;
   $("pwel").textContent="Selamat datang, "+(cur.name||cur.id);
@@ -818,11 +830,13 @@ function renderDriver(){
 function renderPm(){fillDrvSel($("pmsel"));fillYM($("pmy"),$("pmm"));$("pmbody").innerHTML=pmTable($("pmsel").value,$("pmy").value,$("pmm").value,true)}
 $("pdsel").onchange=$("pdy").onchange=$("pdm").onchange=renderDriver;
 $("pmsel").onchange=$("pmy").onchange=$("pmm").onchange=renderPm;
+var ROLEN={penyelia:"Penyelia",penyokong:"Penyokong",pengetua:"Pengetua",pemandu:"Pemandu"};
+function isPen(x){return (x.role||"penyelia")==="penyelia"}
 function toggleRole(){var pm=$("srole").value==="pemandu";$("spenbox").classList.toggle("hide",pm)}
 $("srole").onchange=toggleRole;
-function enter(acc){cur={id:acc.id,name:acc.name||acc.id,role:acc.role||"penyelia"};canEdit=cur.role==="penyelia";try{sessionStorage.setItem("usr",JSON.stringify(cur))}catch(e){}render();tab(canEdit?4:7)}
+function enter(acc){cur={id:acc.id,name:acc.name||acc.id,role:acc.role||"penyelia"};canEdit=cur.role==="penyelia";try{sessionStorage.setItem("usr",JSON.stringify(cur))}catch(e){}render();tab(canEdit?4:(cur.role==="penyokong"||cur.role==="pengetua")?8:7)}
 function doLogout(){var t=TOKEN;TOKEN="";VER="";canEdit=false;cur=null;pendSup=null;try{sessionStorage.removeItem("usr");sessionStorage.removeItem("tok")}catch(e){}if(t&&apiOn())apiCall({action:"logout",token:t}).catch(function(){});render();tab(1);poll(true)}
-$("dlout").onclick=doLogout;
+$("dlout").onclick=doLogout;$("xlout").onclick=doLogout;
 document.querySelectorAll("#p7 .sl a").forEach(function(a){a.onclick=function(){var v=a.getAttribute("data-p");document.querySelectorAll(".pv").forEach(function(e){e.classList.toggle("hide",e.id!=="pv-"+v)});document.querySelectorAll("#p7 .sl a").forEach(function(x){x.classList.toggle("on",x===a)})}});
 var PAL=["#2e7d5b","#3b82c4","#d9822b","#8a5cc2","#c2456b","#2aa6a0","#9a8a1f","#6b7a8f"];
 var rosterDocs=[],rmap={},_n=new Date(),calSt={calS:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)},calD:{y:_n.getFullYear(),m:_n.getMonth(),sel:dstr(_n)}};
