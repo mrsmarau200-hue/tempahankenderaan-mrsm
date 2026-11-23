@@ -520,7 +520,7 @@ $("slist").addEventListener("click",function(ev){
   if(e){editSup=d.id;$("snama").value=d.name||"";$("sjaw").value=d.jawatan||"";$("sgaji").value=d.noGaji||"";$("semail").value=d.email||"";$("snew").value=d.id;$("snew").disabled=true;$("srole").value=d.role||"penyelia";toggleRole();$("spwbox").classList.add("hide");$("sadd").textContent="Simpan Perubahan";$("shead").textContent="Edit Pengguna";$("scancel").classList.remove("hide");$("smsg").textContent="";$("snama").focus()}
   else ask("Kata laluan sementara baharu untuk "+d.name+" (sekurang-kurangnya 12 aksara; huruf besar, huruf kecil, nombor dan simbol):",true).then(async function(v){
     if(v===null)return;var pe=pwErr(v);if(pe){toast(pe);return}
-    try{var h=await sha("mrsm-arau:"+d.id+":"+v);await db.collection("supervisors").doc("s_"+d.id).update({h:h,mustChange:true});toast("Kata laluan ditetapkan semula. Penyelia perlu menukarnya semasa log masuk seterusnya.")}catch(x){toast("Gagal menetapkan semula kata laluan.")}
+    try{var h=await sha("mrsm-arau:"+d.id+":"+v);await db.collection("supervisors").doc("s_"+d.id).update({h:h,mustChange:d.id!=="penyelia"});toast(d.id==="penyelia"?"Kata laluan ditetapkan semula. Akaun penyelia tidak perlu menukarnya lagi.":"Kata laluan ditetapkan semula. Penyelia perlu menukarnya semasa log masuk seterusnya.")}catch(x){toast("Gagal menetapkan semula kata laluan.")}
   });
 });
 $("sadd").onclick=async function(){
@@ -1023,7 +1023,7 @@ $("cok").onclick=async function(){
   var pe=pwErr(p1);if(pe){e.textContent=pe;return}
   if(p1!==p2){e.textContent="Kata laluan tidak sama.";return}
   try{var h=await sha("mrsm-arau:"+pendSup.id+":"+p1);
-    if(h===pendSup.h){e.textContent="Kata laluan baharu mesti berbeza daripada kata laluan sementara.";return}
+    if(h===pendSup.h&&pendSup.id!=="penyelia"){e.textContent="Kata laluan baharu mesti berbeza daripada kata laluan sementara.";return}
     var j=await apiCall({action:"setpw",token:TOKEN,h:h});
     if(!j||!j.ok){e.textContent=(j&&j.error==="same")?"Kata laluan baharu mesti berbeza daripada kata laluan sementara.":"Gagal menyimpan. Cuba lagi.";return}
     var a0=pendSup.acc;pendSup=null;
