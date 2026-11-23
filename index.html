@@ -223,7 +223,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
-<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
+<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><div class="row"><div><label>Mula</label><input id="emula" type="datetime-local"></div><div><label>Tamat</label><input id="etamat" type="datetime-local"></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun (untuk cetak)</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun, buka fail tersebut dan cetak.</p><div id="pbody"></div></div>
 <div class="toast hide" id="toast"></div>
@@ -647,20 +647,24 @@ window.addEventListener("hashchange",routeBorang);
 var edB=null;
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
-  $("etit").textContent=(bk.program||"Program")+" · "+fmt(bk.start);
+  $("etit").textContent=(bk.program||"Program")+" · "+fmt(bk.start)+" hingga "+fmt(bk.end);$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);
   $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
   var cur_=bd(bk),had=cur_.length>0;
   $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=apv.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
     return '<label class="small" style="display:block;margin:4px 0;color:var(--tx)"><input type="checkbox" value="'+esc(n)+'" '+(on?"checked":"")+(busy?" disabled":"")+' style="width:auto;margin-right:6px">'+esc(n)+(busy?" (sudah bertugas masa itu)":od?" (giliran hari itu)":"")+'</label>'}).join("");
   $("enota").value=bk.nota||bk.reason||"";$("emsg").textContent="";edToggle();$("edlg").classList.remove("hide");
 });
+function lti(t){var d=new Date(t),z=function(n){return ("0"+n).slice(-2)};return d.getFullYear()+"-"+z(d.getMonth()+1)+"-"+z(d.getDate())+"T"+z(d.getHours())+":"+z(d.getMinutes())}
 function edToggle(){$("edrvbox").classList.toggle("hide",$("estat").value!=="approved")}
 $("estat").onchange=edToggle;
 $("ecancel").onclick=function(){$("edlg").classList.add("hide");edB=null};
 $("esave").onclick=function(){
   var b=bookings.find(function(x){return x.id===edB});if(!b||!db||!canEdit)return;var m=$("emsg"),st=$("estat").value,nota=$("enota").value.trim();
   var ds=[].slice.call($("edrv").querySelectorAll("input:checked")).map(function(x){return x.value});
+  var ns=ts($("emula").value),ne=ts($("etamat").value);
+  if(isNaN(ns)||isNaN(ne)||ne<=ns){m.textContent="Masa mula dan tamat tidak sah. Tamat mesti selepas mula.";return}
   var data={status:st,nota:nota,reason:st==="rejected"?nota:"",decidedAt:Date.now()};
+  if(ns!==b.start||ne!==b.end){data.start=ns;data.end=ne;b={id:b.id,start:ns,end:ne,vehicle:b.vehicle}}
   if(st==="approved"){
     if(!ds.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
     var vc=apv.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
