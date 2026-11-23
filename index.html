@@ -247,8 +247,8 @@ var pick={},userPk={};
 function fillSelect(sel,list,field,s,e){
   var cur=sel.value,ok=!isNaN(s)&&!isNaN(e)&&e>s;
   sel.innerHTML='<option value="">-- pilih --</option>'+list.map(function(x){
-    var busy=ok&&apv.some(function(b){return has(b,field,x)&&overlap(b,s,e)});
-    return '<option value="'+esc(x)+'"'+(busy?" disabled":"")+'>'+esc(x)+(busy?" (sudah ditempah)":"")+'</option>'});
+    var busy=ok&&apv.find(function(b){return has(b,field,x)&&overlap(b,s,e)});
+    return '<option value="'+esc(x)+'"'+(busy?" disabled":"")+'>'+esc(x)+(busy?" (sudah ditempah "+ftm(busy.start)+" - "+ftm(busy.end)+")":"")+'</option>'});
   if(cur&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
 }
 function refreshForm(){var s=ts($("mula").value),e=ts($("tamat").value);fillSelect($("veh"),VEHICLES,"vehicle",s,e)}
