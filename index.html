@@ -119,11 +119,11 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 <section id="p3" class="hide"></section>
 <section id="p7" class="hide"><div class="dash">
   <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small>Panel Pemandu</small></div></div>
-   <div class="sf"><a id="dlout">&#128682; Log Keluar</a></div></aside>
+   <div class="sf"><a id="dback" style="display:none">&lsaquo; Panel Pentadbir</a><a id="dlout">&#128682; Log Keluar</a></div></aside>
   <div class="dmain"><h2 class="dt" id="pwel"></h2><div class="card"><h2>Giliran Bertugas</h2><div id="giliranNow"></div><div id="calD" style="margin-top:12px"></div></div><div class="card"><h2>Jadual Waktu Bekerja Pemandu</h2><div id="dJw"></div></div><div class="card"><label style="margin-top:0">Pemandu</label><select id="pdsel"></select><div class="row"><div><label>Tahun</label><select id="pdy"></select></div><div><label>Bulan</label><select id="pdm"></select></div></div></div><div id="pdbody"></div></div></div></section>
 <section id="p8" class="hide"><div class="dash">
   <aside class="side"><div class="brand"><img src="logo.png" alt="MRSM" class="slogo"><div><b>MRSM Arau</b><small id="xrole">Panel</small></div></div>
-   <div class="sf"><a id="xlout">&#128682; Log Keluar</a></div></aside>
+   <div class="sf"><a id="xback" style="display:none">&lsaquo; Panel Pentadbir</a><a id="xlout">&#128682; Log Keluar</a></div></aside>
   <div class="dmain"><h2 class="dt" id="xwel"></h2>
    <div class="card"><h2>Menunggu tindakan anda</h2><div id="xact"></div></div>
    <div class="card"><h2>Sudah anda putuskan</h2><div id="xdone"></div></div>
@@ -140,10 +140,13 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <a data-v="bk">&#128203; Senarai Tempahan</a>
     <a data-v="veh">&#128652; Kenderaan</a>
     <a data-v="drv">&#129489; Pemandu</a>
-    <a data-v="pm">&#128197; Dashboard Pemandu</a>
+    <a data-v="pm" class="adm">&#128197; Dashboard Pemandu</a>
     <a data-v="lap">&#128424; Cetak Laporan</a>
     <a data-v="ros">&#128198; Jadual Giliran</a>
-    <a data-v="sup">&#128273; Pengguna</a>
+    <a data-v="sup" class="adm">&#128273; Pengguna</a>
+    <a data-vx="penyokong" class="adm">&#128065; Paparan Penyokong</a>
+    <a data-vx="pengetua" class="adm">&#128065; Paparan Pengetua</a>
+    <a data-vx="pemandu" class="adm">&#128065; Paparan Pemandu</a>
    </nav>
    <div class="sf"><a id="toMain">&lsaquo; Status Tempahan</a><a id="lout">&#128682; Log Keluar</a></div>
   </aside>
@@ -229,7 +232,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
    <div id="v-sup" class="dv hide"><h2 class="dt">Daftar Pengguna</h2>
     <div class="grid2">
      <div class="card"><h2>Senarai Pengguna</h2><div id="slist"></div></div>
-     <div class="card"><h2 id="shead">Tambah Pengguna</h2><label>No. gaji (isi dahulu, maklumat lain keluar automatik)</label><input id="sgaji" inputmode="numeric" autocomplete="off" placeholder="cth: 205339"><div class="small" id="sfind" style="margin-top:4px"></div><label>Peranan</label><select id="srole"><option value="penyelia">Penyelia (pegawai penyemak)</option><option value="penyokong">Penyokong (PPTK / TP)</option><option value="pengetua">Pengetua (pegawai pelulus)</option><option value="pemandu">Pemandu</option></select><label>Nama pengguna</label><input id="snama"><div id="spenbox"><label>Jawatan / gelaran</label><input id="sjaw" placeholder="cth: Warden, PPTK, TP Kokurikulum, Pengetua"></div><label>Emel (untuk notifikasi dan kelulusan)</label><input id="semail" type="email" autocomplete="off"><label>ID log masuk</label><input id="snew" autocomplete="off"><div id="spwbox"><div class="row"><div><label>Kata laluan sementara</label><input id="spw" type="password" autocomplete="new-password"></div><div><label>Ulang kata laluan</label><input id="spw2" type="password" autocomplete="new-password"></div></div><p class="small">Pengguna baharu akan diminta tukar kata laluan semasa log masuk pertama.</p></div><button class="btn" id="sadd">Tambah Pengguna</button><button class="del hide" id="scancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="smsg"></div></div>
+     <div class="card"><h2 id="shead">Tambah Pengguna</h2><label>No. gaji (isi dahulu, maklumat lain keluar automatik)</label><input id="sgaji" inputmode="numeric" autocomplete="off" placeholder="cth: 205339"><div class="small" id="sfind" style="margin-top:4px"></div><label>Peranan</label><select id="srole"><option value="pentadbir">Pentadbir Sistem (akses penuh)</option><option value="penyelia">Penyelia (pegawai penyemak)</option><option value="penyokong">Penyokong (PPTK / TP)</option><option value="pengetua">Pengetua (pegawai pelulus)</option><option value="pemandu">Pemandu</option></select><label>Nama pengguna</label><input id="snama"><div id="spenbox"><label>Jawatan / gelaran</label><input id="sjaw" placeholder="cth: Warden, PPTK, TP Kokurikulum, Pengetua"></div><label>Emel (untuk notifikasi dan kelulusan)</label><input id="semail" type="email" autocomplete="off"><label>ID log masuk</label><input id="snew" autocomplete="off"><div id="spwbox"><div class="row"><div><label>Kata laluan sementara</label><input id="spw" type="password" autocomplete="new-password"></div><div><label>Ulang kata laluan</label><input id="spw2" type="password" autocomplete="new-password"></div></div><p class="small">Pengguna baharu akan diminta tukar kata laluan semasa log masuk pertama.</p></div><button class="btn" id="sadd">Tambah Pengguna</button><button class="del hide" id="scancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="smsg"></div></div>
     </div>
    </div>
   </div>
@@ -243,7 +246,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 <script>
 // Senarai ini boleh diubah (nama sebenar kenderaan dan pemandu)
 var VEHICLES=[],DRIVERS=[],vehDocs=[],drvDocs=[],supDocs=[],staffDocs=[],regDocs=[],mntDocs=[];
-var bookings=[],apv=[],db=null,me=null,canEdit=false,cur=null;
+var bookings=[],apv=[],db=null,me=null,canEdit=false,isAdm=false,viewX="penyokong",cur=null;
 var $=function(i){return document.getElementById(i)};
 function toast(t){var e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.add("hide")},4000)}
 function ask(msg,inp){return new Promise(function(res){var d=$("dlg"),i=$("dinp");$("dmsg").textContent=msg;i.classList.toggle("hide",!inp);i.value="";d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");res(inp?i.value:true)};$("dno").onclick=function(){d.classList.add("hide");res(null)}})}
@@ -251,7 +254,7 @@ function esc(s){var d=document.createElement("div");d.textContent=s==null?"":Str
 function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).replace(/\bOgo\b/,"Ogos")}
 function ts(v){return v?new Date(v).getTime():NaN}
 function overlap(b,s,e){return s<b.end&&e>b.start}
-function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;if(n===8&&!(cur&&(cur.role==="penyokong"||cur.role==="pengetua")))n=5;document.body.classList.toggle("wide",n===4||n===7||n===8);document.querySelector("nav").classList.toggle("hide",n===4||n===7||n===8);for(var i=1;i<=8;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
+function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&(cur.role==="pemandu"||isAdm)))n=5;if(n===8&&!(cur&&(cur.role==="penyokong"||cur.role==="pengetua"||isAdm)))n=5;document.body.classList.toggle("wide",n===4||n===7||n===8);document.querySelector("nav").classList.toggle("hide",n===4||n===7||n===8);for(var i=1;i<=8;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
 [1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){if(n===2){var sd=$("sdate").value;if(sd&&!$("mula").value){$("mula").value=sd+"T08:00";$("tamat").value=sd+"T17:00";formDT.load()}}tab(n)}});
 
 function bd(b){return Array.isArray(b.drivers)?b.drivers:(b.driver?[b.driver]:[])}
@@ -419,7 +422,7 @@ function renderAdmin(){
     var ex=d.lesenTamat?new Date(d.lesenTamat+"T23:59"):null,days=ex?Math.floor((ex-Date.now())/864e5):null,warn=ex&&days<=30;
     return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> '+(d.status==="nonaktif"?'<span class="tag pend">Tidak aktif</span>':'')+'<div class="small">No. gaji: '+esc(d.noGaji||"-")+' &middot; '+esc(d.email||"-")+' &middot; '+esc(d.phone||"-")+'</div><div class="small">Lesen: '+esc(d.lesen||"-")+(d.lesenTamat?' &middot; tamat '+esc(d.lesenTamat):'')+(warn?' <span class="tag busy">'+(days<0?"Lesen tamat tempoh":"Lesen tamat dalam "+days+" hari")+'</span>':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-de="'+esc(d.id)+'">Edit</button><button class="del" data-c="drivers" data-id="'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada pemandu didaftarkan.</p>';
   $("slist").innerHTML=supDocs.length?supDocs.map(function(d){return '<div class="li" style="display:block"><b>'+esc(d.name)+'</b> <span class="tag pend">'+(ROLEN[d.role]||"Penyelia")+'</span><div class="small">'+(d.role==="pemandu"?"Akses paparan pemandu":esc(d.jawatan||"-")+' &middot; No. gaji: '+esc(d.noGaji||"-"))+' &middot; ID: '+esc(d.id)+(d.mustChange?' &middot; belum tukar kata laluan':'')+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-se="'+esc(d.id)+'">Edit</button><button class="del" style="color:var(--tx)" data-sr="'+esc(d.id)+'">Reset Kata Laluan</button><button class="del" data-c="supervisors" data-id="s_'+esc(d.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Belum ada penyelia dalam pangkalan data.</p>';
-  var pc=bookings.filter(function(b){return b.status==="pending"}).length;$("goAdm").textContent=(canEdit?"Panel Penyelia":cur?"Program Saya":"Log Masuk")+(canEdit&&pc?" ("+pc+" menunggu)":"");
+  var pc=bookings.filter(function(b){return b.status==="pending"}).length;document.querySelectorAll("#p4 .adm").forEach(function(e){e.style.display=isAdm?"":"none"});var bs=document.querySelector("#p4 .brand small");if(bs)bs.textContent=isAdm?"Panel Pentadbir":"Panel Penyelia";$("dback").style.display=$("xback").style.display=isAdm?"":"none";$("goAdm").textContent=(canEdit?(isAdm?"Panel Pentadbir":"Panel Penyelia"):cur?"Program Saya":"Log Masuk")+(canEdit&&pc?" ("+pc+" menunggu)":"");
   var pl=bookings.filter(function(b){return b.status==="pending"}).sort(function(a,b){return a.start-b.start});
   $("pend").innerHTML=pl.length?pl.map(function(b){
     if(!userPk[b.id])pick[b.id]=DRIVERS.filter(function(d){return onDuty(b,d)&&!apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)})});
@@ -433,7 +436,7 @@ function renderAdmin(){
 }
 $("p4").addEventListener("click",function(ev){
   var c=ev.target.getAttribute&&ev.target.getAttribute("data-c"),id=ev.target.getAttribute&&ev.target.getAttribute("data-id");
-  if(c==="supervisors"&&isPen(supDocs.find(function(x){return "s_"+x.id===id})||{})&&supDocs.filter(isPen).length<=1){toast("Mesti ada sekurang-kurangnya seorang penyelia.");return}
+  if(c==="supervisors"){if(!isAdm){toast("Hanya pentadbir sistem boleh mengurus pengguna.");return}var tg=supDocs.find(function(x){return "s_"+x.id===id})||{};if(tg.role==="pentadbir"&&supDocs.filter(function(x){return x.role==="pentadbir"}).length<=1){toast("Mesti ada sekurang-kurangnya seorang pentadbir sistem.");return}}
   if(c&&id&&db)ask(c==="drivers"||c==="vehicles"?"Padam item ini? Tempahan sedia ada kekal dalam rekod.":"Padam rekod ini?").then(function(r){if(r)db.collection(c).doc(id).delete().catch(function(){toast("Gagal memadam.")})});
 });
 function addItem(col,inp,docs){
@@ -533,7 +536,7 @@ function makeDb(){return{collection:function(c){return{
 }}}}
 function deviceId(){try{var v=localStorage.getItem("devid");if(!v){v="d"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem("devid",v)}return v}catch(e){return "d"+Math.random().toString(36).slice(2,10)}}
 async function sha(s){var b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(function(x){return("0"+x.toString(16)).slice(-2)}).join("")}
-try{var u0=JSON.parse(sessionStorage.getItem("usr")||"null");if(u0&&TOKEN){cur=u0;canEdit=cur.role==="penyelia"}}catch(e){}
+try{var u0=JSON.parse(sessionStorage.getItem("usr")||"null");if(u0&&TOKEN){cur=u0;canEdit=cur.role==="penyelia"||cur.role==="pentadbir";isAdm=cur.role==="pentadbir"}}catch(e){}
 if(/^#tindak-/.test(location.hash)&&!(cur&&TOKEN))setTimeout(function(){tab(5)},0);
 $("goAdm").onclick=function(){tab(cur&&cur.role==="pemandu"?7:cur&&(cur.role==="penyokong"||cur.role==="pengetua")?8:4)};
 $("lgin").onclick=async function(){
@@ -572,6 +575,7 @@ $("sadd").onclick=async function(){
   if(!nm){m.textContent="Sila isi nama pengguna.";return}
   if(!db){m.textContent="Pangkalan data tidak tersedia.";return}
   if(editSup){
+    var eo=supDocs.find(function(x){return x.id===editSup})||{};if(eo.role==="pentadbir"&&role!=="pentadbir"&&supDocs.filter(function(x){return x.role==="pentadbir"}).length<=1){m.textContent="Mesti ada sekurang-kurangnya seorang pentadbir sistem.";return}
     try{await db.collection("supervisors").doc("s_"+editSup).update({name:nm,jawatan:jw,noGaji:gj,email:em,role:role});sReset();m.className="msg ok";m.textContent="Maklumat pengguna dikemas kini."}catch(x){m.textContent="Gagal menyimpan."}
     return;
   }
@@ -583,9 +587,11 @@ $("sadd").onclick=async function(){
     sReset();m.className="msg ok";m.textContent="Pengguna ditambah. Beliau perlu tukar kata laluan semasa log masuk pertama."}
   catch(x){m.textContent="Gagal menyimpan."}
 };
-function dview(v){document.querySelectorAll(".dv").forEach(function(e){e.classList.toggle("hide",e.id!=="v-"+v)});document.querySelectorAll("#p4 .sl a").forEach(function(a){a.classList.toggle("on",a.getAttribute("data-v")===v)})}
-document.querySelectorAll("#p4 .sl a").forEach(function(a){a.onclick=function(){dview(a.getAttribute("data-v"))}});
+function dview(v){if((v==="sup"||v==="pm")&&!isAdm)v="ov";document.querySelectorAll(".dv").forEach(function(e){e.classList.toggle("hide",e.id!=="v-"+v)});document.querySelectorAll("#p4 .sl a").forEach(function(a){a.classList.toggle("on",a.getAttribute("data-v")===v)})}
+document.querySelectorAll("#p4 .sl a[data-v]").forEach(function(a){a.onclick=function(){dview(a.getAttribute("data-v"))}});
 $("toMain").onclick=function(){tab(1)};
+document.querySelectorAll("#p4 .sl a[data-vx]").forEach(function(a){a.onclick=function(){if(!isAdm)return;var v=a.getAttribute("data-vx");if(v==="pemandu"){renderDriver();tab(7)}else{viewX=v;renderX();tab(8)}}});
+$("dback").onclick=$("xback").onclick=function(){tab(4)};
 function dleft(d){return d?Math.floor((new Date(d+"T23:59")-Date.now())/864e5):null}
 function etag(d){var n=dleft(d);if(n===null)return '<span class="small">-</span>';return n<0?'<span class="tag busy">Tamat tempoh</span>':n<=30?'<span class="tag warn">Tamat dalam '+n+' hari</span>':'<span class="tag free">Sah</span>'}
 function mname(m){var v=vehDocs.find(function(x){return x.id===m.vehId}),r=regDocs.find(function(x){return x.id===m.vehId});return v?v.name+(r&&r.plate?" ("+r.plate+")":""):(m.vehName||"-")}
@@ -897,14 +903,15 @@ function xCard(b,pg){
   return h;
 }
 function renderX(){
-  if(!cur||!(cur.role==="penyokong"||cur.role==="pengetua"))return;
-  $("xrole").textContent="Panel "+ROLEN[cur.role];$("xwel").textContent="Selamat datang, "+(cur.name||cur.id);
-  var pen=cur.role==="pengetua";
-  var act=bookings.filter(function(b){return pen?b.status==="disokong":(b.status==="disemak"&&b.penyokong&&b.penyokong.id===cur.id)}).sort(function(a,b){return a.start-b.start});
+  if(!cur||!(isAdm||cur.role==="penyokong"||cur.role==="pengetua"))return;
+  var xr=isAdm?viewX:cur.role;
+  $("xrole").textContent=isAdm?"Paparan "+ROLEN[xr]+" (baca sahaja)":"Panel "+ROLEN[cur.role];$("xwel").textContent=isAdm?"Pentadbir Sistem: paparan "+ROLEN[xr]+" (baca sahaja, tiada tindakan)":"Selamat datang, "+(cur.name||cur.id);
+  var pen=xr==="pengetua";
+  var act=bookings.filter(function(b){return pen?b.status==="disokong":(b.status==="disemak"&&(isAdm||(b.penyokong&&b.penyokong.id===cur.id)))}).sort(function(a,b){return a.start-b.start});
   var ae=document.activeElement;if(ae&&ae.getAttribute&&ae.getAttribute("data-xn")&&$("xact").contains(ae))return;
-  $("xact").innerHTML=act.length?act.map(function(b){return xCard(b)}).join(""):'<p class="small">Tiada tempahan menunggu tindakan anda.</p>';
-  var done=bookings.filter(function(b){return [b.sokong,b.lulus,b.tolak].some(function(x){return x&&x.id===cur.id})}).sort(function(a,b){return b.start-a.start});
-  $("xdone").innerHTML=done.length?done.map(function(b){var m=[b.sokong,b.lulus,b.tolak].filter(function(x){return x&&x.id===cur.id})[0];return xCard(b,1).replace(/<\/div>$/,'<div class="small"><b>Catatan anda:</b> '+esc(m.nota||"-")+'</div></div>')}).join(""):'<p class="small">Belum ada.</p>';
+  $("xact").innerHTML=act.length?act.map(function(b){return xCard(b,isAdm)}).join(""):'<p class="small">Tiada tempahan menunggu tindakan anda.</p>';
+  var mineX=function(x){return x&&(isAdm?x.role===xr:x.id===cur.id)};var done=bookings.filter(function(b){return [b.sokong,b.lulus,b.tolak].some(mineX)}).sort(function(a,b){return b.start-a.start});
+  $("xdone").innerHTML=done.length?done.map(function(b){var m=[b.sokong,b.lulus,b.tolak].filter(mineX)[0];return xCard(b,1).replace(/<\/div>$/,'<div class="small"><b>'+(isAdm?"Catatan "+esc(m.name||"")+":":"Catatan anda:")+'</b> '+esc(m.nota||"-")+'</div></div>')}).join(""):'<p class="small">Belum ada.</p>';
   var up=bookings.filter(function(b){return b.end>Date.now()&&b.status!=="rejected"}).sort(function(a,b){return a.start-b.start});
   $("xup").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div><div>'+stag(b)+'</div></div>'}).join(""):'<p class="small">Tiada program akan datang.</p>';
   var hid=(/^#tindak-([A-Za-z0-9]+)$/.exec(location.hash)||[])[1];
@@ -923,8 +930,8 @@ $("p8").addEventListener("click",async function(ev){
   b.disabled=false;
 });
 function renderDriver(){
-  if(!cur||cur.role!=="pemandu")return;
-  $("pwel").textContent="Selamat datang, "+(cur.name||cur.id);
+  if(!cur||!(cur.role==="pemandu"||isAdm))return;
+  $("pwel").textContent=isAdm?"Pentadbir Sistem: paparan Pemandu (baca sahaja)":"Selamat datang, "+(cur.name||cur.id);
   fillDrvSel($("pdsel"));fillYM($("pdy"),$("pdm"));$("pdbody").innerHTML=pmTable($("pdsel").value,$("pdy").value,$("pdm").value,false);
 }
 function renderPm(){fillDrvSel($("pmsel"));fillYM($("pmy"),$("pmm"));$("pmbody").innerHTML=pmTable($("pmsel").value,$("pmy").value,$("pmm").value,true)}
@@ -932,12 +939,12 @@ $("pdsel").onchange=$("pdy").onchange=$("pdm").onchange=renderDriver;
 $("pmsel").onchange=$("pmy").onchange=$("pmm").onchange=renderPm;
 function isPend(b){var s=b.status||"approved";return s==="pending"||s==="disemak"||s==="disokong"}
 var semakIn={};
-var ROLEN={penyelia:"Penyelia",penyokong:"Penyokong",pengetua:"Pengetua",pemandu:"Pemandu"};
+var ROLEN={pentadbir:"Pentadbir Sistem",penyelia:"Penyelia",penyokong:"Penyokong",pengetua:"Pengetua",pemandu:"Pemandu"};
 function isPen(x){return (x.role||"penyelia")==="penyelia"}
 function toggleRole(){var pm=$("srole").value==="pemandu";$("spenbox").classList.toggle("hide",pm)}
 $("srole").onchange=toggleRole;
-function enter(acc){cur={id:acc.id,name:acc.name||acc.id,role:acc.role||"penyelia"};canEdit=cur.role==="penyelia";try{sessionStorage.setItem("usr",JSON.stringify(cur))}catch(e){}render();tab(canEdit?4:(cur.role==="penyokong"||cur.role==="pengetua")?8:7)}
-function doLogout(){var t=TOKEN;TOKEN="";VER="";canEdit=false;cur=null;pendSup=null;try{sessionStorage.removeItem("usr");sessionStorage.removeItem("tok")}catch(e){}if(t&&apiOn())apiCall({action:"logout",token:t}).catch(function(){});render();tab(1);poll(true)}
+function enter(acc){cur={id:acc.id,name:acc.name||acc.id,role:acc.role||"penyelia"};canEdit=cur.role==="penyelia"||cur.role==="pentadbir";isAdm=cur.role==="pentadbir";try{sessionStorage.setItem("usr",JSON.stringify(cur))}catch(e){}render();tab(canEdit?4:(cur.role==="penyokong"||cur.role==="pengetua")?8:7)}
+function doLogout(){var t=TOKEN;TOKEN="";VER="";canEdit=false;isAdm=false;cur=null;pendSup=null;try{sessionStorage.removeItem("usr");sessionStorage.removeItem("tok")}catch(e){}if(t&&apiOn())apiCall({action:"logout",token:t}).catch(function(){});render();tab(1);poll(true)}
 $("dlout").onclick=doLogout;$("xlout").onclick=doLogout;
 document.querySelectorAll("#p7 .sl a").forEach(function(a){a.onclick=function(){var v=a.getAttribute("data-p");document.querySelectorAll(".pv").forEach(function(e){e.classList.toggle("hide",e.id!=="pv-"+v)});document.querySelectorAll("#p7 .sl a").forEach(function(x){x.classList.toggle("on",x===a)})}});
 var PAL=["#2e7d5b","#3b82c4","#d9822b","#8a5cc2","#c2456b","#2aa6a0","#9a8a1f","#6b7a8f"];
