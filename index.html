@@ -111,6 +111,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <label class="hide" style="display:none"><input type="checkbox" id="mkn" style="width:auto"></label>
     <div id="mknbox" class="hide"><label>Menu makanan</label><input id="mmenu" placeholder="cth: Minum pagi, makan tengah hari"><div class="row"><div><label>Bungkus / hidang</label><select id="mcara"><option>Bungkus</option><option>Hidang</option></select></div><div><label>Bilangan</label><input id="mbil" placeholder="cth: 6 pack"></div></div><div class="row"><div><label>Tarikh ambil</label><input id="mtkh" type="date"></div><div><label>Masa ambil</label><input id="mmasa" type="time"></div></div></div>
     <p class="small" id="hint">Pilih tarikh dan jam dahulu. Jam atau kenderaan yang sudah ditempah akan jadi kelabu. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
+    <div id="penBox" class="hide" style="margin-top:14px;padding:12px;border:1px dashed var(--ac);border-radius:12px"><b>Khas penyelia</b><p class="small" style="margin:4px 0 0">Tempahan yang penyelia isi tidak perlu disemak semula. Ia terus ke penyokong dan Pengetua.</p><label>Pemandu</label><div id="penDrv" class="pk"></div><label>Penyokong</label><select id="penSp"></select><label>Catatan (pilihan)</label><textarea id="penNota" rows="2"></textarea></div>
     <button class="btn" id="hantar">Hantar Tempahan</button>
     <div class="msg" id="msg"></div>
   </div>
@@ -285,7 +286,18 @@ function dtWire(ms,te,vehFn,exFn,cb){
   [H1,D2,H2].forEach(function(x){x.onchange=ref});
   return {ref:ref,load:function(){var a=M.value.split("T"),b=T.value.split("T");D1.value=a[0]||"";D2.value=b[0]||"";ref();if(a[1]){H1.value=String(parseInt(a[1],10));ref()}if(b[1]){H2.value=String(parseInt(b[1],10));ref()}},clear:function(){D1.value=D2.value="";H1.value=H2.value="";ref()}};
 }
-var formDT=dtWire("mula","tamat",function(){return $("veh").value},function(){return ""},function(){fillSelect($("veh"),VEHICLES,"vehicle",ts($("mula").value),ts($("tamat").value))});
+var formDT=dtWire("mula","tamat",function(){return $("veh").value},function(){return ""},function(){fillSelect($("veh"),VEHICLES,"vehicle",ts($("mula").value),ts($("tamat").value));penUpdate()});
+var penUser=false,penSel="";
+function penUpdate(){
+  var box=$("penBox");if(!box)return;box.classList.toggle("hide",!canEdit);if(!canEdit)return;
+  var s=ts($("mula").value),e=ts($("tamat").value),ok=!isNaN(s)&&!isNaN(e)&&e>s,pb={start:s,end:e,vehicle:$("veh").value};
+  var cur_=penUser?[].slice.call($("penDrv").querySelectorAll("input:checked")).map(function(x){return x.value}):null;
+  $("penDrv").innerHTML=DRIVERS.length?DRIVERS.map(function(d){var busy=ok&&apv.some(function(x){return bd(x).indexOf(d)>=0&&overlap(x,s,e)});var on=!busy&&(cur_?cur_.indexOf(d)>=0:(ok&&pb.vehicle&&onDuty(pb,d)));
+    return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(ok&&pb.vehicle&&onDuty(pb,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join(""):'<span class="small">Belum ada pemandu aktif.</span>';
+  var sv=$("penSp").value||penSel;$("penSp").innerHTML=spOpts(sv);
+}
+$("penDrv").addEventListener("change",function(){penUser=true});
+$("penSp").addEventListener("change",function(){penSel=this.value});
 function refreshForm(){formDT.ref()}
 $("veh").onchange=refreshForm;
 function fdd(t){return new Date(t).toLocaleDateString("ms-MY",{day:"numeric",month:"short",year:"numeric"}).replace(/\bOgo\b/,"Ogos")}
@@ -1154,10 +1166,22 @@ $("hantar").onclick=function(){
   var clash=apv.some(function(b){return overlap(b,d.start,d.end)&&b.vehicle===d.vehicle});
   if(clash){m.textContent="Kenderaan sudah ditempah pada masa tersebut.";refreshForm();return}
   if(!db){m.textContent="Sistem simpanan tidak tersedia. Sila log masuk.";return}
+  var pu=null;
+  if(canEdit){
+    var pd=[].slice.call($("penDrv").querySelectorAll("input:checked")).map(function(x){return x.value}),sp=$("penSp").value;
+    if(!pd.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
+    if(!sp){m.textContent="Pilih penyokong, atau pilih 'Tiada penyokong'.";return}
+    var dcl=pd.filter(function(n){return apv.some(function(x){return bd(x).indexOf(n)>=0&&overlap(x,d.start,d.end)})});
+    if(dcl.length){m.textContent=dcl.join(", ")+" sudah bertugas pada masa itu.";return}
+    var me2=supDocs.find(function(x){return x.id===cur.id})||{};pu=supDocs.find(function(x){return x.id===sp});
+    d.drivers=pd;d.status=sp==="none"?"disokong":"disemak";d.pulang=null;
+    d.semak={id:cur.id,name:cur.name||cur.id,jawatan:me2.jawatan||"",at:Date.now(),nota:("Tempahan diisi oleh penyelia"+($("penNota").value.trim()?". "+$("penNota").value.trim():""))};
+    d.penyokong=sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""};
+  }
   $("hantar").disabled=true;
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
-    m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
+    m.className="msg ok";m.textContent=canEdit?(pu?"Tempahan dihantar kepada "+pu.name+" untuk disokong.":"Tempahan dihantar kepada Pengetua."):"Tempahan dihantar. Menunggu kelulusan penyelia.";penUser=false;penSel="";$("penNota").value="";
     justSent=id;try{location.hash="borang-"+id}catch(e){}openBorang(id);
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});formDT.clear();$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
