@@ -156,6 +156,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
    </div>
    <div id="v-lap" class="dv hide"><h2 class="dt">Cetak Laporan</h2>
     <div class="card"><h2>Laporan Penggunaan Kenderaan</h2><label style="margin-top:0">Pemandu</label><select id="rsel"></select><div class="row"><div><label>Tahun</label><select id="ry"></select></div><div><label>Bulan</label><select id="rm"></select></div></div><button class="btn" id="pmprint" style="width:auto;margin-top:14px;padding:10px 18px">Cetak Laporan</button></div>
+    <div class="card"><h2>Laporan Jejak Kelulusan (Audit)</h2><p class="small">Rekod siapa menyemak, menyokong dan meluluskan setiap tempahan, termasuk tarikh, masa dan catatan.</p><div class="row"><div><label>Tahun</label><select id="ay"></select></div><div><label>Bulan</label><select id="am"></select></div></div><label>Status</label><select id="ast"><option value="">Semua</option><option value="approved">Diluluskan</option><option value="rejected">Ditolak / tidak diluluskan</option><option value="proses">Dalam proses</option></select><button class="btn" id="auprint" style="width:auto;margin-top:14px;padding:10px 18px">Cetak Laporan Audit</button></div>
    </div>
    <div id="v-app" class="dv hide"><h2 class="dt">Menunggu Semakan</h2><div class="card"><div id="pend"></div></div><h2 class="dt" style="margin-top:18px">Dalam proses kelulusan</h2><div class="card"><div id="inproc"></div></div></div>
    <div id="v-bk" class="dv hide"><h2 class="dt">Senarai Tempahan</h2>
@@ -384,7 +385,7 @@ function renderDash(){
   $("chart").innerHTML='<div class="bars">'+cnt.map(function(c,k){return '<div title="'+BULAN[k]+'">'+c+'<i style="height:'+Math.max(3,Math.round(c/mx*80))+'px"></i>'+BULAN[k].slice(0,3)+'</div>'}).join("")+'</div>';
   var dc=DRIVERS.map(function(d){return apm.filter(function(b){return bd(b).indexOf(d)>=0}).length}),md=Math.max.apply(null,dc.concat(1));
   $("dload").innerHTML=DRIVERS.length?DRIVERS.map(function(d,k){return '<div class="hb"><div class="t"><span>'+esc(d)+'</span><b>'+dc[k]+' trip</b></div><div class="tr"><i style="width:'+Math.round(dc[k]/md*100)+'%"></i></div></div>'}).join(""):'<p class="small">Belum ada pemandu.</p>';
-  fillDrvSel($("rsel"));fillYM($("ry"),$("rm"));
+  fillDrvSel($("rsel"));fillYM($("ry"),$("rm"));fillYM($("ay"),$("am"));
   fillYM($("uy"),$("um"));var uy=+$("uy").value,um=+$("um").value;
   var up=apv.filter(function(b){var d=new Date(b.start);return b.end>Date.now()&&d.getFullYear()===uy&&(um<0||d.getMonth()===um)}).sort(function(a,b){return a.start-b.start});
   $("upn").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
@@ -804,6 +805,31 @@ function laporanBody(nm,y,mo){
 $("pmprint").onclick=function(){
   if(!canEdit)return;var nm=$("rsel").value,y=$("ry").value,mo=$("rm").value;
   curForm=null;curRpt={html:laporanBody(nm,y,mo),name:"laporan-penggunaan-kenderaan-"+y+(+mo<0?"":"-"+("0"+(+mo+1)).slice(-2))+".html"};
+  $("pbody").innerHTML='<style>'+PCSS+'</style>'+curRpt.html;$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper();
+};
+function auditBody(y,mo,st){
+  var l=bookings.filter(function(b){var d=new Date(b.start),s=b.status||"approved";
+    return d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)&&(!st||(st==="proses"?isPend(b):s===st))}).sort(function(a,b){return a.start-b.start});
+  var per=(+mo<0?"Tahun "+y:BULAN[+mo]+" "+y),n={approved:0,rejected:0,proses:0};
+  function cell(x,res){if(!x)return res?'<span style="color:#666">'+res+'</span>':'-';return '<b>'+esc(x.name).toUpperCase()+'</b>'+(x.jawatan?'<br>'+esc(x.jawatan):'')+'<br>'+fdtm(x.at)+(res?'<br><b>'+res+'</b>':'')+(x.nota?'<br><i>'+esc(x.nota)+'</i>':'')}
+  var rows=l.map(function(b,i){
+    var s=b.status||"approved",sk=b.sokong||(b.tolak&&b.tolak.role==="penyokong"?b.tolak:null),pg=b.lulus||(b.tolak&&b.tolak.role==="pengetua"?b.tolak:null);
+    if(s==="approved")n.approved++;else if(s==="rejected")n.rejected++;else n.proses++;
+    var skR=sk?(sk===b.sokong?"Disokong":"Ditolak"):(s==="disemak"&&b.penyokong?"Menunggu: "+esc(b.penyokong.name):(b.semak&&!b.penyokong?"Tiada penyokong (terus ke Pengetua)":"")),
+        pgR=pg?(pg===b.lulus?"Diluluskan":"Tidak diluluskan"):(s==="disokong"?"Menunggu Pengetua":""),
+        fin=s==="approved"?"Diluluskan":s==="rejected"?"Ditolak":s==="disemak"?"Menunggu sokongan":s==="disokong"?"Menunggu Pengetua":"Menunggu semakan",
+        old=(s==="approved"||s==="rejected")&&!b.semak&&!b.lulus&&!b.tolak;
+    return '<tr><td>'+(i+1)+'</td><td>'+esc(b.noBorang||"-")+'</td><td style="text-align:left"><b>'+esc(b.program)+'</b><br>Pemohon: '+esc(b.teacher||"-")+'<br>'+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</td><td>'+fdtm(b.start)+'<br>hingga<br>'+fdtm(b.end)+'</td><td>'+(b.dibuat?fdtm(b.dibuat):"-")+'</td><td style="text-align:left">'+cell(b.semak,"")+'</td><td style="text-align:left">'+cell(sk,skR)+'</td><td style="text-align:left">'+cell(pg,pgR)+'</td><td><b>'+fin+'</b>'+(old?'<br><span style="color:#666">Rekod sebelum sistem kelulusan baharu</span>':'')+'</td></tr>'}).join("");
+  return '<style>@page{size:A4 landscape;margin:10mm}.paper.rp{max-width:1060px;font-size:10px}.rp table{width:100%;border-collapse:collapse;margin-top:8px}.rp th,.rp td{border:1px solid #000;padding:3px 5px;text-align:center;vertical-align:top}.rp th{background:#eee}.rp tr{page-break-inside:avoid}.rp .ttl{text-align:center;font-weight:700;font-size:14px}.rp .sub{text-align:center;margin:2px 0 6px}.rp .sg{display:flex;justify-content:space-between;margin-top:36px}.rp .sg div{width:40%}</style>'
+   +'<div class="paper rp"><div class="ttl">LAPORAN JEJAK KELULUSAN TEMPAHAN KENDERAAN MRSM ARAU, PERLIS</div><div class="sub">Tempoh program: <b>'+esc(per)+'</b>'+(st?' &nbsp;|&nbsp; Status: <b>'+(st==="approved"?"Diluluskan":st==="rejected"?"Ditolak":"Dalam proses")+'</b>':'')+' &nbsp;|&nbsp; Dijana: '+fdtm(Date.now())+'</div>'
+   +'<table><thead><tr><th>Bil.</th><th>No. borang</th><th>Program / pemohon / kenderaan</th><th>Tarikh dan masa program</th><th>Dihantar</th><th>Semakan (penyelia)</th><th>Sokongan</th><th>Kelulusan (Pengetua)</th><th>Status akhir</th></tr></thead><tbody>'
+   +(rows||'<tr><td colspan="9">Tiada rekod untuk tempoh ini.</td></tr>')+'</tbody></table>'
+   +'<p style="margin-top:8px">Jumlah tempahan: <b>'+l.length+'</b> &nbsp;|&nbsp; Diluluskan: <b>'+n.approved+'</b> &nbsp;|&nbsp; Ditolak: <b>'+n.rejected+'</b> &nbsp;|&nbsp; Dalam proses: <b>'+n.proses+'</b></p>'
+   +'<div class="sg"><div>Disediakan oleh:<br><br><br>.............................................<br>Tarikh:</div><div>Disahkan oleh:<br><br><br>.............................................<br>Tarikh:</div></div></div>';
+}
+$("auprint").onclick=function(){
+  if(!canEdit)return;var y=$("ay").value,mo=$("am").value,st=$("ast").value;
+  curForm=null;curRpt={html:auditBody(y,mo,st),name:"audit-kelulusan-"+y+(+mo<0?"":"-"+("0"+(+mo+1)).slice(-2))+".html"};
   $("pbody").innerHTML='<style>'+PCSS+'</style>'+curRpt.html;$("pform").classList.remove("hide");$("pform").scrollTop=0;fitPaper();
 };
 function respTables(){
