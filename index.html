@@ -669,8 +669,9 @@ $("esave").onclick=function(){
     if(dc.length){m.textContent=dc.join(", ")+" sudah bertugas pada masa itu.";return}
     data.drivers=ds;
   }
-  var id=b.id;$("edlg").classList.add("hide");edB=null;
-  db.collection("bookings").doc(id).update(data).then(function(){return st==="approved"?syncRoster(b,ds):0}).then(function(){toast(st==="approved"?"Maklumat program dikemas kini.":"Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){toast("Gagal mengemas kini.")});
+  var id=b.id;$("esave").disabled=true;m.className="msg";m.textContent="Menyimpan...";
+  var tryW=function(k){return db.collection("bookings").doc(id).update(data).catch(function(e){if(k>0)return tryW(k-1);throw e})};
+  tryW(2).then(function(){$("edlg").classList.add("hide");edB=null;$("esave").disabled=false;toast(st==="approved"?"Maklumat program dikemas kini.":"Program ditolak. Kenderaan dan pemandu kembali tersedia.")}).catch(function(){$("esave").disabled=false;m.textContent="Gagal menyimpan. Tekan Simpan sekali lagi. Jika masih gagal, log keluar dan log masuk semula."});
 };
 document.addEventListener("click",function(ev){var pr=ev.target.getAttribute&&ev.target.getAttribute("data-pr");if(pr)showForm(pr)});
 $("pclose").onclick=function(){$("pform").classList.add("hide");if(/^#borang-/.test(location.hash)){history.replaceState(null,"",location.pathname+location.search);$("pclose").textContent="Tutup";window.scrollTo(0,0)}};
