@@ -103,11 +103,11 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <label>No. gaji pemohon (nama keluar automatik)</label><input id="gajiP" inputmode="numeric" autocomplete="off" placeholder="cth: 227375"><div class="small" id="gajiMsg" style="margin-top:4px"></div>
     <label>Guru / staf pemohon</label><input id="guru">
     <div class="row"><div><label>Bil. ahli rombongan</label><input id="pel" type="number" min="1"></div><div><label>Tempat aktiviti</label><input id="tuj" placeholder="cth: Dataran Kangar Jaya, Kangar"></div></div>
-    <div class="row"><div><label>Mula</label><input id="mula" type="datetime-local"></div><div><label>Tamat</label><input id="tamat" type="datetime-local"></div></div>
+    <input id="mula" type="hidden"><input id="tamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="mulaD" type="date"></div><div><label>Masa mula</label><select id="mulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="tamatD" type="date"></div><div><label>Masa tamat</label><select id="tamatH"></select></div></div>
     <label>Kenderaan</label><select id="veh"></select>
     <label class="hide" style="display:none"><input type="checkbox" id="mkn" style="width:auto"></label>
     <div id="mknbox" class="hide"><label>Menu makanan</label><input id="mmenu" placeholder="cth: Minum pagi, makan tengah hari"><div class="row"><div><label>Bungkus / hidang</label><select id="mcara"><option>Bungkus</option><option>Hidang</option></select></div><div><label>Bilangan</label><input id="mbil" placeholder="cth: 6 pack"></div></div><div class="row"><div><label>Tarikh ambil</label><input id="mtkh" type="date"></div><div><label>Masa ambil</label><input id="mmasa" type="time"></div></div></div>
-    <p class="small" id="hint">Pilih tarikh dan masa dahulu. Kenderaan yang sudah ditempah pada masa itu akan dikunci. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
+    <p class="small" id="hint">Pilih tarikh dan jam dahulu. Jam atau kenderaan yang sudah ditempah akan jadi kelabu. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
     <button class="btn" id="hantar">Hantar Tempahan</button>
     <div class="msg" id="msg"></div>
   </div>
@@ -223,7 +223,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
-<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><div class="row"><div><label>Mula</label><input id="emula" type="datetime-local"></div><div><label>Tamat</label><input id="etamat" type="datetime-local"></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
+<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><input id="emula" type="hidden"><input id="etamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="emulaD" type="date"></div><div><label>Masa mula</label><select id="emulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="etamatD" type="date"></div><div><label>Masa tamat</label><select id="etamatH"></select></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun (untuk cetak)</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun, buka fail tersebut dan cetak.</p><div id="pbody"></div></div>
 <div class="toast hide" id="toast"></div>
@@ -239,7 +239,7 @@ function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"
 function ts(v){return v?new Date(v).getTime():NaN}
 function overlap(b,s,e){return s<b.end&&e>b.start}
 function tab(n){if(n===4&&!canEdit)n=5;if(n===7&&!(cur&&cur.role==="pemandu"))n=5;document.body.classList.toggle("wide",n===4||n===7);document.querySelector("nav").classList.toggle("hide",n===4||n===7);for(var i=1;i<=7;i++){$("p"+i).classList.toggle("hide",i!==n);var t=$("t"+i);if(t)t.classList.toggle("on",i===n)}}
-[1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){if(n===2){var sd=$("sdate").value;if(sd&&!$("mula").value){$("mula").value=sd+"T08:00";$("tamat").value=sd+"T17:00";refreshForm()}}tab(n)}});
+[1,2,3,4].forEach(function(n){$("t"+n).onclick=function(){if(n===2){var sd=$("sdate").value;if(sd&&!$("mula").value){$("mula").value=sd+"T08:00";$("tamat").value=sd+"T17:00";formDT.load()}}tab(n)}});
 
 function bd(b){return Array.isArray(b.drivers)?b.drivers:(b.driver?[b.driver]:[])}
 function has(b,field,name){return field==="driver"?bd(b).indexOf(name)>=0:b[field]===name}
@@ -251,15 +251,39 @@ function fillSelect(sel,list,field,s,e){
     return '<option value="'+esc(x)+'"'+(busy?" disabled":"")+'>'+esc(x)+(busy?" (sudah ditempah "+ftm(busy.start)+" - "+ftm(busy.end)+")":"")+'</option>'});
   if(cur&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
 }
-function refreshForm(){var s=ts($("mula").value),e=ts($("tamat").value);fillSelect($("veh"),VEHICLES,"vehicle",s,e)}
-$("mula").onchange=$("tamat").onchange=refreshForm;
+function hl(i){return ((i%12)||12)+":00 "+(i<12?"pagi":i<14?"tengah hari":"petang")}
+function hrOpts(sel,kind,ds,veh,ex,minTs){
+  var cur=sel.value,base=ds?new Date(ds+"T00:00").getTime():NaN,h='<option value="">-- jam --</option>';
+  for(var i=0;i<24;i++){var dis=false,why="";
+    if(!isNaN(base)){var a=kind==="s"?base+i*36e5:base+(i-1)*36e5,z=a+36e5;
+      if(veh&&apv.some(function(b){return b.id!==ex&&b.vehicle===veh&&overlap(b,a,z)})){dis=true;why=" (sudah ditempah)"}
+      else if(kind==="e"&&minTs&&base+i*36e5<=minTs){dis=true}}
+    h+='<option value="'+i+'"'+(dis?" disabled":"")+'>'+hl(i)+why+'</option>'}
+  sel.innerHTML=h;if(cur!==""&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
+}
+function dtWire(ms,te,vehFn,exFn,cb){
+  var D1=$(ms+"D"),H1=$(ms+"H"),D2=$(te+"D"),H2=$(te+"H"),M=$(ms),T=$(te);
+  function comp(d,h){return d.value&&h.value!==""?d.value+"T"+("0"+h.value).slice(-2)+":00":""}
+  function ref(){
+    D2.min=D1.value||"";
+    hrOpts(H1,"s",D1.value,vehFn(),exFn(),NaN);M.value=comp(D1,H1);
+    hrOpts(H2,"e",D2.value,vehFn(),exFn(),ts(M.value));T.value=comp(D2,H2);
+    if(cb)cb()}
+  D1.onchange=function(){if(D1.value&&(!D2.value||D2.value<D1.value))D2.value=D1.value;ref()};
+  [H1,D2,H2].forEach(function(x){x.onchange=ref});
+  return {ref:ref,load:function(){var a=M.value.split("T"),b=T.value.split("T");D1.value=a[0]||"";D2.value=b[0]||"";ref();if(a[1]){H1.value=String(parseInt(a[1],10));ref()}if(b[1]){H2.value=String(parseInt(b[1],10));ref()}},clear:function(){D1.value=D2.value="";H1.value=H2.value="";ref()}};
+}
+var formDT=dtWire("mula","tamat",function(){return $("veh").value},function(){return ""},function(){fillSelect($("veh"),VEHICLES,"vehicle",ts($("mula").value),ts($("tamat").value))});
+function refreshForm(){formDT.ref()}
+$("veh").onchange=refreshForm;
+function fdt(t){return new Date(t).toLocaleDateString("ms-MY",{day:"numeric",month:"short",year:"numeric"}).replace(/\bOgo\b/,"Ogos")+", "+ftm(t)}
 
 function card(name,field){
   var n=Date.now(),cur=apv.find(function(b){return has(b,field,name)&&b.start<=n&&n<b.end});
   var nxt=apv.filter(function(b){return has(b,field,name)&&b.start>n}).sort(function(a,b){return a.start-b.start})[0];
   var h='<div class="card"><b>'+esc(name)+'</b> <span class="tag '+(cur?"busy":nxt?"pend":"free")+'">'+(cur?"Sedang digunakan":nxt?"Ada tempahan":"Tersedia")+'</span>';
-  if(cur)h+='<div class="small">'+esc(cur.program)+' &middot; hingga '+fmt(cur.end)+'</div>';
-  if(nxt)h+='<div class="small">Seterusnya: '+esc(nxt.program)+' ('+fmt(nxt.start)+')</div>';
+  if(cur)h+='<div class="small">'+esc(cur.program)+' &middot; hingga '+fdt(cur.end)+'</div>';
+  if(nxt)h+='<div class="small">Seterusnya: '+esc(nxt.program)+' ('+fdt(nxt.start)+')</div>';
   else if(!cur)h+='<div class="small">Tiada tempahan akan datang</div>';
   return h+'</div>';
 }
@@ -278,7 +302,7 @@ function cardD(name,field){
   var ds=ts(($("sdate").value||today())+"T00:00"),de=ds+864e5;
   var l=apv.filter(function(b){return has(b,field,name)&&overlap(b,ds,de)}).sort(function(a,b){return a.start-b.start});
   var h='<div class="card"><b>'+esc(name)+'</b> <span class="tag '+(l.length?"busy":"free")+'">'+(l.length?"Ditempah":"Tersedia")+'</span>';
-  l.forEach(function(b){h+='<div class="small">'+esc(b.program)+'<br>'+fmt(b.start)+' hingga '+fmt(b.end)+'</div>'});
+  l.forEach(function(b){h+='<div class="small">'+esc(b.program)+'<br>'+fdt(b.start)+' hingga '+fdt(b.end)+'</div>'});
   return h+'</div>';
 }
 function render(){
@@ -287,7 +311,7 @@ function render(){
   $("vcards").innerHTML=VEHICLES.map(function(v){return cardD(v,"vehicle")}).join("");
   $("dcards").innerHTML=DRIVERS.map(function(v){return cardD(v,"driver")}).join("");
   var up=apv.filter(function(b){return b.end>Date.now()}).sort(function(a,b){return a.start-b.start});
-  $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
+  $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
   var list=bookings.filter(function(b){return (b.status||"approved")!=="pending"}).sort(function(a,b){return b.start-a.start});
   fillFilters(list);
   var fyv=+$("fy").value,fmv=+$("fm").value;
@@ -300,8 +324,8 @@ function render(){
   $("bcount").textContent=list2.length+" tempahan"+(byv?" · "+byv:" · semua tahun")+(bmv>=0?" · "+BULAN[bmv]:"");
   var rh=list2.length?list2.map(function(b){
     var mine=canEdit||(me&&b.by===me);
-    return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'<br>'+stag(b).replace(/<div class="small">.*?<\/div>/,"")+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td><td class="ac">'+(canEdit&&(b.status||"approved")==="pending"?'<button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button> ':"")+(canEdit&&(b.status||"approved")==="approved"?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':"")+(canEdit&&(b.status||"approved")!=="pending"?'<button class="del" style="color:var(--tx)" data-rj="'+esc(b.id)+'">Edit</button> ':"")+(mine?'<button class="del" data-id="'+esc(b.id)+'">Padam</button>':"")+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
-  var rh3=list.length?list.map(function(b){return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+stag(b)+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
+    return '<tr><td>'+fdt(b.start)+'<br><span class="small">hingga '+fdt(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'<br>'+stag(b).replace(/<div class="small">.*?<\/div>/,"")+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td><td class="ac">'+(canEdit&&(b.status||"approved")==="pending"?'<button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button> ':"")+(canEdit&&(b.status||"approved")==="approved"?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':"")+(canEdit&&(b.status||"approved")!=="pending"?'<button class="del" style="color:var(--tx)" data-rj="'+esc(b.id)+'">Edit</button> ':"")+(mine?'<button class="del" data-id="'+esc(b.id)+'">Padam</button>':"")+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
+  var rh3=list.length?list.map(function(b){return '<tr><td>'+fdt(b.start)+'<br><span class="small">hingga '+fdt(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+stag(b)+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
   $("rows").innerHTML=rh3;$("rows2").innerHTML=rh;renderAdmin();
   refreshForm();
 }
@@ -340,7 +364,7 @@ function renderDash(){
   fillDrvSel($("rsel"));fillYM($("ry"),$("rm"));
   fillYM($("uy"),$("um"));var uy=+$("uy").value,um=+$("um").value;
   var up=apv.filter(function(b){var d=new Date(b.start);return b.end>Date.now()&&d.getFullYear()===uy&&(um<0||d.getMonth()===um)}).sort(function(a,b){return a.start-b.start});
-  $("upn").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
+  $("upn").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
   var al=[];
   function chk(who,label,d){var n=dleft(d);if(n!==null&&n<=30)al.push({n:n,h:'<div class="li" style="display:block"><b>'+esc(who)+'</b> <span class="small">&middot; '+label+' &middot; '+esc(d)+'</span> '+etag(d)+'</div>'})}
   regDocs.forEach(function(v){var w=v.name+(v.plate?" ("+v.plate+")":"");chk(w,"Road tax",v.taxEnd);chk(w,"Insurans",v.insEnd);chk(w,"PUSPAKOM / permit",v.inspEnd)});
@@ -363,7 +387,7 @@ function renderAdmin(){
     var sel=pick[b.id]||[];
     var ck=DRIVERS.map(function(d){var busy=apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)});var on=sel.indexOf(d)>=0&&!busy;
       return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" data-pk="'+esc(b.id)+'" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(onDuty(b,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join("");
-    return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar/staf/guru<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu kelulusan.</p>';
+    return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar/staf/guru<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu kelulusan.</p>';
 }
 $("p4").addEventListener("click",function(ev){
   var c=ev.target.getAttribute&&ev.target.getAttribute("data-c"),id=ev.target.getAttribute&&ev.target.getAttribute("data-id");
@@ -644,10 +668,12 @@ function openBorang(id){
 }
 function routeBorang(){var m=/^#borang-([A-Za-z0-9]+)$/.exec(location.hash);if(m)openBorang(m[1]);else{$("pform").classList.add("hide");$("pclose").textContent="Tutup"}}
 window.addEventListener("hashchange",routeBorang);
-var edB=null;
+var edB=null,edDirty=false;
+var edDT=dtWire("emula","etamat",function(){var b=bookings.find(function(x){return x.id===edB});return b?b.vehicle:""},function(){return edB||""});
+["emulaD","emulaH","etamatD","etamatH"].forEach(function(k){$(k).addEventListener("change",function(){edDirty=true})});
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
-  $("etit").textContent=(bk.program||"Program")+" · "+fmt(bk.start)+" hingga "+fmt(bk.end);$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);
+  $("etit").textContent=(bk.program||"Program")+" · "+fdt(bk.start)+" hingga "+fdt(bk.end);$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);edDT.load();edDirty=false;
   $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
   var cur_=bd(bk),had=cur_.length>0;
   $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=apv.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
@@ -661,7 +687,7 @@ $("ecancel").onclick=function(){$("edlg").classList.add("hide");edB=null};
 $("esave").onclick=function(){
   var b=bookings.find(function(x){return x.id===edB});if(!b||!db||!canEdit)return;var m=$("emsg"),st=$("estat").value,nota=$("enota").value.trim();
   var ds=[].slice.call($("edrv").querySelectorAll("input:checked")).map(function(x){return x.value});
-  var ns=ts($("emula").value),ne=ts($("etamat").value);
+  var ns=edDirty?ts($("emula").value):b.start,ne=edDirty?ts($("etamat").value):b.end;
   if(isNaN(ns)||isNaN(ne)||ne<=ns){m.textContent="Masa mula dan tamat tidak sah. Tamat mesti selepas mula.";return}
   var data={status:st,nota:nota,reason:st==="rejected"?nota:"",decidedAt:Date.now()};
   if(ns!==b.start||ne!==b.end){data.start=ns;data.end=ne;b={id:b.id,start:ns,end:ne,vehicle:b.vehicle}}
@@ -743,7 +769,7 @@ function pmTable(nm,y,mo,pr){
   var l=pmList(nm,y,mo).sort(function(a,b){return b.start-a.start});
   return '<div class="card wrap"><table><thead><tr><th style="min-width:120px">Tarikh &amp; masa</th><th style="min-width:160px">Program</th><th>Pelajar/ Staf/ Guru</th><th>Pemohon</th><th>Kenderaan</th><th style="min-width:110px">Pemandu</th><th style="min-width:120px">Status</th></tr></thead><tbody>'
    +(l.length?l.map(function(b){var ok=(b.status||"approved")==="approved",tg=ok?'<span class="tag free">Diluluskan</span>':'<span class="tag busy">Ditolak</span>',ct=b.nota||b.reason||"";
-     return '<tr><td>'+fmt(b.start)+'<br><span class="small">hingga '+fmt(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+(ct?'<br><span class="small">'+esc(ct)+'</span>':'')+(pr&&ok?'<br><button class="del" style="color:var(--tx);margin-top:6px" data-pr="'+esc(b.id)+'">Cetak</button>':'')+'</td></tr>'}).join(""):'<tr><td colspan="7" class="small">Tiada program untuk tempoh ini.</td></tr>')
+     return '<tr><td>'+fdt(b.start)+'<br><span class="small">hingga '+fdt(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+(ct?'<br><span class="small">'+esc(ct)+'</span>':'')+(pr&&ok?'<br><button class="del" style="color:var(--tx);margin-top:6px" data-pr="'+esc(b.id)+'">Cetak</button>':'')+'</td></tr>'}).join(""):'<tr><td colspan="7" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
 }
 function renderDriver(){
@@ -991,7 +1017,7 @@ $("hantar").onclick=function(){
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent="Tempahan dihantar. Menunggu kelulusan penyelia.";
     justSent=id;try{location.hash="borang-"+id}catch(e){}openBorang(id);
-    ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
+    ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});formDT.clear();$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
 
