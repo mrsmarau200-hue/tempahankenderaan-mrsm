@@ -166,7 +166,8 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
       <label>No. pendaftaran</label><input id="rplat" placeholder="cth: KV 1234 A" autocomplete="off">
       <div class="row"><div><label>Syarikat insurans</label><input id="rsyar"></div><div><label>No. polisi</label><input id="rpol"></div></div>
       <div class="row"><div><label>Insurans mula</label><input id="rin1" type="date"></div><div><label>Insurans tamat</label><input id="rin2" type="date"></div></div>
-      <div class="row"><div><label>Road tax tamat</label><input id="rtax" type="date"></div><div><label>PUSPAKOM / permit tamat</label><input id="rpusp" type="date"></div></div>
+      <label>Road tax tamat</label><input id="rtax" type="date">
+      <div class="row" id="rbasRow"><div><label>PUSPAKOM tamat</label><input id="rpusp" type="date"></div><div><label>Permit tamat</label><input id="rpermit" type="date"></div></div><div class="small hide" id="rvanNote">Van tidak perlu PUSPAKOM dan permit.</div>
       <button class="btn" id="rsave">Simpan Maklumat</button><button class="del hide" id="rcancel" style="margin-top:8px;padding:8px 14px;color:var(--tx)">Batal Edit</button><div class="msg" id="rmsg"></div>
      </div>
     </div>
@@ -368,7 +369,7 @@ function renderDash(){
   $("upn").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
   var al=[];
   function chk(who,label,d){var n=dleft(d);if(n!==null&&n<=30)al.push({n:n,h:'<div class="li" style="display:block"><b>'+esc(who)+'</b> <span class="small">&middot; '+label+' &middot; '+esc(d)+'</span> '+etag(d)+'</div>'})}
-  regDocs.forEach(function(v){var w=v.name+(v.plate?" ("+v.plate+")":"");chk(w,"Road tax",v.taxEnd);chk(w,"Insurans",v.insEnd);chk(w,"PUSPAKOM / permit",v.inspEnd)});
+  regDocs.forEach(function(v){var w=v.name+(v.plate?" ("+v.plate+")":"");chk(w,"Road tax",v.taxEnd);chk(w,"Insurans",v.insEnd);chk(w,"PUSPAKOM",v.inspEnd);chk(w,"Permit",v.permitEnd)});
   drvDocs.forEach(function(d){chk(d.name,"Lesen pemandu",d.lesenTamat)});
   mntDocs.forEach(function(m){chk(mname(m),"Servis seterusnya",m.next)});
   al.sort(function(a,b){return a.n-b.n});
@@ -546,13 +547,15 @@ $("toMain").onclick=function(){tab(1)};
 function dleft(d){return d?Math.floor((new Date(d+"T23:59")-Date.now())/864e5):null}
 function etag(d){var n=dleft(d);if(n===null)return '<span class="small">-</span>';return n<0?'<span class="tag busy">Tamat tempoh</span>':n<=30?'<span class="tag warn">Tamat dalam '+n+' hari</span>':'<span class="tag free">Sah</span>'}
 function mname(m){var v=vehDocs.find(function(x){return x.id===m.vehId}),r=regDocs.find(function(x){return x.id===m.vehId});return v?v.name+(r&&r.plate?" ("+r.plate+")":""):(m.vehName||"-")}
-var RM={rmodel:"model",rtahun:"tahun",rplat:"plate",rsyar:"insurer",rpol:"policy",rin1:"insStart",rin2:"insEnd",rtax:"taxEnd",rpusp:"inspEnd"};
-function loadReg(id){var r=regDocs.find(function(x){return x.id===id})||{};$("rveh").value=id||"";Object.keys(RM).forEach(function(k){$(k).value=r[RM[k]]||""});$("rjenis").value=r.jenis||"Bas";$("rmsg").textContent=""}
+var RM={rmodel:"model",rtahun:"tahun",rplat:"plate",rsyar:"insurer",rpol:"policy",rin1:"insStart",rin2:"insEnd",rtax:"taxEnd",rpusp:"inspEnd",rpermit:"permitEnd"};
+function regJenis(){var bas=$("rjenis").value==="Bas";$("rbasRow").classList.toggle("hide",!bas);$("rvanNote").classList.toggle("hide",bas||$("rjenis").value!=="Van")}
+$("rjenis").onchange=regJenis;
+function loadReg(id){var r=regDocs.find(function(x){return x.id===id})||{};$("rveh").value=id||"";Object.keys(RM).forEach(function(k){$(k).value=r[RM[k]]||""});$("rjenis").value=r.jenis||"Bas";regJenis();$("rmsg").textContent=""}
 function regCard(v){
   var r=regDocs.find(function(x){return x.id===v.id});
   var h='<div class="li" style="display:block"><b>'+esc(v.name)+'</b> '+(r&&r.plate?'<span class="tag pend">'+esc(r.plate)+'</span>':'');
   if(!r)return h+'<div class="small">Maklumat belum diisi.</div><div style="margin-top:6px"><button class="btn" style="margin:0;width:auto;padding:8px 16px" data-re="'+esc(v.id)+'">Isi Maklumat</button></div></div>';
-  return h+'<div class="small">'+esc(r.jenis||"")+' &middot; '+esc(r.model||"-")+(r.tahun?' &middot; '+esc(r.tahun):'')+'</div><div class="small">Road tax: '+esc(r.taxEnd||"-")+' '+etag(r.taxEnd)+'</div><div class="small">Insurans: '+esc(r.insurer||"-")+(r.policy?' ('+esc(r.policy)+')':'')+' &middot; '+esc(r.insStart||"-")+' hingga '+esc(r.insEnd||"-")+' '+etag(r.insEnd)+'</div><div class="small">PUSPAKOM / permit: '+esc(r.inspEnd||"-")+' '+etag(r.inspEnd)+'</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-re="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehreg" data-id="'+esc(v.id)+'">Padam Maklumat</button></div></div>';
+  return h+'<div class="small">'+esc(r.jenis||"")+' &middot; '+esc(r.model||"-")+(r.tahun?' &middot; '+esc(r.tahun):'')+'</div><div class="small">Road tax: '+esc(r.taxEnd||"-")+' '+etag(r.taxEnd)+'</div><div class="small">Insurans: '+esc(r.insurer||"-")+(r.policy?' ('+esc(r.policy)+')':'')+' &middot; '+esc(r.insStart||"-")+' hingga '+esc(r.insEnd||"-")+' '+etag(r.insEnd)+'</div>'+(r.jenis==="Bas"?'<div class="small">PUSPAKOM: '+esc(r.inspEnd||"-")+' '+etag(r.inspEnd)+'</div><div class="small">Permit: '+esc(r.permitEnd||"-")+' '+etag(r.permitEnd)+'</div>':'')+'<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><button class="del" style="color:var(--tx)" data-re="'+esc(v.id)+'">Edit</button><button class="del" data-c="vehreg" data-id="'+esc(v.id)+'">Padam Maklumat</button></div></div>';
 }
 function renderReg(){
   var cur=$("rveh").value;
@@ -566,7 +569,7 @@ $("rsave").onclick=async function(){
   var m=$("rmsg");m.className="msg";var vid=$("rveh").value,v=vehDocs.find(function(x){return x.id===vid});
   if(!v){m.textContent="Sila pilih kenderaan.";return}
   var d={id:vid,name:v.name,jenis:$("rjenis").value};
-  Object.keys(RM).forEach(function(k){d[RM[k]]=$(k).value.trim()});d.plate=d.plate.toUpperCase();
+  Object.keys(RM).forEach(function(k){d[RM[k]]=$(k).value.trim()});d.plate=d.plate.toUpperCase();if(d.jenis!=="Bas"){d.inspEnd="";d.permitEnd=""}
   if(!d.plate){m.textContent="No. pendaftaran wajib diisi.";return}
   if(d.insStart&&d.insEnd&&d.insEnd<d.insStart){m.textContent="Tarikh insurans tamat mesti selepas tarikh mula.";return}
   if(regDocs.some(function(x){return x.id!==vid&&x.plate===d.plate})){m.textContent="No. pendaftaran ini sudah digunakan oleh kenderaan lain.";return}
