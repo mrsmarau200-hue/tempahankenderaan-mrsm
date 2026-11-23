@@ -2,6 +2,9 @@
 <html lang="ms">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://script.google.com https://script.googleusercontent.com https://cdnjs.cloudflare.com; connect-src 'self' https://script.google.com https://script.googleusercontent.com; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<script>if(window.top!==window.self){document.documentElement.style.display="none";try{window.top.location=window.self.location}catch(e){}}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tempahan Bas &amp; Van MRSM Arau</title>
 <link rel="icon" type="image/png" href="favicon.png">
@@ -243,7 +246,7 @@ var bookings=[],apv=[],db=null,me=null,canEdit=false,cur=null;
 var $=function(i){return document.getElementById(i)};
 function toast(t){var e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.add("hide")},4000)}
 function ask(msg,inp){return new Promise(function(res){var d=$("dlg"),i=$("dinp");$("dmsg").textContent=msg;i.classList.toggle("hide",!inp);i.value="";d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");res(inp?i.value:true)};$("dno").onclick=function(){d.classList.add("hide");res(null)}})}
-function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML.replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/`/g,"&#96;")}
 function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).replace(/\bOgo\b/,"Ogos")}
 function ts(v){return v?new Date(v).getTime():NaN}
 function overlap(b,s,e){return s<b.end&&e>b.start}
@@ -523,6 +526,7 @@ if(/^#tindak-/.test(location.hash)&&!(cur&&TOKEN))setTimeout(function(){tab(5)},
 $("goAdm").onclick=function(){tab(cur&&cur.role==="pemandu"?7:cur&&(cur.role==="penyokong"||cur.role==="pengetua")?8:4)};
 $("lgin").onclick=async function(){
   var id=$("lid").value.trim().toLowerCase(),pw=$("lpw").value,e=$("lerr");e.textContent="";
+  if(!/^[a-z0-9._-]{1,30}$/.test(id)){e.textContent="ID atau kata laluan salah.";return}
   if(!apiOn()){e.textContent="Alamat API belum ditetapkan.";return}
   try{var h=await sha("mrsm-arau:"+id+":"+pw);var j=await apiCall({action:"login",id:id,h:h});
     if(j&&j.ok){TOKEN=j.token;try{sessionStorage.setItem("tok",TOKEN)}catch(x){}VER="";$("lpw").value="";var acc=j.user;
