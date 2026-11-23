@@ -224,7 +224,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
-<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><input id="emula" type="hidden"><input id="etamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="emulaD" type="date"></div><div><label>Masa mula</label><select id="emulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="etamatD" type="date"></div><div><label>Masa tamat</label><select id="etamatH"></select></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
+<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Nama pemohon</label><input id="eguru" autocomplete="off"><label>No. gaji pemohon (untuk emel keputusan)</label><input id="egaji" inputmode="numeric" autocomplete="off"><input id="emula" type="hidden"><input id="etamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="emulaD" type="date"></div><div><label>Masa mula</label><select id="emulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="etamatD" type="date"></div><div><label>Masa tamat</label><select id="etamatH"></select></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun PDF</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun PDF, buka fail PDF tersebut dan cetak.</p><div id="pbody"></div></div>
 <div class="toast hide" id="toast"></div>
@@ -677,7 +677,7 @@ var edDT=dtWire("emula","etamat",function(){var b=bookings.find(function(x){retu
 ["emulaD","emulaH","etamatD","etamatH"].forEach(function(k){$(k).addEventListener("change",function(){edDirty=true})});
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
-  $("etit").textContent=(bk.program||"Program")+" · "+fdt(bk.start)+" hingga "+fdt(bk.end);$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);edDT.load();edDirty=false;
+  $("etit").textContent=(bk.program||"Program")+" · "+fdt(bk.start)+" hingga "+fdt(bk.end);$("eguru").value=bk.teacher||"";$("egaji").value=bk.noGaji||"";$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);edDT.load();edDirty=false;
   $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
   var cur_=bd(bk),had=cur_.length>0;
   $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=apv.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
@@ -693,7 +693,9 @@ $("esave").onclick=function(){
   var ds=[].slice.call($("edrv").querySelectorAll("input:checked")).map(function(x){return x.value});
   var ns=edDirty?ts($("emula").value):b.start,ne=edDirty?ts($("etamat").value):b.end;
   if(isNaN(ns)||isNaN(ne)||ne<=ns){m.textContent="Masa mula dan tamat tidak sah. Tamat mesti selepas mula.";return}
-  var data={status:st,nota:nota,reason:st==="rejected"?nota:"",decidedAt:Date.now()};
+  var gu=$("eguru").value.trim(),gj=$("egaji").value.replace(/\D/g,"");
+  if(!gu){m.textContent="Nama pemohon tidak boleh kosong.";return}
+  var data={status:st,nota:nota,reason:st==="rejected"?nota:"",decidedAt:Date.now(),teacher:gu,noGaji:gj};
   if(ns!==b.start||ne!==b.end){data.start=ns;data.end=ne;b={id:b.id,start:ns,end:ne,vehicle:b.vehicle}}
   if(st==="approved"){
     if(!ds.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
