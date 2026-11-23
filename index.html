@@ -152,7 +152,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
    </div>
    <div id="v-app" class="dv hide"><h2 class="dt">Menunggu Kelulusan</h2><div class="card"><div id="pend"></div></div></div>
    <div id="v-bk" class="dv hide"><h2 class="dt">Senarai Tempahan</h2>
-    <div class="card"><div class="row" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div><label style="margin-top:0">Tahun</label><select id="by2"></select></div><div><label style="margin-top:0">Bulan</label><select id="bm2"></select></div><div><label style="margin-top:0">Susunan</label><select id="bo2"><option value="asc">Terawal dahulu</option><option value="desc">Terbaru dahulu</option></select></div></div><div class="small" id="bcount" style="margin-top:8px"></div></div>
+    <div class="card"><div class="row" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"><div><label style="margin-top:0">Tahun</label><select id="by2"></select></div><div><label style="margin-top:0">Bulan</label><select id="bm2"></select></div><div><label style="margin-top:0">Susunan</label><select id="bo2"><option value="desc">Terbaru dahulu</option><option value="asc">Terawal dahulu</option></select></div></div><div class="small" id="bcount" style="margin-top:8px"></div></div>
     <div class="card wrap"><button class="btn" id="addbk" style="margin:0 0 10px;width:auto;padding:10px 18px">+ Tambah Tempahan</button><table><thead><tr><th>Tarikh &amp; masa</th><th>Program</th><th>Pemohon</th><th>Pelajar/Staf/Guru</th><th>Kenderaan</th><th>Pemandu</th><th>Catatan</th><th></th></tr></thead><tbody id="rows2"></tbody></table></div></div>
    <div id="v-veh" class="dv hide"><h2 class="dt">Kenderaan</h2><h3 class="sec">Senarai Kenderaan</h3><div class="card"><div id="vlist"></div><label>Tambah kenderaan</label><input id="vnew" placeholder="cth: Van 3"><button class="btn" id="vadd">Tambah Kenderaan</button></div>
    <h3 class="sec" style="margin-top:22px">Butiran Kenderaan</h3>
@@ -288,7 +288,7 @@ function render(){
   $("dcards").innerHTML=DRIVERS.map(function(v){return cardD(v,"driver")}).join("");
   var up=apv.filter(function(b){return b.end>Date.now()}).sort(function(a,b){return a.start-b.start});
   $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fmt(b.start)+' hingga '+fmt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
-  var list=bookings.filter(function(b){return (b.status||"approved")!=="pending"}).sort(function(a,b){return a.start-b.start});
+  var list=bookings.filter(function(b){return (b.status||"approved")!=="pending"}).sort(function(a,b){return b.start-a.start});
   fillFilters(list);
   var fyv=+$("fy").value,fmv=+$("fm").value;
   list=list.filter(function(b){var d=new Date(b.start);return d.getFullYear()===fyv&&(fmv<0||d.getMonth()===fmv)});
