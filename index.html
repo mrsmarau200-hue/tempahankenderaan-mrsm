@@ -68,7 +68,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 .ac .cv{display:flex;flex-wrap:wrap;gap:4px}
 @media(max-width:900px){.dash{grid-template-columns:minmax(0,1fr)}.side{position:static;min-height:0;padding:12px;min-width:0}.sl,.sf{min-width:0}.sl{flex-direction:row;flex-wrap:wrap}.sl a{white-space:nowrap;padding:8px 10px;font-size:13px}.sf{flex-direction:row;margin-top:0}}
 .warn{background:#fdf0d5;color:#8a5a00}@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .warn{background:#3a2d10;color:#f5c26b}}
-.jt{border-collapse:collapse;width:100%;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.jt th,.jt td{border:1px solid #444;padding:4px 6px;text-align:center;vertical-align:middle}.jt th{background:#4472c4;color:#fff;font-weight:600}.jt th.y{background:#ffc000;color:#000}.jt td.l{text-align:left}.jt td.nm{white-space:nowrap}.jtw{overflow-x:auto}.jt .ub{padding:3px 8px;font-size:11px;margin-top:6px}
+.jt{border-collapse:collapse;width:100%;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.jt th,.jt td{border:1px solid #444;padding:4px 6px;text-align:center;vertical-align:middle}.jt th{background:#4472c4;color:#fff;font-weight:600}.jt th.y{background:#ffc000;color:#000}.jt td.l{text-align:left}.jt td.nm{white-space:nowrap}.jtw{overflow-x:auto}.jtm{display:none}.jc{border:1px solid var(--bd);border-radius:12px;margin:0 0 10px;overflow:hidden}.jch{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;background:#4472c4;color:#fff;padding:7px 12px;font-size:13px}.jcr{display:flex;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--bd)}.jcs{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;flex:none}.jcn{min-width:0}.jcn b{display:block;font-size:14px;overflow-wrap:anywhere}.jcn small{display:block;color:var(--mut);font-size:12px;margin-top:2px}.jcr.me{background:#fff3b0;color:#000}.jcr.me small{color:#555}@media(max-width:900px){.jtw.jd{display:none}.jtm{display:block}}.jt .ub{padding:3px 8px;font-size:11px;margin-top:6px}
 .pform{position:fixed;inset:0;background:#e9ece8;overflow:auto;z-index:100;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 20px}.pform.hide{display:none}.pform .tb{display:flex;gap:8px;max-width:760px;margin:0 auto 10px;flex-wrap:wrap}.pform .tb .btn{width:auto;margin:0;padding:10px 16px}.pform .small{color:#444}
 @media print{body>*:not(#pform){display:none!important}#pform{position:static!important;background:#fff!important;padding:0!important;overflow:visible!important}#pform .tb,#pform .small{display:none!important}#pform .paper{padding-top:0!important}}
 .sec{font-size:15px;margin:4px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--ac)}
@@ -1124,12 +1124,17 @@ $("stSave").onclick=async function(){
   if(ok){m.className="msg ok";m.textContent=empty?"Minggu dikosongkan.":"Disimpan.";stLoad()}else m.textContent="Gagal menyimpan sebahagian hari. Tekan Simpan sekali lagi."
 };
 var djFrom=null;
+function jwCards(list){return list.map(function(x){var s0=new Date(x.ws+"T00:00"),e0=new Date(x.we+"T00:00"),wkl=x.wk||("MINGGU "+isoWk(s0));
+  var h='<div class="jc"><div class="jch"><b>'+esc(wkl)+'</b><span>'+fdmy(s0)+' - '+fdmy(e0)+'</span></div>';
+  ["A","B","C"].forEach(function(k){var c=JW[k],sd=x.sd&&x.sd[k]||{},nm=x.roles[k]||"-",wk=sd.wk!==undefined?sd.wk:c.wk,we=sd.we!==undefined?sd.we:c.we,pl=(x.places||{})[k]||c.pl;
+    h+='<div class="jcr" data-nm="'+esc(nm)+'"><span class="jcs" style="background:'+c.col+'">'+k+'</span><div class="jcn"><b>'+esc(nm)+'</b><small>'+esc(c.vh)+' &middot; '+esc(pl)+'</small><small>Isn-Jum '+esc(wk)+' &middot; Sab-Ahd '+esc(we)+'</small></div></div>'});
+  return h+'</div>'}).join("")}
 function renderDjw(){
   ["dJw","pJw"].forEach(function(id){var box=$(id);if(!box)return;
     var f=djFrom||(djFrom=mon0()),n=4,list=jwList(f,n,true),e=addD(f,n*7-1);
     box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px"><button class="del" data-djn="-1" style="color:var(--tx);padding:8px 14px">&lsaquo; Sebelum</button><button class="del" data-djn="0" style="color:var(--tx);padding:8px 14px">Minggu ini</button><button class="del" data-djn="1" style="color:var(--tx);padding:8px 14px">Seterusnya &rsaquo;</button><span class="small">'+fdmy(f)+' hingga '+fdmy(e)+'</span></div>'
-      +(list.length?'<div class="jtw">'+jwTable(f,n,true,list)+'</div>':'<div class="small">Jadual belum ditetapkan untuk tempoh ini.</div>');
-    if(cur)[].slice.call(box.querySelectorAll("td.nm")).forEach(function(td){if(td.textContent===cur.name)td.style.cssText="font-weight:700;background:#fff3b0"})
+      +(list.length?'<div class="jtw jd">'+jwTable(f,n,true,list)+'</div><div class="jtm">'+jwCards(list)+'</div>':'<div class="small">Jadual belum ditetapkan untuk tempoh ini.</div>');
+    if(cur){[].slice.call(box.querySelectorAll("td.nm")).forEach(function(td){if(td.textContent===cur.name)td.style.cssText="font-weight:700;background:#fff3b0"});[].slice.call(box.querySelectorAll(".jcr")).forEach(function(r){if(r.getAttribute("data-nm")===cur.name)r.className+=" me"})}
   })
 }
 document.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest("[data-djn]");if(!b)return;
