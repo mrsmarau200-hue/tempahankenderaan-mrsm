@@ -658,7 +658,7 @@ $("msave").onclick=async function(){
     var was=!!editMnt;mReset();m.className="msg ok";m.textContent=was?"Rekod senggaraan dikemas kini.":"Rekod senggaraan disimpan."
   }catch(x){m.textContent="Gagal menyimpan."}
 };
-var PCSS='@page{size:A4 portrait;margin:16mm 10mm 8mm}.paper{font:12px/1.4 Arial,Helvetica,sans-serif;color:#000;background:#fff;max-width:760px;margin:0 auto;padding:30px 26px 4px}.paper .tp{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}.paper .tt{font-weight:700;font-size:14px;margin:12px 0 10px}.paper table{width:100%;border-collapse:collapse}.paper td{padding:2px 4px;vertical-align:top}.paper td.n{width:34px}.paper td.l{width:210px}.paper td.c{width:12px}.paper .v{font-weight:700;text-transform:uppercase}.paper .nu{padding-left:34px}.paper .dots{border-bottom:1px dotted #000;min-height:16px;display:block}.paper .sg{margin-top:14px}.paper .sg td{width:50%;text-align:center;padding-top:4px}.paper .sl{display:block;height:40px;border-bottom:1px dotted #000;margin:0 18px}.paper hr{border:0;border-top:1px solid #000;margin:8px 0 6px}.paper ol{margin:6px 0 0 20px;padding:0}.paper li{margin-bottom:0}.paper .pr{font-size:11px}.paper .ft{margin-top:4px;font-size:10px;color:#666}.paper.cp{font-size:11.5px;line-height:1.3}.paper.cp td{padding:1px 4px}.paper.cp .sl{height:32px}.paper.cp .pr{font-size:10.5px}@page{size:A4;margin:11mm 15mm}';
+var PCSS='@page{size:A4 portrait;margin:16mm 10mm 8mm}.paper{font:12px/1.4 Arial,Helvetica,sans-serif;color:#000;background:#fff;max-width:760px;margin:0 auto;padding:30px 26px 4px}.paper .tp{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}.paper .tt{font-weight:700;font-size:14px;margin:12px 0 10px}.paper table{width:100%;border-collapse:collapse}.paper td{padding:2px 4px;vertical-align:top}.paper td.n{width:34px}.paper td.l{width:210px}.paper td.c{width:12px}.paper .v{font-weight:700;text-transform:uppercase}.paper .nu{padding-left:34px}.paper .dots{border-bottom:1px dotted #000;min-height:16px;display:block}.paper .sg{margin-top:14px}.paper .sg td{width:50%;text-align:center;padding-top:4px}.paper .sl{display:block;height:40px;border-bottom:1px dotted #000;margin:0 18px}.paper hr{border:0;border-top:1px solid #000;margin:8px 0 6px}.paper ol{margin:6px 0 0 20px;padding:0}.paper li{margin-bottom:0}.paper .pr{font-size:11px}.paper .ft{margin-top:4px;font-size:10px;color:#666}.paper.cp{font-size:11.5px;line-height:1.3}.paper.cp td{padding:1px 4px}.paper.cp .sl{height:32px}.paper.cp .pr{font-size:10.5px}@page{size:A4;margin:11mm 15mm}.paper.lf{font:12.5px/1.35 Arial,Helvetica,sans-serif;padding:16px 22px 4px}.lf-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}.lf-org{display:flex;gap:14px;align-items:center;font-size:13px;line-height:1.35}.lf-logo{height:78px;width:auto}.lf-ref{width:215px}.lf-la{font-weight:700;font-size:12px;text-align:right;margin-bottom:6px}.lf-box{border:1px solid #000}.lf-bh{padding:6px;text-align:center;font-weight:700;border-bottom:1px solid #000}.lf-bv{padding:8px 6px;text-align:center;font-weight:700;min-height:34px}.lf-tt{text-align:center;font-weight:700;font-size:15px;margin:14px 0 6px;text-decoration:underline}.lf-main{border:1px solid #000}.lf-h{text-align:center;font-weight:700;padding:7px 4px;border-top:1px solid #000;border-bottom:1px solid #000}.lf-h1{border-top:0}.lf-r{display:flex;border-bottom:1px solid #000;padding:3px 6px;align-items:baseline}.lf-k{width:190px;flex:none}.lf-c{width:14px;flex:none}.lf-v{flex:1}.lf-d{flex:none;width:250px}.lf-m{flex:none;width:44px}.lf-t{flex:1}.up{text-transform:uppercase}.lf-sg{display:flex;justify-content:space-between;align-items:flex-end;padding:20px 10px 10px}.lf-sl{flex:1}.lf-dot{display:inline-block;width:260px;border-bottom:1px dotted #000;height:14px}.lf-nm{margin-left:130px;font-weight:700;margin-top:3px}.lf-tr{width:230px}.lf-tx{text-align:center;padding:10px 6px 4px}.lf-two{display:flex;gap:10px;padding:2px 10px 10px}.lf-half{flex:1;min-width:0}.lf-kv{display:flex;align-items:flex-end;margin-top:6px}.lf-kk{width:96px;flex:none}.lf-cc{width:14px;flex:none}.lf-vv{flex:1;min-width:0}.lf-dt{border-bottom:1px dotted #000;min-height:18px}.lf-nt{font-size:10.5px;margin-top:6px}.lf-kos{padding:4px 10px 0}.lf-kr{display:flex;justify-content:space-between;gap:8px;margin-top:6px}.lf-sq{display:inline-block;width:38px;height:17px;border:1px solid #000;vertical-align:middle;margin-left:6px}.lf-cat{border-top:1px dashed #000;padding:6px 6px;min-height:92px}.lf-nota{margin-top:4px;font-size:12px}';
 function fd2(t){var d=new Date(t);return ("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+d.getFullYear()}
 function ftm(t){var d=new Date(t),h=d.getHours(),m=("0"+d.getMinutes()).slice(-2);return ((h%12)||12)+"."+m+" "+(h<12?"pagi":h<14?"tengah hari":"petang")}
 function fdIso(x){if(!x)return "";var q=String(x).split("-");return q.length===3?q[2]+"/"+q[1]+"/"+q[0]:x}
@@ -667,45 +667,37 @@ var ESIGN=false;try{ESIGN=localStorage.getItem("esign")==="1"}catch(e){}
 function fdtm(t){var d=new Date(t);return fd2(t)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
 function eBox(txt,nm,at,h){return '<div style="height:'+h+'px;display:flex;align-items:center;justify-content:center"><div style="border:1px solid #666;padding:6px 10px;font-size:10.5px;line-height:1.4">'+txt+' secara elektronik<br>oleh <b>'+esc(nm).toUpperCase()+'</b><br>pada '+fdtm(at)+'</div></div>'}
 function formBody(b){
-  var drs=bd(b).map(function(n){return drvDocs.find(function(x){return x.name===n})||{name:n}});
-  var mk=b.makanan||null;
-  var sk=b.sokong||(b.tolak&&b.tolak.role==="penyokong"?b.tolak:null),pg=b.lulus||(b.tolak&&b.tolak.role==="pengetua"?b.tolak:null),apr=b.status==="approved";
-  function o(t,on){return on?"<b>"+t+"</b>":"<s>"+t+"</s>"}
-  function r(n,l,v,extra){return '<tr><td class="n">'+n+'</td><td class="l">'+l+'</td><td class="c">:</td><td>'+v+(extra||"")+'</td></tr>'}
-  function r2(n,l,v){return '<tr><td class="n"></td><td class="l nu">'+n+" "+l+'</td><td class="c">:</td><td>'+v+'</td></tr>'}
-  var isBas=/bas/i.test(b.vehicle),isVan=/van/i.test(b.vehicle),dots='<span class="dots">&nbsp;</span>';
-  var catatan=drs.length?"Pemandu: "+drs.map(function(d){return esc(d.name)+(d.noGaji?" ("+esc(d.noGaji)+")":"")+(d.phone?" "+esc(d.phone):"")}).join(", "):"";
-  var cmp=((b.program||"").length+(b.purpose||"").length>70||drs.length>1||(mk&&((mk.menu||"").length>40)))?" cp":"";
-  return '<div class="paper'+cmp+'"><div class="tp"><div>Pengetua<br>Maktab Rendah Sains MARA Arau<br>Perlis.</div><div><b>No. Borang : '+(b.noBorang?esc(b.noBorang):"..............................")+'</b></div></div>'
-   +'<div class="tt">PERMOHONAN MENGADAKAN AKTIVITI LUAR MAKTAB/LAWATAN/PERKHEMAHAN/SUKAN DAN LAIN-LAIN</div>'
-   +'<p style="margin:6px 0">Dengan hormatnya saya memohon untuk mengadakan aktiviti seperti berikut:</p><table>'
-   +r("1.","Nama Pemohon",'<span class="v">'+esc(b.teacher)+'</span>')
-   +r("2.","Kegiatan Aktiviti",'<span class="v">'+esc(b.kegiatan||"")+'</span>')
-   +r("3.","Tujuan Aktiviti",'<span class="v" style="text-transform:none">'+esc(b.program)+'</span>')
-   +r("4.","Tempat Aktiviti",'<span class="v" style="text-transform:none">'+esc(b.purpose)+'</span>')
-   +r("5.","Tarikh/Masa Aktiviti","")
-   +r2("5.1","Tarikh Bertolak",'<b>'+fd2(b.start)+'</b> &nbsp;&nbsp;&nbsp;&nbsp; Masa : <b>'+ftm(b.start)+'</b>')
-   +r2("5.2","Tarikh Pulang",'<b>'+fd2(b.end)+'</b> &nbsp;&nbsp;&nbsp;&nbsp; Masa : <b>'+ftm(b.end)+'</b>')
-   +r("6.","Guru-guru yang bertanggungjawab","")
-   +r2("6.1","",'<b>'+esc(b.teacher)+'</b>')
-   +r("7.","Bil. Ahli Rombongan",'<b>'+esc(b.students)+'</b> orang <i>(Termasuk guru. Senarai nama pelajar rujuk lampiran)</i>')
-   +r("8.","Taklimat Keselamatan Sudah / Akan Dilaksanakan Pada",'<b>'+(fdIso(b.taklimat)||"..............................")+'</b>')
-   +r("9.","Kenderaan",o("Bas Maktab",isBas)+" / "+o("Van Maktab",isVan)+" / <s>Bas Sewa</s> / Lain-lain: ...............")
-   +r2("9.1","Bas Maktab",isBas?o("Ada",true)+" / "+o("Tiada",false):"Ada / Tiada")
-   +r2("","Van Maktab",isVan?o("Ada",true)+" / "+o("Tiada",false):"Ada / Tiada")
-   +r2("","Catatan",catatan||dots)
-   +r("10.","Tempahan Makanan",mk?o("Ya",true)+" / "+o("Tidak",false):o("Ya",false)+" / "+o("Tidak",true))
-   +r2("10.1","Menu Makanan",mk?'<b>'+esc(mk.menu||"")+'</b>':dots)
-   +r2("10.2","Bungkus / Hidang",mk?o("Bungkus",mk.cara==="Bungkus")+" / "+o("Hidang",mk.cara==="Hidang")+(mk.bil?' &nbsp; <b>'+esc(mk.bil)+'</b>':""):dots)
-   +r2("10.3","Tarikh Ambil",mk?'<b>'+(fdIso(mk.tarikh)||"............")+'</b> &nbsp;&nbsp;&nbsp; Masa : <b>'+(ftIso(mk.masa)||"............")+'</b>':dots)
-   +'</table>'
-   +'<table class="sg"><tr><td>Tandatangan Pemohon,<div class="sl"></div>('+esc(b.teacher).toUpperCase()+')<br>Tarikh:</td><td>Sokongan (Cop Rasmi):'+(ESIGN&&sk?eBox(sk===b.sokong?"Disokong":"Ditolak",sk.name,sk.at,60):'<div class="sl"></div>')+(sk||b.penyokong?'('+esc((sk||b.penyokong).name).toUpperCase()+')'+((sk||b.penyokong).jawatan?'<br>'+esc((sk||b.penyokong).jawatan):''):'&nbsp;')+'<br>Tarikh: '+(sk?fd2(sk.at):'')+(sk&&sk.nota?'<div style="font-size:10.5px;margin-top:2px">'+(sk===b.sokong?'Disokong':'Ditolak')+': '+esc(sk.nota)+'</div>':(sk===b.sokong&&sk?'<div style="font-size:10.5px;margin-top:2px">Disokong</div>':''))+'</td></tr></table>'
-   +(b.semak?'<table style="width:100%;margin-top:6px"><tr><td class="l" style="width:90px">Disemak oleh</td><td>: <b>'+esc(b.semak.name).toUpperCase()+'</b>'+(b.semak.jawatan?' ('+esc(b.semak.jawatan)+')':'')+(b.semak.nota?' &mdash; '+esc(b.semak.nota):'')+' &nbsp;<span style="font-size:10.5px">'+fd2(b.semak.at)+'</span></td></tr></table>':'')
-   +'<hr><p style="margin:4px 0"><b>*Permohonan di atas '+(pg&&!apr?'<s>diluluskan</s>':'diluluskan')+' / '+(apr?'<s>tidak diluluskan</s>':'tidak diluluskan')+'.</b></p>'
-   +'<table style="width:100%;table-layout:fixed"><tr><td style="width:52%"><table style="width:100%"><tr><td class="l" style="width:70px">Catatan</td><td>: <span class="dots" style="display:inline-block;width:92%">'+(pg&&pg.nota?esc(pg.nota):"&nbsp;")+'</span></td></tr><tr><td class="l">Tarikh</td><td>: <span class="dots" style="display:inline-block;width:40%">'+(pg?fd2(pg.at):"&nbsp;")+'</span></td></tr></table></td>'
-   +'<td style="text-align:center;width:48%">'+(ESIGN&&pg?eBox(apr?"Diluluskan":"Tidak diluluskan",pg.name,pg.at,90):'<div class="sl" style="height:90px;width:70%;margin-left:auto;margin-right:auto"></div>')+(pg?'('+esc(pg.name).toUpperCase()+')':'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)')+'<br>Pengetua<br>Maktab Rendah Sains MARA Arau</td></tr></table>'
-   +'<div class="pr"><b><u>Peringatan:</u></b><ol><li>Permohonan hendaklah dibuat sekurang-kurangnya 3 hari sebelum tarikh aktiviti</li><li>Setiap aktiviti luar dari Daerah Arau perlu disertakan dengan kertas kerja</li><li>Kelulusan boleh dibatalkan sekiranya bas/van diperlukan oleh aktiviti lain yang lebih penting</li><li>Hanya pelajar-pelajar yang seperti dalam senarai di lampiran sahaja yang dibenarkan menyertai aktiviti luar maktab ini</li><li>Sekiranya bas/van sewa digunakan, sila beri nama, alamat, nombor bas/van serta no. telefon tuan bas/van tersebut</li><li>Salinan borang perlu diberi kepada : a. TP PP / KA / PB &nbsp; b. Ketua Warden &nbsp; c. Penyelia Asrama &nbsp; d. Pengawal Keselamatan &nbsp; e. Guru Pengiring</li></ol></div>'
-   +'<div class="ft">Rujukan sistem: '+esc(b.id)+' &middot; Dijana pada '+fd2(Date.now())+' melalui e-Kenderaan MRSM Arau</div></div>';
+  var sk=b.sokong||(b.tolak&&b.tolak.role==="penyokong"?b.tolak:null),pg=b.lulus||(b.tolak&&b.tolak.role==="pengetua"?b.tolak:null);
+  var sti=staffDocs.find(function(x){return (b.noGaji&&String(x.noGaji)===String(b.noGaji))||(x.name&&x.name===b.teacher)})||{};
+  var jaw=b.jawatan||sti.jawatan||"",jab=b.jabatan||sti.dept||"",pny=sk||b.penyokong||null;
+  function pil(a,c,sel){return sel==="a"?"<b>"+a+"</b> / <s>"+c+"</s>":sel==="b"?"<s>"+a+"</s> / <b>"+c+"</b>":a+" / "+c}
+  function row(k,v){return '<div class="lf-r"><div class="lf-k">'+k+'</div><div class="lf-c">:</div><div class="lf-v">'+v+'</div></div>'}
+  function tm(k,d,t){return '<div class="lf-r"><div class="lf-k">'+k+'</div><div class="lf-c">:</div><div class="lf-v lf-d">'+d+'</div><div class="lf-m">Masa</div><div class="lf-c">:</div><div class="lf-v lf-t">'+t+'</div></div>'}
+  function sign(x,txt,h){return ESIGN&&x?eBox(txt,x.name,x.at,h):'<div style="height:'+h+'px"></div>'}
+  function kv(k,v,dots){return '<div class="lf-kv"><span class="lf-kk">'+k+'</span><span class="lf-cc">:</span><span class="lf-vv'+(dots?' lf-dt':'')+'">'+(v||"&nbsp;")+'</span></div>'}
+  var skSel=sk?(sk===b.sokong?"a":"b"):"",pgSel=pg?(pg===b.lulus?"a":"b"):"";
+  return '<div class="paper lf"><div class="lf-top"><div class="lf-org"><img src="logo.png" alt="" class="lf-logo"><div>MAKTAB RENDAH SAINS MARA ARAU<br>PAUH PUTRA,<br>02600 ARAU,<br>PERLIS.</div></div>'
+   +'<div class="lf-ref"><div class="lf-la">LAMPIRAN A</div><div class="lf-box"><div class="lf-bh">Nombor Rujukan</div><div class="lf-bv">'+(b.noBorang?esc(b.noBorang):"&nbsp;")+'</div></div></div></div>'
+   +'<div class="lf-tt">BORANG PERMOHONAN PENGGUNAAN BAS / VAN RASMI MRSM ARAU</div>'
+   +'<div class="lf-main"><div class="lf-h lf-h1">BUTIRAN DIRI PEMOHON</div>'
+   +row("Nama",'<b class="up">'+esc(b.teacher)+'</b>')+row("Jawatan",'<b class="up">'+esc(jaw)+'</b>')+row("Jabatan",'<b class="up">'+esc(jab)+'</b>')
+   +'<div class="lf-h">MAKLUMAT PERJALANAN / PENGGUNAAN BAS / VAN</div>'
+   +row("Destinasi / Tempat Dituju",'<b class="up">'+esc(b.purpose)+'</b>')+row("Tujuan Penggunaan",'<b>'+esc(b.program)+'</b>')
+   +tm("Pada / Mulai",'<b>'+fd2(b.start)+'</b>','<b>'+ftm(b.start)+'</b>')+tm("Hingga",'<b>'+fd2(b.end)+'</b>','<b>'+ftm(b.end)+'</b>')
+   +row("Jumlah Penumpang",'<b>'+esc(b.students)+'</b> orang <i>(Termasuk guru. Senarai nama pelajar rujuk lampiran)</i>')
+   +'<div class="lf-sg"><div class="lf-sl">Tandatangan Pemohon : <span class="lf-dot"></span><div class="lf-nm">('+esc(b.teacher).toUpperCase()+')</div></div><div class="lf-tr">Tarikh: <b>'+(b.dibuat?fd2(b.dibuat):"")+'</b></div></div>'
+   +'<div class="lf-h">PENGESAHAN PEGAWAI MENYOKONG</div>'
+   +'<div class="lf-tx">Permohonan *'+pil("disokong","tidak sokong",skSel)+' untuk diluluskan</div>'
+   +'<div class="lf-two"><div class="lf-half">'+kv("Tandatangan",sign(sk,sk?(sk===b.sokong?"Disokong":"Ditolak"):"",74),true)+kv("Tarikh",sk?fd2(sk.at):"",true)+'</div>'
+   +'<div class="lf-half">'+kv("Nama",pny?'<b class="up">'+esc(pny.name)+'</b>':"",true)+kv("Jawatan",pny&&pny.jawatan?esc(pny.jawatan):"",true)+(sk&&sk.nota?'<div class="lf-nt">'+(sk===b.sokong?"Catatan":"Sebab")+': '+esc(sk.nota)+'</div>':'')+'</div></div>'
+   +'<div class="lf-h">KELULUSAN PEGAWAI MENGAWAL PUSAT</div>'
+   +'<div class="lf-tx">Permohonan *'+pil("diluluskan","tidak diluluskan",pgSel)+' dengan *<b>syarat</b> / <b>tanpa syarat</b> seperti berikut:</div>'
+   +'<div class="lf-kos"><b><i>Tanggung Kos Bayaran :-</i></b><div class="lf-kr"><span><b>i.</b> <b>Kos minyak diesel</b> <i class="lf-sq"></i></span><span><b>ii.</b> <b>Elaun Pemandu</b> <i class="lf-sq"></i></span><span><b>iii.</b> <b>Kos Tol, Parking dll</b> <i class="lf-sq"></i></span></div></div>'
+   +'<div class="lf-two"><div class="lf-half">'+kv("Tandatangan",sign(pg,pg?(pg===b.lulus?"Diluluskan":"Tidak diluluskan"):"",84),true)+kv("Tarikh",pg?fd2(pg.at):"",true)+'</div>'
+   +'<div class="lf-half">'+kv("Nama",pg?'<b class="up">'+esc(pg.name)+'</b>':"",true)+kv("Cop Jawatan",'Pengetua<br>Maktab Rendah Sains MARA Arau',true)+'</div></div>'
+   +'<div class="lf-cat"><span>Catatan :</span> '+(pg&&pg.nota?esc(pg.nota):"")+'</div></div>'
+   +'<div class="lf-nota">Nota : *potong mana yang tidak berkenaan</div>'
+   +'<div class="ft">Rujukan sistem: '+esc(b.id)+(b.semak?' &middot; Disemak oleh '+esc(b.semak.name)+' ('+fd2(b.semak.at)+')':'')+' &middot; Dijana pada '+fd2(Date.now())+' melalui e-Kenderaan MRSM Arau</div></div>';
 }
 var curForm=null;
 function fitPaper(){var e=$("pbody").querySelector(".paper");if(!e||$("pform").classList.contains("hide"))return;var W=e.classList.contains("rp")?1060:760;e.style.zoom="";e.style.width="";e.style.maxWidth="none";var av=$("pform").clientWidth-20;if(av<W){e.style.width=W+"px";e.style.margin="0";e.style.zoom=(av/W).toFixed(3)}else{e.style.maxWidth="";e.style.margin=""}}
