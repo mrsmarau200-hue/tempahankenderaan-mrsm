@@ -111,7 +111,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <label class="hide" style="display:none"><input type="checkbox" id="mkn" style="width:auto"></label>
     <div id="mknbox" class="hide"><label>Menu makanan</label><input id="mmenu" placeholder="cth: Minum pagi, makan tengah hari"><div class="row"><div><label>Bungkus / hidang</label><select id="mcara"><option>Bungkus</option><option>Hidang</option></select></div><div><label>Bilangan</label><input id="mbil" placeholder="cth: 6 pack"></div></div><div class="row"><div><label>Tarikh ambil</label><input id="mtkh" type="date"></div><div><label>Masa ambil</label><input id="mmasa" type="time"></div></div></div>
     <p class="small" id="hint">Pilih tarikh dan jam dahulu. Jam atau kenderaan yang sudah ditempah akan jadi kelabu. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
-    <div id="penBox" class="hide" style="margin-top:14px;padding:12px;border:1px dashed var(--ac);border-radius:12px"><b>Khas penyelia</b><p class="small" style="margin:4px 0 0">Tempahan yang penyelia isi tidak perlu disemak semula. Ia terus ke penyokong dan Pengetua.</p><label>Pemandu</label><div id="penDrv" class="pk"></div><label>Penyokong</label><select id="penSp"></select><label>Catatan (pilihan)</label><textarea id="penNota" rows="2"></textarea></div>
+    <div id="penBox" class="hide" style="margin-top:14px;padding:12px;border:1px dashed var(--ac);border-radius:12px"><b>Khas penyelia</b><p class="small" style="margin:4px 0 0">Tempahan yang penyelia isi tidak perlu disemak semula. Ia terus ke penyokong dan Pengetua.</p><label>Pemandu</label><div id="penDrv" class="pk"></div><label>Penyokong</label><select id="penSp"></select><label>Pelulus</label><select id="penPl"></select><label>Catatan (pilihan)</label><textarea id="penNota" rows="2"></textarea></div>
     <button class="btn" id="hantar">Hantar Tempahan</button>
     <div class="msg" id="msg"></div>
   </div>
@@ -297,7 +297,7 @@ function penUpdate(){
   var cur_=penUser?[].slice.call($("penDrv").querySelectorAll("input:checked")).map(function(x){return x.value}):null;
   $("penDrv").innerHTML=DRIVERS.length?DRIVERS.map(function(d){var busy=ok&&apv.some(function(x){return bd(x).indexOf(d)>=0&&overlap(x,s,e)});var on=!busy&&(cur_?cur_.indexOf(d)>=0:(ok&&pb.vehicle&&onDuty(pb,d)));
     return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(ok&&pb.vehicle&&onDuty(pb,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join(""):'<span class="small">Belum ada pemandu aktif.</span>';
-  var sv=$("penSp").value||penSel;$("penSp").innerHTML=spOpts(sv);
+  var sv=$("penSp").value||penSel;$("penSp").innerHTML=spOpts(sv);$("penPl").innerHTML=plOpts($("penPl").value);
 }
 $("penDrv").addEventListener("change",function(){penUser=true});
 $("penSp").addEventListener("change",function(){penSel=this.value});
@@ -359,10 +359,12 @@ function render(){
 }
 var delH=function(ev){var t=ev.target,a=t.getAttribute&&t.getAttribute("data-a");if(a){decide(t.getAttribute("data-id"),a);return}var id=t.getAttribute&&t.getAttribute("data-id");if(id&&db)ask("Padam tempahan ini?").then(function(r){if(r)db.collection("bookings").doc(id).delete().then(function(){toast("Tempahan dipadam.")}).catch(function(){toast("Gagal memadam. Anda mungkin tiada kebenaran.")})})};
 $("rows").onclick=delH;$("rows2").onclick=delH;$("pend").onclick=delH;
+function plOpts(sel){var l=supDocs.filter(function(x){return x.role==="pengetua"||x.role==="tp"});if(!sel&&l.length===1)sel=l[0].id;return '<option value="">-- pilih pelulus --</option>'+l.map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")}
+function plChk(sp,pl){return sp&&sp!=="none"&&sp===pl?"Pelulus tidak boleh orang yang sama dengan penyokong.":""}
 function spOpts(sel){return '<option value="">-- pilih penyokong --</option>'+supDocs.filter(function(x){return x.role==="penyokong"||x.role==="tp"}).map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")+'<option value="none"'+(sel==="none"?" selected":"")+'>Tiada penyokong (terus ke kelulusan)</option>'}
 $("pend").addEventListener("input",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-sn");if(id){semakIn[id]=semakIn[id]||{};semakIn[id].nota=ev.target.value}});
 $("inproc").onclick=delH;
-$("pend").addEventListener("change",function(ev){var sp=ev.target.getAttribute&&ev.target.getAttribute("data-sp");if(sp){semakIn[sp]=semakIn[sp]||{};semakIn[sp].sp=ev.target.value;return}var id=ev.target.getAttribute&&ev.target.getAttribute("data-pk");if(!id)return;userPk[id]=true;pick[id]=Array.prototype.map.call($("pend").querySelectorAll('[data-pk="'+id+'"]:checked'),function(c){return c.value})});
+$("pend").addEventListener("change",function(ev){var sp=ev.target.getAttribute&&ev.target.getAttribute("data-sp");if(sp){semakIn[sp]=semakIn[sp]||{};semakIn[sp].sp=ev.target.value;return}var pl=ev.target.getAttribute&&ev.target.getAttribute("data-pl");if(pl){semakIn[pl]=semakIn[pl]||{};semakIn[pl].pl=ev.target.value;return}var id=ev.target.getAttribute&&ev.target.getAttribute("data-pk");if(!id)return;userPk[id]=true;pick[id]=Array.prototype.map.call($("pend").querySelectorAll('[data-pk="'+id+'"]:checked'),function(c){return c.value})});
 function stag(b){var s=b.status||"approved";if(s==="disemak")return '<span class="tag pend">Menunggu sokongan</span>';if(s==="disokong")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="pending")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="rejected")return '<span class="tag busy">Ditolak</span>'+(b.reason?'<div class="small">'+esc(b.reason)+'</div>':"");return '<span class="tag free">Diluluskan</span>'}
 function decide(id,a){
   var b=bookings.find(function(x){return x.id===id});if(!b||!db||!canEdit)return;
@@ -372,11 +374,13 @@ function decide(id,a){
     var ds0=(pick[id]||[]).filter(function(d){return DRIVERS.indexOf(d)>=0}),si=semakIn[id]||{};
     if(!ds0.length){toast("Pilih sekurang-kurangnya seorang pemandu.");return}
     if(!si.sp){toast("Pilih penyokong, atau pilih 'Tiada penyokong'.");return}
+    var pl0=si.pl||(function(){var l=supDocs.filter(function(x){return x.role==="pengetua"||x.role==="tp"});return l.length===1?l[0].id:""})();
+    if(!pl0){toast("Pilih pelulus.");return}if(plChk(si.sp,pl0)){toast(plChk(si.sp,pl0));return}var plu0=supDocs.find(function(x){return x.id===pl0});
     if(apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle})){toast("Kenderaan sudah ditempah pada masa itu.");return}
     var dc0=ds0.filter(function(d){return apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
     if(dc0.length){toast(dc0.join(", ")+" sudah bertugas pada masa itu.");return}
     var me=supDocs.find(function(x){return x.id===cur.id})||{},pu=supDocs.find(function(x){return x.id===si.sp});
-    ref.update({status:si.sp==="none"?"disokong":"disemak",drivers:ds0,semak:{id:cur.id,name:cur.name||cur.id,jawatan:me.jawatan||"",at:Date.now(),nota:(si.nota||"").trim()},penyokong:si.sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""},pulang:null}).then(function(){delete pick[id];delete semakIn[id];toast(si.sp==="none"?"Dihantar kepada Pengetua.":"Dihantar kepada "+pu.name+" untuk disokong.")}).catch(function(){toast("Gagal mengemas kini.")});
+    ref.update({status:si.sp==="none"?"disokong":"disemak",drivers:ds0,semak:{id:cur.id,name:cur.name||cur.id,jawatan:me.jawatan||"",at:Date.now(),nota:(si.nota||"").trim()},penyokong:si.sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""},pelulus:{id:plu0.id,name:plu0.name,jawatan:plu0.jawatan||""},pulang:null}).then(function(){delete pick[id];delete semakIn[id];toast(si.sp==="none"?"Dihantar kepada "+plu0.name+" untuk kelulusan.":"Dihantar kepada "+pu.name+" untuk disokong.")}).catch(function(){toast("Gagal mengemas kini.")});
     return}
   if(a==="ok"){
     var ds=(pick[id]||[]).filter(function(d){return DRIVERS.indexOf(d)>=0});
@@ -429,7 +433,7 @@ function renderAdmin(){
     var sel=pick[b.id]||[];
     var ck=DRIVERS.map(function(d){var busy=apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)});var on=sel.indexOf(d)>=0&&!busy;
       return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" data-pk="'+esc(b.id)+'" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(onDuty(b,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join("");
-    return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b>'+(b.pulang?'<div class="small" style="color:#b45309;font-weight:600">Dipulangkan oleh '+esc(b.pulang.name||"")+(b.pulang.nota?': '+esc(b.pulang.nota):'')+'</div>':'')+'<div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar/staf/guru<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><label>Penyokong</label><select data-sp="'+esc(b.id)+'">'+spOpts((semakIn[b.id]||{}).sp)+'</select><label>Catatan semakan</label><textarea data-sn="'+esc(b.id)+'" rows="2" placeholder="cth: Pemandu giliran sudah ditetapkan, kenderaan tersedia">'+esc((semakIn[b.id]||{}).nota||"")+'</textarea></div><div style="margin-top:8px"><button class="btn" style="margin:0;width:auto;padding:9px 16px" data-a="semak" data-id="'+esc(b.id)+'">Semak &amp; hantar</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu semakan.</p>';
+    return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b>'+(b.pulang?'<div class="small" style="color:#b45309;font-weight:600">Dipulangkan oleh '+esc(b.pulang.name||"")+(b.pulang.nota?': '+esc(b.pulang.nota):'')+'</div>':'')+'<div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar/staf/guru<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><label>Penyokong</label><select data-sp="'+esc(b.id)+'">'+spOpts((semakIn[b.id]||{}).sp)+'</select><label>Pelulus</label><select data-pl="'+esc(b.id)+'">'+plOpts((semakIn[b.id]||{}).pl)+'</select><label>Catatan semakan</label><textarea data-sn="'+esc(b.id)+'" rows="2" placeholder="cth: Pemandu giliran sudah ditetapkan, kenderaan tersedia">'+esc((semakIn[b.id]||{}).nota||"")+'</textarea></div><div style="margin-top:8px"><button class="btn" style="margin:0;width:auto;padding:9px 16px" data-a="semak" data-id="'+esc(b.id)+'">Semak &amp; hantar</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu semakan.</p>';
   var ip=bookings.filter(function(b){return b.status==="disemak"||b.status==="disokong"}).sort(function(a,b){return a.start-b.start});
   $("inproc").innerHTML=ip.length?ip.map(function(b){
     return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> '+stag(b)+'<div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'<br>Disemak: '+esc((b.semak||{}).name||"-")+((b.semak||{}).nota?' ("'+esc(b.semak.nota)+'")':'')+(b.status==="disemak"?'<br>Penyokong: '+esc((b.penyokong||{}).name||"-")+((b.penyokong||{}).jawatan?' ('+esc(b.penyokong.jawatan)+')':''):'<br>Disokong: '+(b.sokong?esc(b.sokong.name)+(b.sokong.nota?' ("'+esc(b.sokong.nota)+'")':''):'tiada penyokong')+'<br>Menunggu Pengetua')+'</div><div style="margin-top:6px"><button class="del" style="color:var(--tx)" data-a="balik" data-id="'+esc(b.id)+'">Pulangkan ke semakan</button></div></div>'}).join(""):'<p class="small">Tiada tempahan dalam proses.</p>';
@@ -900,7 +904,7 @@ function renderX(){
   var xr=isAdm?viewX:cur.role;
   $("xrole").textContent=isAdm?"Paparan "+ROLEN[xr]+" (baca sahaja)":"Panel "+ROLEN[cur.role];$("xwel").textContent=isAdm?"Pentadbir Sistem: paparan "+ROLEN[xr]+" (baca sahaja, tiada tindakan)":"Selamat datang, "+(cur.name||cur.id);
   var canL=xr==="pengetua"||xr==="tp",canS=xr==="penyokong"||xr==="tp";
-  var act=bookings.filter(function(b){if(b.status==="disokong")return canL&&(isAdm||xr==="pengetua"||!((b.sokong&&b.sokong.id===cur.id)||(b.penyokong&&b.penyokong.id===cur.id)));return b.status==="disemak"&&canS&&(isAdm||(b.penyokong&&b.penyokong.id===cur.id))}).sort(function(a,b){return a.start-b.start});
+  var act=bookings.filter(function(b){if(b.status==="disokong")return canL&&(isAdm||(b.pelulus?b.pelulus.id===cur.id:(xr==="pengetua"||!((b.sokong&&b.sokong.id===cur.id)||(b.penyokong&&b.penyokong.id===cur.id)))));return b.status==="disemak"&&canS&&(isAdm||(b.penyokong&&b.penyokong.id===cur.id))}).sort(function(a,b){return a.start-b.start});
   var ae=document.activeElement;if(ae&&ae.getAttribute&&ae.getAttribute("data-xn")&&$("xact").contains(ae))return;
   $("xact").innerHTML=act.length?act.map(function(b){return xCard(b,isAdm)}).join(""):'<p class="small">Tiada tempahan menunggu tindakan anda.</p>';
   var mineX=function(x){return x&&(isAdm?x.role===xr:x.id===cur.id)};var done=bookings.filter(function(b){return [b.sokong,b.lulus,b.tolak].some(mineX)}).sort(function(a,b){return b.start-a.start});
@@ -1176,12 +1180,13 @@ $("hantar").onclick=function(){
     var pd=[].slice.call($("penDrv").querySelectorAll("input:checked")).map(function(x){return x.value}),sp=$("penSp").value;
     if(!pd.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
     if(!sp){m.textContent="Pilih penyokong, atau pilih 'Tiada penyokong'.";return}
+    var pl=$("penPl").value;if(!pl){m.textContent="Pilih pelulus.";return}if(plChk(sp,pl)){m.textContent=plChk(sp,pl);return}var plu=supDocs.find(function(x){return x.id===pl});
     var dcl=pd.filter(function(n){return apv.some(function(x){return bd(x).indexOf(n)>=0&&overlap(x,d.start,d.end)})});
     if(dcl.length){m.textContent=dcl.join(", ")+" sudah bertugas pada masa itu.";return}
     var me2=supDocs.find(function(x){return x.id===cur.id})||{};pu=supDocs.find(function(x){return x.id===sp});
     d.drivers=pd;d.status=sp==="none"?"disokong":"disemak";d.pulang=null;
     d.semak={id:cur.id,name:cur.name||cur.id,jawatan:me2.jawatan||"",at:Date.now(),nota:("Tempahan diisi oleh penyelia"+($("penNota").value.trim()?". "+$("penNota").value.trim():""))};
-    d.penyokong=sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""};
+    d.penyokong=sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""};d.pelulus={id:plu.id,name:plu.name,jawatan:plu.jawatan||""};
   }
   $("hantar").disabled=true;
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
