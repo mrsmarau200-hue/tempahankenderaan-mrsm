@@ -304,7 +304,8 @@ $("penDrv").addEventListener("change",function(){penUser=true});
 $("penSp").addEventListener("change",function(){penSel=this.value;$("penPl").innerHTML=plOpts($("penPl").value,this.value)});
 function refreshForm(){formDT.ref()}
 $("veh").onchange=refreshForm;
-function fdd(t){return new Date(t).toLocaleDateString("ms-MY",{day:"numeric",month:"short",year:"numeric"}).replace(/\bOgo\b/,"Ogos")}
+var HARI=["Ahad","Isnin","Selasa","Rabu","Khamis","Jumaat","Sabtu"];
+function fdd(t){return HARI[new Date(t).getDay()]+", "+new Date(t).toLocaleDateString("ms-MY",{day:"numeric",month:"short",year:"numeric"}).replace(/\bOgo\b/,"Ogos")}
 function fdt(t){return new Date(t).toLocaleDateString("ms-MY",{day:"numeric",month:"short",year:"numeric"}).replace(/\bOgo\b/,"Ogos")+", "+ftm(t)}
 
 function card(name,field){
@@ -883,7 +884,7 @@ function fillYM(ys,ms){
 function pmList(nm,y,mo){return bookings.filter(function(b){var d=new Date(b.start);return !isPend(b)&&(!nm||bd(b).indexOf(nm)>=0)&&d.getFullYear()===+y&&(+mo<0||d.getMonth()===+mo)})}
 function pmTable(nm,y,mo,pr){
   var l=pmList(nm,y,mo).sort(function(a,b){return b.start-a.start});
-  return '<div class="card wrap"><table><thead><tr><th style="min-width:100px">Tarikh</th><th style="min-width:90px">Masa</th><th style="min-width:160px">Program</th><th>Pelajar/ Staf/ Guru</th><th>Pemohon</th><th>Kenderaan</th><th style="min-width:110px">Pemandu</th><th style="min-width:120px">Status</th></tr></thead><tbody>'
+  return '<div class="card wrap"><table><thead><tr><th style="min-width:120px">Tarikh</th><th style="min-width:90px">Masa</th><th style="min-width:160px">Program</th><th>Pelajar/ Staf/ Guru</th><th>Pemohon</th><th>Kenderaan</th><th style="min-width:110px">Pemandu</th><th style="min-width:120px">Status</th></tr></thead><tbody>'
    +(l.length?l.map(function(b){var ok=(b.status||"approved")==="approved",tg=ok?'<span class="tag free">Diluluskan</span>':'<span class="tag busy">Ditolak</span>',ct=b.nota||b.reason||"";
      return '<tr><td>'+fdd(b.start)+(fdd(b.end)!==fdd(b.start)?'<br><span class="small">hingga '+fdd(b.end)+'</span>':'')+'</td><td>'+ftm(b.start)+'<br><span class="small">hingga '+ftm(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+tg+(ct?'<br><span class="small">'+esc(ct)+'</span>':'')+(pr&&ok?'<br><button class="del" style="color:var(--tx);margin-top:6px" data-pr="'+esc(b.id)+'">Cetak</button>':'')+'</td></tr>'}).join(""):'<tr><td colspan="8" class="small">Tiada program untuk tempoh ini.</td></tr>')
    +'</tbody></table></div>';
