@@ -359,9 +359,9 @@ function render(){
 }
 var delH=function(ev){var t=ev.target,a=t.getAttribute&&t.getAttribute("data-a");if(a){decide(t.getAttribute("data-id"),a);return}var id=t.getAttribute&&t.getAttribute("data-id");if(id&&db)ask("Padam tempahan ini? Proses kelulusan akan dihentikan dan rekod dibuang.").then(function(r){if(r)db.collection("bookings").doc(id).delete().then(function(){toast("Tempahan dipadam.")}).catch(function(){toast("Gagal memadam. Anda mungkin tiada kebenaran.")})})};
 $("rows").onclick=delH;$("rows2").onclick=delH;$("pend").onclick=delH;
-function plOpts(sel){var l=supDocs.filter(function(x){return x.role==="pengetua"||x.role==="tp"});if(!sel&&l.length===1)sel=l[0].id;return '<option value="">-- pilih pelulus --</option>'+l.map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")}
+function plOpts(sel){var l=supDocs.filter(function(x){return x.role==="pengetua"||x.role==="tp"});if(!sel){var pg=l.filter(function(x){return x.role==="pengetua"});if(pg.length===1)sel=pg[0].id}return '<option value="">-- pilih pelulus --</option>'+l.map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")}
 function plChk(sp,pl){return sp&&sp!=="none"&&sp===pl?"Pelulus tidak boleh orang yang sama dengan penyokong.":""}
-function spOpts(sel){return '<option value="">-- pilih penyokong --</option>'+supDocs.filter(function(x){return x.role==="penyokong"||x.role==="tp"}).map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")+'<option value="none"'+(sel==="none"?" selected":"")+'>Tiada penyokong (terus ke kelulusan)</option>'}
+function spOpts(sel){if(!sel){var pp=supDocs.filter(function(x){return x.role==="penyokong"});if(pp.length===1)sel=pp[0].id}return '<option value="">-- pilih penyokong --</option>'+supDocs.filter(function(x){return x.role==="penyokong"||x.role==="tp"}).map(function(x){return '<option value="'+esc(x.id)+'"'+(sel===x.id?" selected":"")+'>'+esc(x.name)+(x.jawatan?" ("+esc(x.jawatan)+")":"")+'</option>'}).join("")+'<option value="none"'+(sel==="none"?" selected":"")+'>Tiada penyokong (terus ke kelulusan)</option>'}
 $("pend").addEventListener("input",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-sn");if(id){semakIn[id]=semakIn[id]||{};semakIn[id].nota=ev.target.value}});
 $("inproc").onclick=delH;
 $("pend").addEventListener("change",function(ev){var sp=ev.target.getAttribute&&ev.target.getAttribute("data-sp");if(sp){semakIn[sp]=semakIn[sp]||{};semakIn[sp].sp=ev.target.value;return}var pl=ev.target.getAttribute&&ev.target.getAttribute("data-pl");if(pl){semakIn[pl]=semakIn[pl]||{};semakIn[pl].pl=ev.target.value;return}var id=ev.target.getAttribute&&ev.target.getAttribute("data-pk");if(!id)return;userPk[id]=true;pick[id]=Array.prototype.map.call($("pend").querySelectorAll('[data-pk="'+id+'"]:checked'),function(c){return c.value})});
@@ -373,8 +373,9 @@ function decide(id,a){
   if(a==="semak"){
     var ds0=(pick[id]||[]).filter(function(d){return DRIVERS.indexOf(d)>=0}),si=semakIn[id]||{};
     if(!ds0.length){toast("Pilih sekurang-kurangnya seorang pemandu.");return}
+    if(!si.sp){var pp0=supDocs.filter(function(x){return x.role==="penyokong"});if(pp0.length===1)si.sp=pp0[0].id}
     if(!si.sp){toast("Pilih penyokong, atau pilih 'Tiada penyokong'.");return}
-    var pl0=si.pl||(function(){var l=supDocs.filter(function(x){return x.role==="pengetua"||x.role==="tp"});return l.length===1?l[0].id:""})();
+    var pl0=si.pl||(function(){var l=supDocs.filter(function(x){return x.role==="pengetua"});return l.length===1?l[0].id:""})();
     if(!pl0){toast("Pilih pelulus.");return}if(plChk(si.sp,pl0)){toast(plChk(si.sp,pl0));return}var plu0=supDocs.find(function(x){return x.id===pl0});
     if(apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle})){toast("Kenderaan sudah ditempah pada masa itu.");return}
     var dc0=ds0.filter(function(d){return apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
