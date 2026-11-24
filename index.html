@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <script>if(window.top!==window.self){document.documentElement.style.display="none";try{window.top.location=window.self.location}catch(e){}}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Tempahan Bas &amp; Van MRSM Arau</title>
+<title>e-Kenderaan MRSM Arau</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
 :root{--bg:#f6f7f4;--card:#fff;--tx:#1d2a22;--mut:#5f6f65;--bd:#dfe4dc;--ac:#1f6b4a;--act:#fff;--red:#b3261e;--redbg:#fbe9e7;--grn:#1f6b4a;--grnbg:#e3f3ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
@@ -86,7 +86,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 .stopts{display:flex;flex-direction:column;gap:8px;margin-top:8px}.stop{display:flex!important;gap:8px;align-items:center;margin:0!important;cursor:pointer;font-size:14px}.stop input{width:auto;margin:0}.stsh{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-top:10px}.stsh b{font-size:14px}.stck{display:inline-flex;gap:6px;align-items:center;margin:4px 14px 0 0;font-size:14px;cursor:pointer}.stck input{width:auto;margin:0}</style>
 </head>
 <body>
-<header><div style="display:flex;gap:12px;align-items:center"><img src="logo.png" alt="MRSM" class="hlogo"><div><h1>Tempahan Bas &amp; Van MRSM Arau</h1><p>Draf sistem tempahan kenderaan sekolah</p></div></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
+<header><div style="display:flex;gap:12px;align-items:center"><img src="logo.png" alt="MRSM" class="hlogo"><div><h1>e-Kenderaan MRSM Arau</h1><p>Sistem Tempahan Bas &amp; Van</p></div></div><button id="goAdm" class="hbtn">Log Masuk</button></header>
 <nav><button id="t1" class="on">Status Tempahan</button><button id="t2">Tempah Baharu</button><button id="t3" class="hide">Senarai Tempahan</button><button id="t4" class="hide">Penyelia</button></nav>
 <main>
 <section id="p1">
@@ -705,7 +705,7 @@ function formBody(b){
    +'<table style="width:100%;table-layout:fixed"><tr><td style="width:52%"><table style="width:100%"><tr><td class="l" style="width:70px">Catatan</td><td>: <span class="dots" style="display:inline-block;width:92%">'+(pg&&pg.nota?esc(pg.nota):"&nbsp;")+'</span></td></tr><tr><td class="l">Tarikh</td><td>: <span class="dots" style="display:inline-block;width:40%">'+(pg?fd2(pg.at):"&nbsp;")+'</span></td></tr></table></td>'
    +'<td style="text-align:center;width:48%">'+(ESIGN&&pg?eBox(apr?"Diluluskan":"Tidak diluluskan",pg.name,pg.at,90):'<div class="sl" style="height:90px;width:70%;margin-left:auto;margin-right:auto"></div>')+(pg?'('+esc(pg.name).toUpperCase()+')':'(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)')+'<br>Pengetua<br>Maktab Rendah Sains MARA Arau</td></tr></table>'
    +'<div class="pr"><b><u>Peringatan:</u></b><ol><li>Permohonan hendaklah dibuat sekurang-kurangnya 3 hari sebelum tarikh aktiviti</li><li>Setiap aktiviti luar dari Daerah Arau perlu disertakan dengan kertas kerja</li><li>Kelulusan boleh dibatalkan sekiranya bas/van diperlukan oleh aktiviti lain yang lebih penting</li><li>Hanya pelajar-pelajar yang seperti dalam senarai di lampiran sahaja yang dibenarkan menyertai aktiviti luar maktab ini</li><li>Sekiranya bas/van sewa digunakan, sila beri nama, alamat, nombor bas/van serta no. telefon tuan bas/van tersebut</li><li>Salinan borang perlu diberi kepada : a. TP PP / KA / PB &nbsp; b. Ketua Warden &nbsp; c. Penyelia Asrama &nbsp; d. Pengawal Keselamatan &nbsp; e. Guru Pengiring</li></ol></div>'
-   +'<div class="ft">Rujukan sistem: '+esc(b.id)+' &middot; Dijana pada '+fd2(Date.now())+' melalui Sistem Tempahan Bas &amp; Van MRSM Arau</div></div>';
+   +'<div class="ft">Rujukan sistem: '+esc(b.id)+' &middot; Dijana pada '+fd2(Date.now())+' melalui e-Kenderaan MRSM Arau</div></div>';
 }
 var curForm=null;
 function fitPaper(){var e=$("pbody").querySelector(".paper");if(!e||$("pform").classList.contains("hide"))return;var W=e.classList.contains("rp")?1060:760;e.style.zoom="";e.style.width="";e.style.maxWidth="none";var av=$("pform").clientWidth-20;if(av<W){e.style.width=W+"px";e.style.margin="0";e.style.zoom=(av/W).toFixed(3)}else{e.style.maxWidth="";e.style.margin=""}}
