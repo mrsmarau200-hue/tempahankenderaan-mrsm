@@ -249,6 +249,7 @@ var VEHICLES=[],DRIVERS=[],vehDocs=[],drvDocs=[],supDocs=[],staffDocs=[],regDocs
 var bookings=[],apv=[],db=null,me=null,canEdit=false,isAdm=false,viewX="penyokong",cur=null;
 var $=function(i){return document.getElementById(i)};
 function toast(t){var e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.add("hide")},4000)}
+function info(msg){var d=$("dlg");$("dmsg").textContent=msg;$("dinp").classList.add("hide");$("dno").classList.add("hide");d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");$("dno").classList.remove("hide")}}
 function ask(msg,inp){return new Promise(function(res){var d=$("dlg"),i=$("dinp");$("dmsg").textContent=msg;i.classList.toggle("hide",!inp);i.value="";d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");res(inp?i.value:true)};$("dno").onclick=function(){d.classList.add("hide");res(null)}})}
 function esc(s){var d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML.replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/`/g,"&#96;")}
 function fmt(t){return new Date(t).toLocaleString("ms-MY",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).replace(/\bOgo\b/,"Ogos")}
@@ -1193,7 +1194,7 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent=canEdit?(pu?"Tempahan dihantar kepada "+pu.name+" untuk disokong.":"Tempahan dihantar kepada Pengetua."):"Tempahan dihantar. Menunggu kelulusan penyelia.";penUser=false;penSel="";$("penNota").value="";
-    justSent=id;try{location.hash="borang-"+id}catch(e){}openBorang(id);
+    info("Permohonan anda telah berjaya dihantar untuk diluluskan.");window.scrollTo(0,0);
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});formDT.clear();$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
