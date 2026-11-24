@@ -1195,7 +1195,7 @@ $("hantar").onclick=function(){
   var id="b"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);d.id=id;
   db.collection("bookings").doc(id).set(d).then(function(){
     m.className="msg ok";m.textContent=canEdit?(pu?"Tempahan dihantar kepada "+pu.name+" untuk disokong.":"Tempahan dihantar kepada Pengetua."):"Tempahan dihantar. Menunggu kelulusan penyelia.";penUser=false;penSel="";$("penNota").value="";
-    info("Permohonan anda telah berjaya dihantar untuk diluluskan.");window.scrollTo(0,0);
+    info("Terima kasih. Tempahan anda telah dihantar dan sedang menunggu semakan serta kelulusan.");window.scrollTo(0,0);
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});formDT.clear();$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
   }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
