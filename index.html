@@ -246,7 +246,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
 <script>
 // Senarai ini boleh diubah (nama sebenar kenderaan dan pemandu)
 var VEHICLES=[],DRIVERS=[],vehDocs=[],drvDocs=[],supDocs=[],staffDocs=[],regDocs=[],mntDocs=[];
-var bookings=[],apv=[],db=null,me=null,canEdit=false,isAdm=false,viewX="penyokong",cur=null;
+var bookings=[],apv=[],blk=[],db=null,me=null,canEdit=false,isAdm=false,viewX="penyokong",cur=null;
 var $=function(i){return document.getElementById(i)};
 function toast(t){var e=$("toast");e.textContent=t;e.classList.remove("hide");clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.add("hide")},4000)}
 function info(msg){var d=$("dlg");$("dmsg").textContent=msg;$("dinp").classList.add("hide");$("dno").classList.add("hide");d.classList.remove("hide");$("dok").onclick=function(){d.classList.add("hide");$("dno").classList.remove("hide")}}
@@ -264,7 +264,7 @@ var pick={},userPk={};
 function fillSelect(sel,list,field,s,e){
   var cur=sel.value,ok=!isNaN(s)&&!isNaN(e)&&e>s;
   sel.innerHTML='<option value="">-- pilih --</option>'+list.map(function(x){
-    var busy=ok&&apv.find(function(b){return has(b,field,x)&&overlap(b,s,e)});
+    var busy=ok&&blk.find(function(b){return has(b,field,x)&&overlap(b,s,e)});
     return '<option value="'+esc(x)+'"'+(busy?" disabled":"")+'>'+esc(x)+(busy?" (sudah ditempah "+ftm(busy.start)+" - "+ftm(busy.end)+")":"")+'</option>'});
   if(cur&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
 }
@@ -273,7 +273,7 @@ function hrOpts(sel,kind,ds,veh,ex,minTs){
   var cur=sel.value,base=ds?new Date(ds+"T00:00").getTime():NaN,h='<option value="">-- jam --</option>';
   for(var i=0;i<24;i++){var dis=false,why="";
     if(!isNaN(base)){var a=kind==="s"?base+i*36e5:base+(i-1)*36e5,z=a+36e5;
-      if(veh&&apv.some(function(b){return b.id!==ex&&b.vehicle===veh&&overlap(b,a,z)})){dis=true;why=" (sudah ditempah)"}
+      if(veh&&blk.some(function(b){return b.id!==ex&&b.vehicle===veh&&overlap(b,a,z)})){dis=true;why=" (sudah ditempah)"}
       else if(kind==="e"&&minTs&&base+i*36e5<=minTs){dis=true}}
     h+='<option value="'+i+'"'+(dis?" disabled":"")+'>'+hl(i)+why+'</option>'}
   sel.innerHTML=h;if(cur!==""&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
@@ -296,7 +296,7 @@ function penUpdate(){
   var box=$("penBox");if(!box)return;box.classList.toggle("hide",!canEdit);if(!canEdit)return;
   var s=ts($("mula").value),e=ts($("tamat").value),ok=!isNaN(s)&&!isNaN(e)&&e>s,pb={start:s,end:e,vehicle:$("veh").value};
   var cur_=penUser?[].slice.call($("penDrv").querySelectorAll("input:checked")).map(function(x){return x.value}):null;
-  $("penDrv").innerHTML=DRIVERS.length?DRIVERS.map(function(d){var busy=ok&&apv.some(function(x){return bd(x).indexOf(d)>=0&&overlap(x,s,e)});var on=!busy&&(cur_?cur_.indexOf(d)>=0:(ok&&pb.vehicle&&onDuty(pb,d)));
+  $("penDrv").innerHTML=DRIVERS.length?DRIVERS.map(function(d){var busy=ok&&blk.some(function(x){return bd(x).indexOf(d)>=0&&overlap(x,s,e)});var on=!busy&&(cur_?cur_.indexOf(d)>=0:(ok&&pb.vehicle&&onDuty(pb,d)));
     return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(ok&&pb.vehicle&&onDuty(pb,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join(""):'<span class="small">Belum ada pemandu aktif.</span>';
   var sv=$("penSp").value||penSel;$("penSp").innerHTML=spOpts(sv);$("penPl").innerHTML=plOpts($("penPl").value,$("penSp").value);
 }
@@ -340,13 +340,13 @@ function render(){
   $("now").textContent="Dikemas kini: "+fmt(Date.now());
   $("vcards").innerHTML=VEHICLES.map(function(v){return cardD(v,"vehicle")}).join("");
   $("dcards").innerHTML=DRIVERS.map(function(v){return cardD(v,"driver")}).join("");
-  var up=apv.filter(function(b){return b.end>Date.now()}).sort(function(a,b){return a.start-b.start});
-  $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> <span class="small">&middot; '+esc(b.vehicle)+' / '+esc(bd(b).join(", ")||"-")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
-  var list=bookings.filter(function(b){return !isPend(b)}).sort(function(a,b){return b.start-a.start});
+  var up=blk.filter(function(b){return b.end>Date.now()}).sort(function(a,b){return a.start-b.start});
+  $("upc").innerHTML=up.length?up.map(function(b){return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b> '+stag(b).replace(/<div class="small">.*?<\/div>/,"")+' <span class="small">&middot; '+esc(b.vehicle)+(bd(b).length?' / '+esc(bd(b).join(", ")):"")+'</span><div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+' &middot; '+esc(b.purpose)+'</div></div>'}).join(""):'<p class="small">Tiada tempahan akan datang.</p>';
+  var list=bookings.slice().sort(function(a,b){return b.start-a.start});
   fillFilters(list);
   var fyv=+$("fy").value,fmv=+$("fm").value;
   list=list.filter(function(b){var d=new Date(b.start);return d.getFullYear()===fyv&&(fmv<0||d.getMonth()===fmv)});
-  var all2=bookings.filter(function(b){return !isPend(b)}),y2={};y2[new Date().getFullYear()]=1;y2[new Date().getFullYear()+1]=1;all2.forEach(function(b){y2[new Date(b.start).getFullYear()]=1});
+  var all2=bookings.slice(),y2={};y2[new Date().getFullYear()]=1;y2[new Date().getFullYear()+1]=1;all2.forEach(function(b){y2[new Date(b.start).getFullYear()]=1});
   var by2=$("by2"),bm2=$("bm2"),c2=by2.value;by2.innerHTML='<option value="0">Semua tahun</option>'+Object.keys(y2).sort().map(function(y){return '<option>'+y+'</option>'}).join("");by2.value=c2&&(c2==="0"||y2[c2])?c2:String(new Date().getFullYear());
   if(!bm2.options.length){bm2.innerHTML='<option value="-1">Semua bulan</option>'+BULAN.map(function(m,i){return '<option value="'+i+'">'+m+'</option>'}).join("");bm2.value="-1"}
   var byv=+by2.value,bmv=+bm2.value,bdesc=$("bo2").value==="desc";
@@ -354,7 +354,7 @@ function render(){
   $("bcount").textContent=list2.length+" tempahan"+(byv?" · "+byv:" · semua tahun")+(bmv>=0?" · "+BULAN[bmv]:"");
   var rh=list2.length?list2.map(function(b){
     var mine=canEdit||(me&&b.by===me);
-    return '<tr><td>'+fdd(b.start)+(fdd(b.end)!==fdd(b.start)?'<br><span class="small">hingga '+fdd(b.end)+'</span>':'')+'</td><td>'+ftm(b.start)+'<br><span class="small">hingga '+ftm(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'<br>'+stag(b).replace(/<div class="small">.*?<\/div>/,"")+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td><td class="ac">'+(canEdit&&(b.status||"approved")==="pending"?'<button class="del" style="color:var(--grn)" data-a="ok" data-id="'+esc(b.id)+'">Lulus</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button> ':"")+(canEdit&&(b.status||"approved")==="approved"?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':"")+(canEdit&&(b.status||"approved")!=="pending"?'<button class="del" style="color:var(--tx)" data-rj="'+esc(b.id)+'">Edit</button> ':"")+(mine?'<button class="del" data-id="'+esc(b.id)+'">Padam</button>':"")+'</td></tr>'}).join(""):'<tr><td colspan="9" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
+    return '<tr><td>'+fdd(b.start)+(fdd(b.end)!==fdd(b.start)?'<br><span class="small">hingga '+fdd(b.end)+'</span>':'')+'</td><td>'+ftm(b.start)+'<br><span class="small">hingga '+ftm(b.end)+'</span></td><td>'+esc(b.program)+(b.purpose&&b.purpose!==b.program?'<br><span class="small">Destinasi: '+esc(b.purpose)+'</span>':'')+'<br>'+stag(b).replace(/<div class="small">.*?<\/div>/,"")+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td class="small">'+esc(b.nota||b.reason||"")+'</td><td class="ac">'+(canEdit&&(b.status||"approved")==="approved"?'<button class="del" style="color:var(--tx)" data-pr="'+esc(b.id)+'">Cetak</button> ':"")+(canEdit&&((b.status||"approved")==="approved"||b.status==="rejected")?'<button class="del" style="color:var(--tx)" data-rj="'+esc(b.id)+'">Edit</button> ':"")+(mine?'<button class="del" data-id="'+esc(b.id)+'">Padam</button>':"")+'</td></tr>'}).join(""):'<tr><td colspan="9" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
   var rh3=list.length?list.map(function(b){return '<tr><td>'+fdd(b.start)+(fdd(b.end)!==fdd(b.start)?'<br><span class="small">hingga '+fdd(b.end)+'</span>':'')+'</td><td>'+ftm(b.start)+'<br><span class="small">hingga '+ftm(b.end)+'</span></td><td>'+esc(b.program)+'</td><td>'+esc(b.teacher)+'</td><td>'+esc(b.students)+'</td><td>'+esc(b.purpose)+'</td><td>'+esc(b.vehicle)+'</td><td>'+esc(bd(b).join(", ")||"-")+'</td><td>'+stag(b)+'</td></tr>'}).join(""):'<tr><td colspan="9" class="small">Tiada tempahan untuk tempoh ini.</td></tr>';
   $("rows").innerHTML=rh3;$("rows2").innerHTML=rh;renderAdmin();
   refreshForm();
@@ -367,7 +367,7 @@ function spOpts(sel){if(!sel){var pp=supDocs.filter(function(x){return x.role===
 $("pend").addEventListener("input",function(ev){var id=ev.target.getAttribute&&ev.target.getAttribute("data-sn");if(id){semakIn[id]=semakIn[id]||{};semakIn[id].nota=ev.target.value}});
 $("inproc").onclick=delH;
 $("pend").addEventListener("change",function(ev){var sp=ev.target.getAttribute&&ev.target.getAttribute("data-sp");if(sp){semakIn[sp]=semakIn[sp]||{};semakIn[sp].sp=ev.target.value;var ps=ev.target.parentNode.querySelector("select[data-pl]");if(ps){var cv=ps.value===ev.target.value?"":ps.value;ps.innerHTML=plOpts(cv,ev.target.value);semakIn[sp].pl=ps.value}return}var pl=ev.target.getAttribute&&ev.target.getAttribute("data-pl");if(pl){semakIn[pl]=semakIn[pl]||{};semakIn[pl].pl=ev.target.value;return}var id=ev.target.getAttribute&&ev.target.getAttribute("data-pk");if(!id)return;userPk[id]=true;pick[id]=Array.prototype.map.call($("pend").querySelectorAll('[data-pk="'+id+'"]:checked'),function(c){return c.value})});
-function stag(b){var s=b.status||"approved";if(s==="disemak")return '<span class="tag pend">Menunggu sokongan</span>';if(s==="disokong")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="pending")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="rejected")return '<span class="tag busy">Ditolak</span>'+(b.reason?'<div class="small">'+esc(b.reason)+'</div>':"");return '<span class="tag free">Diluluskan</span>'}
+function stag(b){var s=b.status||"approved";if(s==="disemak")return '<span class="tag pend">Menunggu sokongan</span>';if(s==="disokong")return '<span class="tag pend">Menunggu kelulusan</span>';if(s==="pending")return '<span class="tag pend">Menunggu semakan</span>';if(s==="rejected")return '<span class="tag busy">Ditolak</span>'+(b.reason?'<div class="small">'+esc(b.reason)+'</div>':"");return '<span class="tag free">Diluluskan</span>'}
 function decide(id,a){
   var b=bookings.find(function(x){return x.id===id});if(!b||!db||!canEdit)return;
   var ref=db.collection("bookings").doc(id);
@@ -379,8 +379,8 @@ function decide(id,a){
     if(!si.sp){toast("Pilih penyokong, atau pilih 'Tiada penyokong'.");return}
     var pl0=si.pl||(function(){var l=supDocs.filter(function(x){return x.role==="pengetua"});return l.length===1?l[0].id:""})();
     if(!pl0){toast("Pilih pelulus.");return}if(plChk(si.sp,pl0)){toast(plChk(si.sp,pl0));return}var plu0=supDocs.find(function(x){return x.id===pl0});
-    if(apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle})){toast("Kenderaan sudah ditempah pada masa itu.");return}
-    var dc0=ds0.filter(function(d){return apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
+    if(blk.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle})){toast("Kenderaan sudah ditempah pada masa itu.");return}
+    var dc0=ds0.filter(function(d){return blk.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
     if(dc0.length){toast(dc0.join(", ")+" sudah bertugas pada masa itu.");return}
     var me=supDocs.find(function(x){return x.id===cur.id})||{},pu=supDocs.find(function(x){return x.id===si.sp});
     ref.update({status:si.sp==="none"?"disokong":"disemak",drivers:ds0,semak:{id:cur.id,name:cur.name||cur.id,jawatan:me.jawatan||"",at:Date.now(),nota:(si.nota||"").trim()},penyokong:si.sp==="none"?null:{id:pu.id,name:pu.name,jawatan:pu.jawatan||""},pelulus:{id:plu0.id,name:plu0.name,jawatan:plu0.jawatan||""},pulang:null}).then(function(){delete pick[id];delete semakIn[id];toast(si.sp==="none"?"Dihantar kepada "+plu0.name+" untuk kelulusan.":"Dihantar kepada "+pu.name+" untuk disokong.")}).catch(function(){toast("Gagal mengemas kini.")});
@@ -388,9 +388,9 @@ function decide(id,a){
   if(a==="ok"){
     var ds=(pick[id]||[]).filter(function(d){return DRIVERS.indexOf(d)>=0});
     if(!ds.length){toast("Pilih sekurang-kurangnya seorang pemandu sebelum meluluskan.");return}
-    var vc=apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
+    var vc=blk.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
     if(vc){toast("Tidak boleh lulus: kenderaan sudah ditempah pada masa itu.");return}
-    var dc=ds.filter(function(d){return apv.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
+    var dc=ds.filter(function(d){return blk.some(function(x){return x.id!==id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
     if(dc.length){toast("Tidak boleh lulus: "+dc.join(", ")+" sudah bertugas pada masa itu.");return}
     ref.update({status:"approved",drivers:ds,decidedAt:Date.now()}).then(function(){delete pick[id];return syncRoster(b,ds)}).then(function(n){toast(n?"Tempahan diluluskan. Kalendar giliran dikemas kini.":"Tempahan diluluskan.")}).catch(function(){toast("Gagal mengemas kini.")});
   }else{
@@ -432,9 +432,9 @@ function renderAdmin(){
   var pc=bookings.filter(function(b){return b.status==="pending"}).length;document.querySelectorAll("#p4 .adm").forEach(function(e){e.style.display=isAdm?"":"none"});var bs=document.querySelector("#p4 .brand small");if(bs)bs.textContent=isAdm?"Panel Pentadbir":"Panel Penyelia";$("dback").style.display=$("xback").style.display=isAdm?"":"none";$("goAdm").textContent=(canEdit?(isAdm?"Panel Pentadbir":"Panel Penyelia"):cur?"Program Saya":"Log Masuk")+(canEdit&&pc?" ("+pc+" menunggu)":"");
   var pl=bookings.filter(function(b){return b.status==="pending"}).sort(function(a,b){return a.start-b.start});
   $("pend").innerHTML=pl.length?pl.map(function(b){
-    if(!userPk[b.id])pick[b.id]=DRIVERS.filter(function(d){return onDuty(b,d)&&!apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)})});
+    if(!userPk[b.id])pick[b.id]=DRIVERS.filter(function(d){return onDuty(b,d)&&!blk.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)})});
     var sel=pick[b.id]||[];
-    var ck=DRIVERS.map(function(d){var busy=apv.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)});var on=sel.indexOf(d)>=0&&!busy;
+    var ck=DRIVERS.map(function(d){var busy=blk.some(function(x){return x.id!==b.id&&bd(x).indexOf(d)>=0&&overlap(x,b.start,b.end)});var on=sel.indexOf(d)>=0&&!busy;
       return '<label class="ck'+(busy?' off':'')+'"><input type="checkbox" data-pk="'+esc(b.id)+'" value="'+esc(d)+'"'+(on?' checked':'')+(busy?' disabled':'')+'> '+esc(d)+(busy?' <span class="small">(bertugas)</span>':(onDuty(b,d)?' <span class="small">(giliran hari itu)</span>':''))+'</label>'}).join("");
     return '<div class="li" style="display:block"><b>'+esc(b.program)+'</b>'+(b.pulang?'<div class="small" style="color:#b45309;font-weight:600">Dipulangkan oleh '+esc(b.pulang.name||"")+(b.pulang.nota?': '+esc(b.pulang.nota):'')+'</div>':'')+'<div class="small">'+fdt(b.start)+' hingga '+fdt(b.end)+'<br>Pemohon: '+esc(b.teacher)+' &middot; '+esc(b.students)+' pelajar/staf/guru<br>Destinasi: '+esc(b.purpose)+'<br>'+esc(b.vehicle)+'</div><div style="margin-top:8px"><b class="small">Pemandu (giliran hari itu dipilih automatik; boleh tambah pemandu lain)</b><div class="pk">'+(ck||'<span class="small">Belum ada pemandu aktif. Daftar di menu Pemandu.</span>')+'</div></div><div style="margin-top:8px"><label>Penyokong</label><select data-sp="'+esc(b.id)+'">'+spOpts((semakIn[b.id]||{}).sp)+'</select><label>Pelulus</label><select data-pl="'+esc(b.id)+'">'+plOpts((semakIn[b.id]||{}).pl,(semakIn[b.id]||{}).sp)+'</select><label>Catatan semakan</label><textarea data-sn="'+esc(b.id)+'" rows="2" placeholder="cth: Pemandu giliran sudah ditetapkan, kenderaan tersedia">'+esc((semakIn[b.id]||{}).nota||"")+'</textarea></div><div style="margin-top:8px"><button class="btn" style="margin:0;width:auto;padding:9px 16px" data-a="semak" data-id="'+esc(b.id)+'">Semak &amp; hantar</button> <button class="del" data-a="no" data-id="'+esc(b.id)+'">Tolak</button> <button class="del" style="color:var(--tx)" data-id="'+esc(b.id)+'">Padam</button></div></div>'}).join(""):'<p class="small">Tiada tempahan menunggu semakan.</p>';
   var ip=bookings.filter(function(b){return b.status==="disemak"||b.status==="disokong"}).sort(function(a,b){return a.start-b.start});
@@ -733,7 +733,7 @@ document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev
   $("etit").textContent=(bk.program||"Program")+" · "+fdt(bk.start)+" hingga "+fdt(bk.end);$("eguru").value=bk.teacher||"";$("egaji").value=bk.noGaji||"";$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);edDT.load();edDirty=false;
   $("estat").value=(bk.status||"approved")==="rejected"?"rejected":"approved";
   var cur_=bd(bk),had=cur_.length>0;
-  $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=apv.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
+  $("edrv").innerHTML=drvDocs.map(function(d){var n=d.name,od=onDuty(bk,n),busy=blk.some(function(x){return x.id!==bk.id&&overlap(x,bk.start,bk.end)&&bd(x).indexOf(n)>=0});var on=had?cur_.indexOf(n)>=0:(od&&!busy);
     return '<label class="small" style="display:block;margin:4px 0;color:var(--tx)"><input type="checkbox" value="'+esc(n)+'" '+(on?"checked":"")+(busy?" disabled":"")+' style="width:auto;margin-right:6px">'+esc(n)+(busy?" (sudah bertugas masa itu)":od?" (giliran hari itu)":"")+'</label>'}).join("");
   $("enota").value=bk.nota||bk.reason||"";$("emsg").textContent="";edToggle();$("edlg").classList.remove("hide");
 });
@@ -752,9 +752,9 @@ $("esave").onclick=function(){
   if(ns!==b.start||ne!==b.end){data.start=ns;data.end=ne;b={id:b.id,start:ns,end:ne,vehicle:b.vehicle}}
   if(st==="approved"){
     if(!ds.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
-    var vc=apv.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
+    var vc=blk.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&x.vehicle===b.vehicle});
     if(vc){m.textContent="Kenderaan sudah ditempah pada masa itu.";return}
-    var dc=ds.filter(function(d){return apv.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
+    var dc=ds.filter(function(d){return blk.some(function(x){return x.id!==b.id&&overlap(x,b.start,b.end)&&bd(x).indexOf(d)>=0})});
     if(dc.length){m.textContent=dc.join(", ")+" sudah bertugas pada masa itu.";return}
     data.drivers=ds;
   }
@@ -957,7 +957,7 @@ function sn(n){return String(n).split(/ BIN | BINTI | BT /)[0]}
 function rpill(k,n){return '<span class="pl" style="background:'+JW[k].col+';color:#222" title="'+k+' '+esc(n)+'"><span class="ini">'+k+' '+esc(ini(n))+'</span><span class="fn">'+k+' '+esc(sn(n))+'</span></span>'}
 function pill(n){return '<span class="pl" style="background:'+dcol(n)+'" title="'+esc(n)+'"><span class="ini">'+esc(ini(n))+'</span><span class="fn">'+esc(n)+'</span></span>'}
 function chip(n){return '<span class="tag" style="background:'+dcol(n)+';color:#fff">'+esc(n)+'</span>'}
-function dayProgs(k){var s0=new Date(k+"T00:00").getTime();return apv.filter(function(b){return overlap(b,s0,s0+864e5)})}
+function dayProgs(k){var s0=new Date(k+"T00:00").getTime();return blk.filter(function(b){return overlap(b,s0,s0+864e5)})}
 function onDuty(b,d){var r=rmap[dstr(new Date(b.start))];if(!r)return false;if(r.roles)return dutyFor(b,r).indexOf(d)>=0;return (r.drivers||[]).indexOf(d)>=0}
 function renderCal(id){
   var box=$(id);if(!box)return;
@@ -967,9 +967,9 @@ function renderCal(id){
   for(var i=0;i<lead;i++)h+='<div class="cd blank"></div>';
   for(var d=1;d<=dim;d++){var k=dkey(st.y,st.m,d),r=rmap[k],ds=(r&&r.drivers)||[],n=dayProgs(k).length;
     h+='<div class="cd'+(k===tk?" today":"")+(k===st.sel?" sel":"")+'" data-cal="'+id+'" data-day="'+k+'"><span class="dn">'+d+'</span>'+(n?'<span class="cb" title="'+n+' program">'+n+'</span>':'')+(r&&r.roles?["A","B","C"].filter(function(k){return r.roles[k]}).map(function(k){return rpill(k,r.roles[k])}).join("")+stPills(r):ds.map(pill).join(""))+'</div>'}
-  h+='</div><div class="leg">'+drvDocs.map(function(x,i){return '<span><i style="background:'+PAL[i%PAL.length]+'"></i>'+esc(x.name)+'</span>'}).join("")+'</div><div class="small" style="margin-top:6px">Nombor kecil di sudut hari = bilangan program diluluskan pada hari itu. Huruf A/B/C = shift (A Bas, B Van PG, C Van PTG).</div>';
+  h+='</div><div class="leg">'+drvDocs.map(function(x,i){return '<span><i style="background:'+PAL[i%PAL.length]+'"></i>'+esc(x.name)+'</span>'}).join("")+'</div><div class="small" style="margin-top:6px">Nombor kecil di sudut hari = bilangan program pada hari itu (termasuk yang masih menunggu kelulusan). Huruf A/B/C = shift (A Bas, B Van PG, C Van PTG).</div>';
   if(st.sel){var r2=rmap[st.sel],ds2=(r2&&r2.drivers)||[],ps=dayProgs(st.sel);
-    h+='<div class="caldet"><b>'+esc(fdate(st.sel))+'</b><div style="margin-top:6px">'+(r2&&r2.roles?rolesDetail(st.sel,r2)+(r2.note?' <div class="small">'+esc(r2.note)+'</div>':''):ds2.length?'Giliran: '+ds2.map(chip).join(" ")+(r2.note?' <span class="small">&middot; '+esc(r2.note)+'</span>':''):'<span class="small">Giliran belum ditetapkan.</span>')+'</div>'+(ps.length?ps.map(function(b){return '<div class="small" style="margin-top:4px">&bull; '+esc(b.program)+' &middot; '+esc(b.vehicle)+' &middot; '+esc(bd(b).join(", ")||"-")+'</div>'}).join(""):'<div class="small" style="margin-top:4px">Tiada program diluluskan pada hari ini.</div>')+'</div>';
+    h+='<div class="caldet"><b>'+esc(fdate(st.sel))+'</b><div style="margin-top:6px">'+(r2&&r2.roles?rolesDetail(st.sel,r2)+(r2.note?' <div class="small">'+esc(r2.note)+'</div>':''):ds2.length?'Giliran: '+ds2.map(chip).join(" ")+(r2.note?' <span class="small">&middot; '+esc(r2.note)+'</span>':''):'<span class="small">Giliran belum ditetapkan.</span>')+'</div>'+(ps.length?ps.map(function(b){return '<div class="small" style="margin-top:4px">&bull; '+esc(b.program)+' &middot; '+esc(b.vehicle)+' &middot; '+esc(bd(b).join(", ")||"-")+' '+((b.status||"approved")==="approved"?"":stag(b))+'</div>'}).join(""):'<div class="small" style="margin-top:4px">Tiada program pada hari ini.</div>')+'</div>';
   }
   box.innerHTML=h;
 }
@@ -1175,7 +1175,7 @@ $("hantar").onclick=function(){
   if($("mkn").checked)d.makanan={menu:$("mmenu").value.trim(),cara:$("mcara").value,bil:$("mbil").value.trim(),tarikh:$("mtkh").value,masa:$("mmasa").value};
   if(!d.program||!d.teacher||!d.purpose||!(d.students>0)||!d.vehicle||isNaN(d.start)||isNaN(d.end)){m.textContent="Sila lengkapkan semua ruangan.";return}
   if(d.end<=d.start){m.textContent="Masa tamat mesti selepas masa mula.";return}
-  var clash=apv.some(function(b){return overlap(b,d.start,d.end)&&b.vehicle===d.vehicle});
+  var clash=blk.some(function(b){return overlap(b,d.start,d.end)&&b.vehicle===d.vehicle});
   if(clash){m.textContent="Kenderaan sudah ditempah pada masa tersebut.";refreshForm();return}
   if(!db){m.textContent="Sistem simpanan tidak tersedia. Sila log masuk.";return}
   var pu=null;
@@ -1184,7 +1184,7 @@ $("hantar").onclick=function(){
     if(!pd.length){m.textContent="Pilih sekurang-kurangnya seorang pemandu.";return}
     if(!sp){m.textContent="Pilih penyokong, atau pilih 'Tiada penyokong'.";return}
     var pl=$("penPl").value;if(!pl){m.textContent="Pilih pelulus.";return}if(plChk(sp,pl)){m.textContent=plChk(sp,pl);return}var plu=supDocs.find(function(x){return x.id===pl});
-    var dcl=pd.filter(function(n){return apv.some(function(x){return bd(x).indexOf(n)>=0&&overlap(x,d.start,d.end)})});
+    var dcl=pd.filter(function(n){return blk.some(function(x){return bd(x).indexOf(n)>=0&&overlap(x,d.start,d.end)})});
     if(dcl.length){m.textContent=dcl.join(", ")+" sudah bertugas pada masa itu.";return}
     var me2=supDocs.find(function(x){return x.id===cur.id})||{};pu=supDocs.find(function(x){return x.id===sp});
     d.drivers=pd;d.status=sp==="none"?"disokong":"disemak";d.pulang=null;
@@ -1197,7 +1197,7 @@ $("hantar").onclick=function(){
     m.className="msg ok";m.textContent=canEdit?(pu?"Tempahan dihantar kepada "+pu.name+" untuk disokong.":"Tempahan dihantar kepada Pengetua."):"Tempahan dihantar. Menunggu kelulusan penyelia.";penUser=false;penSel="";$("penNota").value="";
     info("Terima kasih. Tempahan anda telah dihantar dan sedang menunggu semakan serta kelulusan.");window.scrollTo(0,0);
     ["prog","gajiP","guru","pel","tuj","mula","tamat","mmenu","mbil","mtkh","mmasa"].forEach(function(k){$(k).value=""});formDT.clear();$("mkn").checked=false;$("gajiMsg").textContent="";$("mknbox").classList.add("hide");refreshForm();
-  }).catch(function(){m.textContent="Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
+  }).catch(function(x){m.textContent=(x&&x.message==="clash")?"Kenderaan ini sudah ditempah (atau sedang menunggu kelulusan) pada masa tersebut. Sila pilih masa atau kenderaan lain.":"Gagal menyimpan. Anda mungkin tiada kebenaran menempah."}).then(function(){$("hantar").disabled=false});
 };
 
 render();routeBorang();
@@ -1216,7 +1216,7 @@ setInterval(render,60000);
     db.collection("roster").onSnapshot(function(s){rosterDocs=s.docs.map(function(d){return d.data()});rmap={};rosterDocs.forEach(function(d){rmap[d.id]=d});renderCals()},function(){});
     db.collection("staff").onSnapshot(function(s){staffDocs=s.docs.map(function(d){return d.data()})},function(){});
     db.collection("supervisors").onSnapshot(function(s){supDocs=s.docs.map(function(d){return d.data()}).sort(by);renderAdmin()},function(){});
-    db.collection("bookings").onSnapshot(function(s){bookings=s.docs.map(function(d){return d.data()});apv=bookings.filter(function(b){return (b.status||"approved")==="approved"});render()},function(){});
+    db.collection("bookings").onSnapshot(function(s){bookings=s.docs.map(function(d){return d.data()});apv=bookings.filter(function(b){return (b.status||"approved")==="approved"});blk=bookings.filter(function(b){return (b.status||"approved")==="approved"||isPend(b)});render()},function(){});
     poll(true);setInterval(function(){if(!document.hidden)poll()},20000);document.addEventListener("visibilitychange",function(){if(!document.hidden)poll()});
   }catch(e){}
 })();
