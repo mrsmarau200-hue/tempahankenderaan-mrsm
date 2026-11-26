@@ -712,6 +712,8 @@ function formBody(b){
    +row("Destinasi / Tempat Dituju",'<b class="up">'+esc(b.purpose)+'</b>')+row("Tujuan Penggunaan",'<b>'+esc(b.program)+'</b>')
    +tm("Pada / Mulai",'<b>'+fd2(b.start)+'</b>','<b>'+ftm(b.start)+'</b>')+tm("Hingga",'<b>'+fd2(b.end)+'</b>','<b>'+ftm(b.end)+'</b>')
    +row("Jumlah Penumpang",'<b>'+esc(b.students)+'</b> orang <i>(Termasuk guru. Senarai nama pelajar rujuk lampiran)</i>')
+   +row("Kenderaan",'<b>'+esc(b.vehicle)+'</b>')
+   +(bd(b).length?row("Pemandu",'<b>'+bd(b).map(function(n){return esc(n)}).join(", ")+'</b>'):"")
    +'<div class="lf-sg"><div class="lf-sl"><span>Tandatangan Pemohon :</span><span class="lf-sc"><span class="lf-dot"></span><div class="lf-nm">('+esc(b.teacher).toUpperCase()+')</div></span></div><div class="lf-tr">Tarikh: <b>'+(b.dibuat?fd2(b.dibuat):"")+'</b></div></div>'
    +'<div class="lf-h">PENGESAHAN PEGAWAI MENYOKONG</div>'
    +'<div class="lf-tx">Permohonan *'+pil("disokong","tidak sokong",skSel)+' untuk diluluskan</div>'
