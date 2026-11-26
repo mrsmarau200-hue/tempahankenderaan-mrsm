@@ -690,7 +690,7 @@ function ftm(t){var d=new Date(t),h=d.getHours(),m=("0"+d.getMinutes()).slice(-2
 function fdIso(x){if(!x)return "";var q=String(x).split("-");return q.length===3?q[2]+"/"+q[1]+"/"+q[0]:x}
 function ftIso(x){if(!x)return "";var q=String(x).split(":"),h=+q[0];return ((h%12)||12)+"."+q[1]+" "+(h<12?"pagi":h<14?"tengah hari":"petang")}
 function tSt(x){return x.peringkat||(x.role==="penyokong"?"sokong":"lulus")}
-var ESIGN=false;try{ESIGN=localStorage.getItem("esign")==="1"}catch(e){}
+var ESIGN=true;try{ESIGN=localStorage.getItem("esign")!=="0"}catch(e){}
 function fdtm(t){var d=new Date(t);return fd2(t)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
 function eBox(txt,nm,at,h){return '<div style="height:'+h+'px;display:flex;align-items:center;justify-content:center"><div style="border:1px solid #666;padding:6px 10px;font-size:10.5px;line-height:1.4">'+txt+' secara elektronik<br>oleh <b>'+esc(nm).toUpperCase()+'</b><br>pada '+fdtm(at)+'</div></div>'}
 function formBody(b){
