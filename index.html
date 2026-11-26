@@ -29,6 +29,7 @@ input,select,textarea{width:100%;padding:9px;border:1px solid var(--bd);border-r
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:var(--ac);color:var(--act);font:inherit;font-weight:700;cursor:pointer}
 .btn:disabled{opacity:.5}
+.tm3{display:flex;gap:6px;align-items:center}.tm3 select{flex:1;min-width:0}.tmw{color:#b3261e;margin-top:4px;min-height:0}
 .tag{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700}
 .free{background:var(--grnbg);color:var(--grn)}.busy{background:var(--redbg);color:var(--red)}
 .msg{margin-top:10px;font-size:13px;color:var(--red)}.ok{color:var(--grn)}
@@ -106,11 +107,11 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
     <label>No. gaji pemohon (nama keluar automatik)</label><input id="gajiP" inputmode="numeric" autocomplete="off" placeholder="cth: 227375"><div class="small" id="gajiMsg" style="margin-top:4px"></div>
     <label>Guru / staf pemohon</label><input id="guru">
     <div class="row"><div><label>Bil. ahli rombongan</label><input id="pel" type="number" min="1"></div><div><label>Tempat aktiviti</label><input id="tuj" placeholder="cth: Dataran Kangar Jaya, Kangar"></div></div>
-    <input id="mula" type="hidden"><input id="tamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="mulaD" type="date"></div><div><label>Masa mula</label><select id="mulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="tamatD" type="date"></div><div><label>Masa tamat</label><select id="tamatH"></select></div></div>
+    <input id="mula" type="hidden"><input id="tamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="mulaD" type="date"></div><div><label>Masa mula</label><div class="tm3"><select id="mulaH"></select><select id="mulaN"></select><select id="mulaP"></select></div><div class="small tmw" id="mulaW"></div></div></div><div class="row"><div><label>Tarikh tamat</label><input id="tamatD" type="date"></div><div><label>Masa tamat</label><div class="tm3"><select id="tamatH"></select><select id="tamatN"></select><select id="tamatP"></select></div><div class="small tmw" id="tamatW"></div></div></div>
     <label>Kenderaan</label><select id="veh"></select>
     <label class="hide" style="display:none"><input type="checkbox" id="mkn" style="width:auto"></label>
     <div id="mknbox" class="hide"><label>Menu makanan</label><input id="mmenu" placeholder="cth: Minum pagi, makan tengah hari"><div class="row"><div><label>Bungkus / hidang</label><select id="mcara"><option>Bungkus</option><option>Hidang</option></select></div><div><label>Bilangan</label><input id="mbil" placeholder="cth: 6 pack"></div></div><div class="row"><div><label>Tarikh ambil</label><input id="mtkh" type="date"></div><div><label>Masa ambil</label><input id="mmasa" type="time"></div></div></div>
-    <p class="small" id="hint">Pilih tarikh dan jam dahulu. Jam atau kenderaan yang sudah ditempah akan jadi kelabu. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
+    <p class="small" id="hint">Pilih tarikh dan masa dahulu. Kenderaan yang sudah ditempah pada masa itu akan jadi kelabu. Pemandu ditetapkan oleh penyelia semasa kelulusan.</p>
     <div id="penBox" class="hide" style="margin-top:14px;padding:12px;border:1px dashed var(--ac);border-radius:12px"><b>Khas penyelia</b><p class="small" style="margin:4px 0 0">Tempahan yang penyelia isi tidak perlu disemak semula. Ia terus ke penyokong dan pelulus yang dipilih.</p><label>Pemandu</label><div id="penDrv" class="pk"></div><label>Penyokong</label><select id="penSp"></select><label>Pelulus</label><select id="penPl"></select><label>Catatan (pilihan)</label><textarea id="penNota" rows="2"></textarea></div>
     <button class="btn" id="hantar">Hantar Tempahan</button>
     <div class="msg" id="msg"></div>
@@ -239,7 +240,7 @@ th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-ali
  </div>
 </section>
 </main>
-<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Nama pemohon</label><input id="eguru" autocomplete="off"><label>No. gaji pemohon (untuk emel keputusan)</label><input id="egaji" inputmode="numeric" autocomplete="off"><input id="emula" type="hidden"><input id="etamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="emulaD" type="date"></div><div><label>Masa mula</label><select id="emulaH"></select></div></div><div class="row"><div><label>Tarikh tamat</label><input id="etamatD" type="date"></div><div><label>Masa tamat</label><select id="etamatH"></select></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
+<div class="dlg hide" id="edlg"><div style="max-width:420px"><b id="etit"></b><label>Nama pemohon</label><input id="eguru" autocomplete="off"><label>No. gaji pemohon (untuk emel keputusan)</label><input id="egaji" inputmode="numeric" autocomplete="off"><input id="emula" type="hidden"><input id="etamat" type="hidden"><div class="row"><div><label>Tarikh mula</label><input id="emulaD" type="date"></div><div><label>Masa mula</label><div class="tm3"><select id="emulaH"></select><select id="emulaN"></select><select id="emulaP"></select></div><div class="small tmw" id="emulaW"></div></div></div><div class="row"><div><label>Tarikh tamat</label><input id="etamatD" type="date"></div><div><label>Masa tamat</label><div class="tm3"><select id="etamatH"></select><select id="etamatN"></select><select id="etamatP"></select></div><div class="small tmw" id="etamatW"></div></div></div><label>Status</label><select id="estat"><option value="approved">Diluluskan</option><option value="rejected">Ditolak / dibatalkan</option></select><div id="edrvbox"><label>Pemandu bertugas</label><div id="edrv" style="max-height:160px;overflow:auto"></div></div><label>Catatan</label><textarea id="enota" rows="3" placeholder="cth: Dibatalkan kerana bas rosak"></textarea><div class="msg" id="emsg"></div><div class="row" style="margin-top:10px"><button class="del" id="ecancel" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="esave" style="margin:0">Simpan</button></div></div></div>
 <div class="dlg hide" id="dlg"><div><div id="dmsg"></div><input id="dinp" class="hide" style="margin-top:10px"><div class="row"><button class="del" id="dno" style="color:var(--tx);padding:10px">Batal</button><button class="btn" id="dok" style="margin:0">OK</button></div></div></div>
 <div class="pform hide" id="pform"><div class="tb"><label class="small" style="display:flex;align-items:center;gap:6px;color:var(--tx)"><input type="checkbox" id="pesign" style="width:auto"> Kelulusan elektronik (tanpa ruang tandatangan)</label><button class="btn" id="pprint">Cetak</button><button class="btn" id="pdl">Muat Turun PDF</button><button class="del" id="pclose" style="padding:10px 16px;color:var(--tx)">Tutup</button></div><p class="small" style="max-width:760px;margin:0 auto 10px">Jika butang Cetak tiada tindakan, tekan Muat Turun PDF, buka fail PDF tersebut dan cetak.</p><div id="pbody"></div></div>
 <div class="toast hide" id="toast"></div>
@@ -278,17 +279,35 @@ function hrOpts(sel,kind,ds,veh,ex,minTs){
     h+='<option value="'+i+'"'+(dis?" disabled":"")+'>'+hl(i)+why+'</option>'}
   sel.innerHTML=h;if(cur!==""&&!sel.querySelector('option[value="'+cur+'"]:disabled'))sel.value=cur;
 }
+function tmInit(H,N,P){
+  H.innerHTML='<option value="">Jam</option>'+[1,2,3,4,5,6,7,8,9,10,11,12].map(function(i){return '<option value="'+i+'">'+("0"+i).slice(-2)+'</option>'}).join("");
+  var o='<option value="">Minit</option>';for(var m=0;m<60;m++)o+='<option value="'+m+'">'+("0"+m).slice(-2)+'</option>';N.innerHTML=o;
+  P.innerHTML='<option value="">AM/PM</option><option value="AM">AM</option><option value="PM">PM</option>'}
+function tmComp(d,H,N,P){
+  if(!d.value||H.value===""||P.value==="")return "";
+  if(N.value==="")N.value="0";
+  var h=(parseInt(H.value,10)%12)+(P.value==="PM"?12:0);
+  return d.value+"T"+("0"+h).slice(-2)+":"+("0"+parseInt(N.value,10)).slice(-2)}
+function tmSet(str,H,N,P){
+  if(!str){H.value=N.value=P.value="";return}
+  var h=parseInt(str.slice(0,2),10),m=parseInt(str.slice(3,5),10);
+  H.value=String(h%12||12);N.value=String(m);P.value=h>=12?"PM":"AM"}
 function dtWire(ms,te,vehFn,exFn,cb){
-  var D1=$(ms+"D"),H1=$(ms+"H"),D2=$(te+"D"),H2=$(te+"H"),M=$(ms),T=$(te);
-  function comp(d,h){return d.value&&h.value!==""?d.value+"T"+("0"+h.value).slice(-2)+":00":""}
+  var D1=$(ms+"D"),H1=$(ms+"H"),N1=$(ms+"N"),P1=$(ms+"P"),D2=$(te+"D"),H2=$(te+"H"),N2=$(te+"N"),P2=$(te+"P"),M=$(ms),T=$(te),W2=$(te+"W");
+  tmInit(H1,N1,P1);tmInit(H2,N2,P2);
   function ref(){
     D2.min=D1.value||"";
-    hrOpts(H1,"s",D1.value,vehFn(),exFn(),NaN);M.value=comp(D1,H1);
-    hrOpts(H2,"e",D2.value,vehFn(),exFn(),ts(M.value));T.value=comp(D2,H2);
+    M.value=tmComp(D1,H1,N1,P1);T.value=tmComp(D2,H2,N2,P2);
+    var w="",a=ts(M.value),z=ts(T.value);
+    if(!isNaN(a)&&!isNaN(z)){
+      if(z<=a)w="Masa tamat mesti selepas masa mula.";
+      else{var v=vehFn(),ex=exFn(),c=v&&blk.find(function(b){return b.id!==ex&&b.vehicle===v&&overlap(b,a,z)});
+        if(c)w="Kenderaan ini sudah ditempah ("+(c.status==="approved"||!c.status?"diluluskan":"menunggu kelulusan")+") pada "+ftm(c.start)+" hingga "+ftm(c.end)+". Sila pilih masa lain."}}
+    W2.textContent=w;
     if(cb)cb()}
   D1.onchange=function(){if(D1.value&&(!D2.value||D2.value<D1.value))D2.value=D1.value;ref()};
-  [H1,D2,H2].forEach(function(x){x.onchange=ref});
-  return {ref:ref,load:function(){var a=M.value.split("T"),b=T.value.split("T");D1.value=a[0]||"";D2.value=b[0]||"";ref();if(a[1]){H1.value=String(parseInt(a[1],10));ref()}if(b[1]){H2.value=String(parseInt(b[1],10));ref()}},clear:function(){D1.value=D2.value="";H1.value=H2.value="";ref()}};
+  [H1,N1,P1,D2,H2,N2,P2].forEach(function(x){x.onchange=ref});
+  return {ref:ref,load:function(){var a=M.value.split("T"),b=T.value.split("T");D1.value=a[0]||"";D2.value=b[0]||"";tmSet(a[1],H1,N1,P1);tmSet(b[1],H2,N2,P2);ref()},clear:function(){D1.value=D2.value="";tmSet("",H1,N1,P1);tmSet("",H2,N2,P2);ref()}};
 }
 var formDT=dtWire("mula","tamat",function(){return $("veh").value},function(){return ""},function(){fillSelect($("veh"),VEHICLES,"vehicle",ts($("mula").value),ts($("tamat").value));penUpdate()});
 var penUser=false,penSel="";
@@ -727,7 +746,7 @@ function routeBorang(){var m=/^#borang-([A-Za-z0-9]+)$/.exec(location.hash);if(m
 window.addEventListener("hashchange",routeBorang);
 var edB=null,edDirty=false;
 var edDT=dtWire("emula","etamat",function(){var b=bookings.find(function(x){return x.id===edB});return b?b.vehicle:""},function(){return edB||""});
-["emulaD","emulaH","etamatD","etamatH"].forEach(function(k){$(k).addEventListener("change",function(){edDirty=true})});
+["emulaD","emulaH","emulaN","emulaP","etamatD","etamatH","etamatN","etamatP"].forEach(function(k){$(k).addEventListener("change",function(){edDirty=true})});
 document.addEventListener("click",function(ev){var rj=ev.target.getAttribute&&ev.target.getAttribute("data-rj");if(!rj||!canEdit||!db)return;
   var bk=bookings.find(function(x){return x.id===rj});if(!bk)return;edB=rj;
   $("etit").textContent=(bk.program||"Program")+" · "+fdt(bk.start)+" hingga "+fdt(bk.end);$("eguru").value=bk.teacher||"";$("egaji").value=bk.noGaji||"";$("emula").value=lti(bk.start);$("etamat").value=lti(bk.end);edDT.load();edDirty=false;
