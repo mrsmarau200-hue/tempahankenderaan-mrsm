@@ -714,7 +714,7 @@ function formBody(b){
    +row("Jumlah Penumpang",'<b>'+esc(b.students)+'</b> orang <i>(Termasuk guru. Senarai nama pelajar rujuk lampiran)</i>')
    +row("Kenderaan",'<b>'+esc(b.vehicle)+'</b>')
    +(bd(b).length?row("Pemandu",'<b>'+bd(b).map(function(n){return esc(n)}).join(", ")+'</b>'):"")
-   +'<div class="lf-sg"><div class="lf-sl"><span>Tandatangan Pemohon :</span><span class="lf-sc"><span class="lf-dot"></span><div class="lf-nm">('+esc(b.teacher).toUpperCase()+')</div></span></div><div class="lf-tr">Tarikh: <b>'+(b.dibuat?fd2(b.dibuat):"")+'</b></div></div>'
+   +'<div class="lf-sg"><div class="lf-sl"><span'+(ESIGN&&b.dibuat?' style="margin-top:58px"':'')+'>Tandatangan Pemohon :</span><span class="lf-sc">'+(ESIGN&&b.dibuat?eBox("Dihantar",b.teacher,b.dibuat,58):"")+'<span class="lf-dot"></span><div class="lf-nm">('+esc(b.teacher).toUpperCase()+')</div></span></div><div class="lf-tr">Tarikh: <b>'+(b.dibuat?fd2(b.dibuat):"")+'</b></div></div>'
    +'<div class="lf-h">PENGESAHAN PEGAWAI MENYOKONG</div>'
    +'<div class="lf-tx">Permohonan *'+pil("disokong","tidak sokong",skSel)+' untuk diluluskan</div>'
    +'<div class="lf-two"><div class="lf-half">'+kv("Tandatangan",sign(sk,sk?(sk===b.sokong?"Disokong":"Ditolak"):"",74),true)+kv("Tarikh",sk?fd2(sk.at):"",true)+'</div>'
