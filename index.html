@@ -572,7 +572,7 @@ $("lgin").onclick=async function(){
   try{var h=await sha("mrsm-arau:"+id+":"+pw);var j=await apiCall({action:"login",id:id,h:h});
     if(j&&j.ok){TOKEN=j.token;try{sessionStorage.setItem("tok",TOKEN)}catch(x){}VER="";$("lpw").value="";var acc=j.user;
       if(acc.mustChange){pendSup={id:id,h:h,acc:acc};$("cpw1").value="";$("cpw2").value="";$("cerr").textContent="";tab(6)}else{enter(acc);poll(true)}}
-    else e.textContent=(j&&j.error==="locked")?"Terlalu banyak percubaan. Cuba lagi selepas 10 minit.":"ID atau kata laluan salah.";
+    else e.textContent=(j&&j.error==="locked")?"Terlalu banyak percubaan. Cuba lagi selepas 10 minit.":(j&&j.error==="server")?"Pelayan sibuk atau ada ralat, bukan salah kata laluan. Cuba lagi sebentar."+(j.msg?" ("+String(j.msg).slice(0,120)+")":""):(!j?"Tiada jawapan daripada pelayan. Cuba lagi sebentar.":"ID atau kata laluan salah.");
   }catch(x){e.textContent="Tidak dapat menghubungi pelayan. Semak sambungan internet."}
 };
 var editSup=null;
